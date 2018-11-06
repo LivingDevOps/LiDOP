@@ -1,0 +1,31 @@
+version: '3.2'
+
+services:
+  
+  sonarqube:
+    image: livingdevops/lidop.sonarqube
+    restart: always
+    ports:
+      - target: 9000
+        published: 8084
+        protocol: tcp
+        mode: host
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db.service.lidop.local:5432/sonar
+      - SONARQUBE_JDBC_USERNAME={{ root_user }}
+      - SONARQUBE_JDBC_PASSWORD={{ secret_password }}
+      - SERVICE_NAME=sonarqube
+    volumes:
+      - /var/lidop/sonarqube/conf:/opt/sonarqube/conf
+#      - /var/lidop/sonarqube/data:/opt/sonarqube/data
+#     - /var/lidop/sonarqube/extensions/plugins:/opt/sonarqube/extensions/plugins
+#      - /vagrant/.temp/sonarqube/extensions:/opt/sonarqube/extensions
+#      - /vagrant/.temp/sonarqube/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any

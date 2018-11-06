@@ -1,0 +1,72 @@
+---
+
+- name: elk Service
+  hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    folder: "/var/lidop/elk"
+
+  tasks:
+    - name: fix max memory
+      command: sysctl -w vm.max_map_count=262144
+
+    - name: delete directory
+      file:
+        path: "{{ folder }}"
+        state: absent
+
+    - name: Copy config
+      copy:
+        src: config/
+        dest: "{{ folder }}"
+        mode: 0644
+      when: state == "present"
+      
+    - name: Create folders
+      file:
+        state: "directory"
+        path: "{{ folder }}{{ item }}"
+        owner: "{{ root_user }}"
+        group: "{{ root_user }}"
+        mode: '0777'
+      with_items:
+        - /elasticsearch
+      when: state == "present"
+
+    - name: set docker-compose
+      template:
+        src: docker-compose.yml.j2
+        dest: "{{ folder }}/docker-compose.yml"
+
+    - name: permission hack needs to be removed
+      command: "chmod 777 -R  {{ folder }}/elasticsearch"
+      when: state == "present"
+
+    - name: permission hack needs to be removed
+      command: "chown 0:0 {{ folder }}/metricbeat/metricbeat.yml"
+      when: state == "present"
+
+    - name: permission hack needs to be removed
+      command: "chmod 755 -R  {{ folder }}/metricbeat/metricbeat.yml"
+      when: state == "present"
+
+    - name: start elk
+      command: "docker stack deploy -c {{ folder }}/docker-compose.yml elk"
+      when: state == "present"
+
+    - name: remove elk
+      command: docker stack rm elk
+      when: state == "absent"
+
+    - name: wait for starting elk up
+      shell: docker service logs $(docker service ls -q -f name=elk_elasticsearch)
+      register: result
+      until: result.stdout.find("recovered [0] indices into cluster_state") != -1
+      retries: 100
+      delay: 5
+      when: state == "present"
+  
+    - name: restart metricbeat
+      command: docker service update elk_metricbeat
+      ignore_errors: yes

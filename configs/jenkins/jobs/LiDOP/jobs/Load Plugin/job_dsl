@@ -1,0 +1,80 @@
+{% for pipeline in pipelines %}
+
+folder("{{ project_name | replace(' ', '_')}}") {
+    description('')
+}
+
+pipelineJob("{{ project_name | replace(' ', '_')}}/{{ pipeline }}") {
+
+    properties {
+        githubProjectUrl("{{ plugin_url_link }}")
+    }
+
+    triggers {    
+        {% if pipelines[pipeline].TriggerOnPush is defined %}
+            {%if pipelines[pipeline].TriggerOnPush == true%}
+
+            genericTrigger {
+                token("{{ project_name | replace(' ', '_')}}")
+                regexpFilterText("")
+                regexpFilterExpression("")            
+            }
+
+            {% endif %}
+        {% endif %}
+    }
+
+    {% if pipelines[pipeline].Token is defined %}
+    authenticationToken("{{ pipelines[pipeline].Token }}")
+    {% endif %}
+
+{% if pipelines[pipeline].Parameters is defined %}
+    parameters {
+    {% for param in pipelines[pipeline].Parameters%}
+        {%if param.Type == "String"%}
+        stringParam("{{ param.Name }}", "{{ param.Default }}", "")
+        {%endif%}
+        {%if param.Type == "Credential"%}
+        credentialsParam("{{ param.Name }}") {}
+        {%endif%}
+        {%if param.Type == "Boolean"%}
+        booleanParam("{{ param.Name }}", "{{ param.Default }}", "")
+        {%endif%}
+        {%if param.Type == "Choice"%}
+        choiceParam("{{ param.Name }}", {{ param.Choices | to_json }}, "")
+        {%endif%}
+    {% endfor %}
+    }
+{% endif %}
+
+    definition {
+        cpsScmFlowDefinition {
+            scm {
+                gitSCM {
+                userRemoteConfigs {
+                    userRemoteConfig {
+                    credentialsId("{{ credential2 }}")
+                    name('')
+                    refspec('')
+                    url("{{ plugin_url2 }}")
+                    }
+                }
+                branches {
+                    branchSpec {
+                    name("{{ branch }}")
+                    }
+                }
+                extensions {
+                }
+                  doGenerateSubmoduleConfigurations(false)
+                  browser { }
+                  gitTool('')
+            }
+        }
+        scriptPath("{{ pipelines[pipeline].Script }}")
+        lightweight(false)
+    }
+  }
+}
+
+{% endfor %}

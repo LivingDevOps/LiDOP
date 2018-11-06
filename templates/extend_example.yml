@@ -1,0 +1,44 @@
+---
+
+# You can set needed variables over the environment variable LIDOP_ENV
+# For this example we need custom_user and custom_password
+# export LIDOP_EXTEND="path to this file"
+# export LIDOP_ENV="custom_user=myUserName custom_password=mySecretPassword"
+
+
+- name: lidop extend installation example
+  block:
+  - name: Create {{ custom_user }} in Jenkins
+    uri:
+      method: POST
+      status_code: 302
+      url: 'http://{{ ipaddress }}:8080/credentials/store/system/domain/_/createCredentials'
+      user: "{{ root_user }}"
+      password: "{{ root_password }}"
+      force_basic_auth: yes
+      headers:
+        Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+      body: |
+        json={
+          "": "0",
+          "credentials": {
+            "scope": "GLOBAL",
+            "id": "{{ custom_user }}",
+            "username": "{{ custom_user }}",
+            "password": "{{ custom_password }}",
+            "description": "{{ custom_user }}",
+            "$class": "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"
+          }
+        }
+
+  - name: Load Plugin
+    uri:
+      url: 'http://{{ ipaddress }}:8080/job/LiDOP/job/Load%20Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Hello%20World%20NodeJs&PluginUrl=http://{{ ipaddress }}:8081/gitbucket/LiDOP/Environment&Branch=*/master&Credential={{ custom_user }}'
+      status_code: 201
+      user: "{{ root_user }}"
+      password: "{{ root_password }}"
+      force_basic_auth: yes
+      headers:
+        Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+
+  tags: extend

@@ -1,0 +1,29 @@
+dn: ou=users,dc=lidop,dc=local
+objectclass: organizationalUnit
+objectclass: top
+ou: users
+
+dn: ou=groups,dc=lidop,dc=local
+objectclass: organizationalUnit
+objectclass: top
+ou: groups
+
+dn: cn={{ root_user }},ou=users,dc=lidop,dc=local
+cn: {{ root_user }}
+gidnumber: 500
+givenname: {{ root_user }}
+homedirectory: /home/users/{{ root_user }}
+loginshell: /bin/sh
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
+sn: {{ root_user }}
+uid: {{ root_user }}
+uidnumber: 1000
+
+dn: cn=admins,ou=groups,dc=lidop,dc=local
+cn: admins
+gidnumber: 500
+memberuid: {{ root_user }}
+objectclass: posixGroup
+objectclass: top

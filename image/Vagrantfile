@@ -1,0 +1,22 @@
+Vagrant.configure("2") do |config|
+
+    config.vm.define "LiDOPBox" do |machine_config|
+        machine_config.vm.hostname = "LiDOPBox"  
+
+        machine_config.vm.provider :virtualbox do |v, override|
+            override.vm.synced_folder ".", "/vagrant", disabled: true
+            override.vm.synced_folder "./../", "/vagrant"
+
+            override.vm.box = "LivingDevOps/lidop.online"
+            override.ssh.username = "vagrant"
+            override.ssh.password = "vagrant"
+            v.memory = 8096
+            v.cpus = 4
+
+            override.vm.provision "shell", path: "./../scripts/ansible.sh"
+            override.vm.provision "shell", path: "./scripts/software.small.sh"
+            override.vm.provision "shell", path: "./scripts/downloadDockerImages.sh"
+            override.vm.provision "shell", path: "./scripts/minimize.sh"
+        end
+    end
+end

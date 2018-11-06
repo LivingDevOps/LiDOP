@@ -1,0 +1,45 @@
+---
+
+- name: Registry
+  block:
+
+  - name: create certificate certificate
+    shell: |
+      echo "Create Key"
+      openssl genrsa -out /var/lidop/certs/registry.key 4096
+
+      echo "Create request"
+      openssl req -new \
+        -key /var/lidop/certs/registry.key \
+        -out /var/lidop/certs/registry.csr \
+        -subj "/CN=registry.service.lidop.local"
+
+      echo "Sign request"
+      openssl x509 -req \
+        -in /var/lidop/certs/registry.csr \
+        -CA /var/lidop/certs/rootCA.pem \
+        -CAkey /var/lidop/certs/rootCA.key \
+        -CAcreateserial \
+        -out /var/lidop/certs/registry.pem \
+        -days 365 \
+        -passin pass:lidop \
+        -sha256
+
+      echo "Cleanup"
+      rm /var/lidop/certs/registry.csr
+
+  - name: start registry
+    shell: docker stack deploy -c /var/lidop/templates/registry.yml registry
+    when: node == "master"
+  
+  - name: "wait for registry ui to come up"
+    uri:
+      url: "http://{{ ipaddress }}:8092/registry/"
+      status_code: 200
+    register: result
+    until: result.status == 200
+    retries: 100
+    delay: 5
+    when: node == "master"
+
+  tags: registry

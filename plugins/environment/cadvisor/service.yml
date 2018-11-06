@@ -1,0 +1,17 @@
+---
+
+- name: cadvisor Service
+  hosts: localhost
+  connection: local
+  become: yes
+
+  tasks:
+    - name: set docker-compose
+      template:
+        src: docker-compose.yml.j2
+        dest: ./docker-compose.yml
+
+    - name: "Set Container to {{ state }}"
+      docker_service:
+        project_src: .  
+        state: "{{ state }}"

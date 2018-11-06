@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+psql -v ON_ERROR_STOP=1 --username "{{ root_user }}" <<-EOSQL
+	CREATE USER gitbucket;
+	CREATE DATABASE gitbucket;
+	GRANT ALL PRIVILEGES ON DATABASE gitbucket TO gitbucket;	
+EOSQL

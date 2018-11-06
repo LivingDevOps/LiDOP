@@ -1,0 +1,238 @@
+server {
+    server_name  {{ public_ipaddress }} {{ public_ipaddress }}.*;
+    listen       80;
+    listen       443 ssl;
+    ssl_certificate /certs/live/{{ domain_name }}/fullchain.pem;
+    ssl_certificate_key /certs/live/{{ domain_name }}/privkey.pem;
+
+    auth_ldap "Forbidden";
+    auth_ldap_servers ldapserver;
+
+    resolver {{ ipaddress }};
+
+    # Welcome page
+    location / {
+        root                    /usr/share/nginx/html;
+        index                   index.html index.htm;
+    }
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # ports
+    location ~ /port/(?<port>\d\d\d\d) {
+        auth_ldap               off;
+        set $upstream           http://$host:$port;
+        rewrite                 /port/\d\d\d\d/(.*) /$1 break;
+        proxy_pass              $upstream;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Letsencrypt
+    location ^~ /.well-known/acme-challenge/ {
+        auth_ldap               off;
+        default_type            "text/plain";
+        root                    /usr/share/nginx/letsencrypt;
+    }
+
+    # Jenkins
+    location /jenkins {
+        proxy_pass              http://jenkins.service.lidop.local:8080;
+        proxy_set_header        Host $host:$server_port;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $scheme;
+        # Required for new HTTP-based CLI
+        proxy_http_version      1.1;
+        proxy_request_buffering off;
+        proxy_buffering         off; # Required for HTTP-based CLI to work over SSL
+        # workaround for https://issues.jenkins-ci.org/browse/JENKINS-45651
+        add_header              'X-SSH-Endpoint' 'jenkins.service.lidop.local:50022' always;
+    }
+
+    # Gitbucket
+   location /gitbucket {
+        auth_ldap               off;
+        proxy_pass              http://gitbucket.service.lidop.local:8081/gitbucket;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_connect_timeout   150;
+        proxy_send_timeout      100;
+        proxy_read_timeout      100;
+        proxy_buffers           4 32k;
+        client_max_body_size    500m; # Big number is we can post big commits.
+        client_body_buffer_size 128k;    
+    }
+
+   # LDAP
+   location /ldap/ {
+        proxy_pass              http://ldap.service.lidop.local:8090;
+        rewrite                 /ldap/(.*) /$1 break;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+    location /user {
+        auth_ldap               off;
+        proxy_pass              http://ldap.service.lidop.local:9002;
+        rewrite                 /ldap/(.*) /$1 break;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+   location /css {
+        auth_ldap               off;
+        proxy_pass              http://ldap.service.lidop.local:9002;
+        rewrite                 /ldap/(.*) /$1 break;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+   location /js {
+        auth_ldap               off;
+        proxy_pass              http://ldap.service.lidop.local:9002;
+        rewrite                 /ldap/(.*) /$1 break;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+   location /fonts {
+        auth_ldap               off;
+        proxy_pass              http://ldap.service.lidop.local:9002;
+        rewrite                 /ldap/(.*) /$1 break;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+   location /images {
+        auth_ldap               off;
+        proxy_pass              http://ldap.service.lidop.local:9002;
+        rewrite                 /ldap/(.*) /$1 break;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Consul
+    location /ui {
+        proxy_pass              http://consul.service.lidop.local:8500/ui;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+    location /v1 {
+        proxy_pass              http://consul.service.lidop.local:8500/v1;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Docker
+    location /portainer {
+        proxy_pass              http://consul.service.lidop.local:8083;
+        rewrite                 /portainer/(.*) /$1 break;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_http_version 1.1;
+    }
+    location /registry {
+        proxy_pass              http://docker-registry-ui.service.lidop.local:8092;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Database
+    location /adminer {
+        proxy_pass              http://db.service.lidop.local:8082;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Sonarqube
+    location /sonarqube {
+        set $upstream           http://sonarqube.service.lidop.local:8084;
+        proxy_pass              $upstream;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Selenium
+    location /grid/ {
+        set $upstream           http://selenium.service.lidop.local:8091;
+        proxy_pass              $upstream;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Cadvisor
+    location /cadvisor {
+        set $upstream           http://cadvisor.service.lidop.local:8086;
+        proxy_pass              $upstream;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # ELK
+    location /kibana/ {
+        set $upstream           http://kibana.service.lidop.local:8087;
+        rewrite                 /kibana/(.*) /$1 break;
+        proxy_pass              $upstream;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # AWX
+    location /awx {
+        set $upstream           http://awx.service.lidop.local:8093/;
+        rewrite                 /awx/(.*) /$1 break;
+        proxy_pass              $upstream;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+    location /static {
+        set $upstream           http://awx.service.lidop.local:8093;
+        proxy_pass              $upstream;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+    location /api {
+        set $upstream           http://awx.service.lidop.local:8093;
+        proxy_pass              $upstream;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Nexus
+    location /nexus {
+        set $upstream           http://nexus.service.lidop.local:8085;
+        proxy_pass              $upstream;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Tomcat
+    location /tomcat {
+        set $upstream           http://tomcat.service.lidop.local:8088;
+        proxy_pass              $upstream;
+        proxy_set_header        Host $host;
+        proxy_set_header        X-Real-IP $remote_addr;
+        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}

@@ -1,0 +1,86 @@
+---
+
+- name: setup jenkins
+  block:
+
+  - name: pull image
+    shell: "docker pull livingdevops/lidop.jenkins"
+    when: 
+      - install_mode == "online"
+      - node == "master"
+
+  - name: tag image
+    shell: "docker tag livingdevops/lidop.jenkins registry.service.lidop.local:5000/lidop/jenkins:latest"
+    when: node == "master"
+
+  - name: start jenkins
+    shell: docker stack deploy -c /var/lidop/templates/jenkins.yml jenkins
+          
+  - name: "wait for Jenkins to come up"
+    uri:
+      url: "http://{{ ipaddress }}:8080/jenkins"
+      status_code: 403
+    register: result
+    until: result.status == 403
+    retries: 100
+    delay: 5
+
+  - name: Create Credentials Crumb
+    uri:
+      url: 'http://{{ ipaddress }}:8080/jenkins/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)'
+      user: "{{ root_user }}"
+      password: "{{ root_password }}"
+      timeout: 120
+      force_basic_auth: yes
+      return_content: yes
+    register: crumb
+
+  - name: Create lidop Credentials in Jenkins
+    uri:
+      method: POST
+      status_code: 302
+      url: 'http://{{ ipaddress }}:8080/jenkins/credentials/store/system/domain/_/createCredentials'
+      user: "{{ root_user }}"
+      password: "{{ root_password }}"
+      timeout: 120
+      force_basic_auth: yes
+      headers:
+        Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+      body: |
+        json={
+          "": "0",
+          "credentials": {
+            "scope": "GLOBAL",
+            "id": "lidop",
+            "username": "{{ root_user }}",
+            "password": "{{ root_password }}",
+            "description": "lidop",
+            "$class": "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"
+          }
+        }
+
+  - name: Create secret_password Credentials in Jenkins
+    uri:
+      method: POST
+      status_code: 302
+      url: 'http://{{ ipaddress }}:8080/jenkins/credentials/store/system/domain/_/createCredentials'
+      user: "{{ root_user }}"
+      password: "{{ root_password }}"
+      timeout: 120
+      force_basic_auth: yes
+      headers:
+        Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+      body: |
+        json={
+          "": "0",
+          "credentials": {
+            "scope": "GLOBAL",
+            "id": "lidop_secret_password",
+            "username": "{{ root_user }}",
+            "password": "{{ secret_password }}",
+            "description": "lidop_secret_password",
+            "$class": "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"
+          }
+        }
+
+  tags: jenkins

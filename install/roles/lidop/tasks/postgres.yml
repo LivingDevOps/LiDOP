@@ -1,0 +1,28 @@
+---
+
+########################################################################
+- name: Start postgres
+########################################################################
+  block:
+
+  - name: Create folders
+    file:
+      state: "directory"
+      path: "/var/lidop/{{ item }}"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0777'
+    with_items:
+      - postgres/data
+
+  - name: start postgres
+    shell: docker stack deploy -c /var/lidop/templates/postgres.yml postgres
+
+  - name: wait for starting postgresql up
+    shell: docker logs $(docker ps -f "name=_postgres" -q)
+    register: result
+    until: result.stderr.find("database system is ready to accept connections") != -1
+    retries: 100
+    delay: 5
+  
+  tags: postgres

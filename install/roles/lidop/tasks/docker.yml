@@ -1,0 +1,53 @@
+---
+
+- name: ensure repository key is installed
+  apt_key:
+    url: https://download.docker.com/linux/raspbian/gpg
+    state: present
+  when: install_mode == "online"
+  
+- name: ensure docker registry is available
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
+    state: present
+    update_cache: yes
+  when: install_mode == "online"
+
+- name: ensure docker and dependencies are installed
+  apt: 
+    name: docker-ce 
+    update_cache: yes
+  when: install_mode == "online"
+
+- name: Installing docker compose
+  pip:
+    name: docker-compose
+    state: present
+  when: install_mode == "online"
+
+- name: Ensure docker daemon options used (systemd)
+  lineinfile:
+    backrefs: yes
+    dest: /lib/systemd/system/docker.service
+    regexp: '^ExecStart='
+    line: ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375 --api-cors-header="*" --insecure-registry registry.service.lidop.local:5000
+  notify: 
+    - Reload systemd
+    - Restart docker
+
+- meta: flush_handlers
+
+- name: initialize swarm cluster
+  shell: >
+    docker swarm init --advertise-addr={{ ipaddress }}:2377
+  when: node == "master"
+  ignore_errors: true
+
+- name: add swarm worker
+  shell: >
+    docker swarm join --token {{ swarm_worker_token }} {{ node_master_ipaddress }}:2377
+  when: node == "worker"
+
+- name: Add Vagrant user to docker group
+  command: "usermod -aG docker {{ root_user }}"
+  changed_when: false

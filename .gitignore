@@ -1,0 +1,10 @@
+.*/**
+.*
+**.iso
+builds
+**.tar
+
+!.gitignore
+docker-compose.yml
+**.retry
+backup.tgz

@@ -1,0 +1,37 @@
+version: '3.2'
+
+services:
+  selenium:
+    image: selenium/hub
+    environment:
+      - SERVICE_NAME=selenium
+      - GRID_HUB_PORT=8091
+    ports:
+      - 8091:4444 # needed for registrator
+    network_mode: host
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  selenium_chrome:
+    image: selenium/node-chrome
+    environment:
+      HUB_HOST: selenium.service.lidop.local
+      HUB_PORT: 8091
+    volumes:
+    - /dev/shm:/dev/shm # Mitigates the Chromium issue described at https://code.google.com/p/chromium/issues/detail?id=519952
+    network_mode: host
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+

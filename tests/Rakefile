@@ -1,0 +1,34 @@
+require 'rake'
+require 'rspec/core/rake_task'
+
+task :test    => 'spec:all'
+task :default => :spec
+
+namespace :spec do
+  targets = []
+  puts("Target Host: #{ENV['TEST_HOST']}")
+  Dir.glob("./spec/*").each do |dir|
+    next unless File.directory?(dir)
+    target = File.basename(dir)
+    if(target == ENV['TEST_HOST'])
+      targets << target
+    end
+    puts targets
+  end
+
+  task :all     => targets
+  task :default => :all
+
+  targets.each do |target|
+    original_target = target == "_default" ? target[1..-1] : target
+    puts "Run serverspec tests to #{original_target}"
+    RSpec::Core::RakeTask.new(target.to_sym) do |t|
+
+      ENV['TARGET_HOST'] = ENV['TEST_HOST'] || original_target
+      t.pattern = "spec/#{original_target}/*_spec.rb"
+      t.rspec_opts = "--format documentation \
+      --format html --out /var/lidop/www/tests/#{ENV['HOSTNAME']}.html \
+      --format json --out /var/lidop/www/tests/#{ENV['HOSTNAME']}.json"
+    end
+  end
+end

@@ -1,0 +1,76 @@
+body {
+    color: wheat;
+    position: relative;
+    top: 100px;
+    background-image: url("Devops.jpg");
+    background-position: top;
+    background-attachment: fixed;
+}
+
+div {
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+a:hover {
+    text-decoration:none;
+}
+
+.col-sm-4 {
+    color: white;
+    text-align: center;
+    height: 200px;
+    background-color: rgb(33, 117, 143);
+    margin-bottom: 20px;
+}
+
+.col-sm-4:hover {
+    background-color: rgb(132, 190, 245);
+    cursor: pointer;
+}
+
+.container {
+    align-self: center;
+}
+
+.row [class*='col-']:not(.hid) {
+    background-clip: content-box;
+      background-color: #8080ff;
+    min-height: 20px;
+}
+
+  .topic {
+    background-color: #5b5bd7;
+    text-align: center;
+    color: #ffccff;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 100%;
+}
+
+ .welcome {
+        background-color: #5b5bd7;
+       text-align: center;
+       color: #f2f2f2;
+       padding: 10px;
+     font-weight: bold;
+   font-size: 150%;
+   }
+
+.navigator {
+  text-align: center;
+  color: #e6e600;
+  padding: 10px;
+  font-weight: bold;
+      }
+
+h1 {
+    display: block;
+    font-size: 300%;
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: bold;
+}

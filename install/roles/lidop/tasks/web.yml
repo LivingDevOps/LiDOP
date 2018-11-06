@@ -1,0 +1,73 @@
+---
+
+########################################################################
+- name: Start web
+########################################################################
+  block:
+
+  - name: Create folders
+    file:
+      state: "directory"
+      path: "/var/lidop/{{ item }}"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+    with_items:
+      - /www/certbot
+      - /certs/live
+    when: node == "master"
+
+  - name: pull image
+    shell: "docker pull livingdevops/lidop.nginx"
+    when: 
+      - install_mode == "online"
+      - node == "master"
+
+  - name: tag image
+    shell: "docker tag livingdevops/lidop.nginx registry.service.lidop.local:5000/lidop/nginx:latest"
+    when: node == "master"
+
+  - name: push image
+    shell: "docker push registry.service.lidop.local:5000/lidop/nginx:latest"
+    when: node == "master"
+
+  - name: pull image
+    shell: "docker pull registry.service.lidop.local:5000/lidop/nginx:latest"
+    when: node == "worker"
+
+  - name: create ssl certificate with letsencrypt
+    shell: >
+      docker run --rm -i -v /var/lidop/www/certbot:/var/www/html -v /var/lidop/certs:/etc/letsencrypt  certbot/certbot 
+      certonly --webroot -d {{ item }}{{ domain_name }} -m test@test.com --agree-tos --webroot-path /var/www/html -n --staging
+    when: 
+      - certificate_creation == "letsencrypt"
+      - node == "master"
+    with_items:
+      - ""
+
+  - name: create self signed certificate
+    shell: |
+      mkdir /var/lidop/certs/live/{{ item }}{{ domain_name }}
+      openssl req -nodes -newkey rsa:2048 -keyout /var/lidop/certs/live/{{ item }}{{ domain_name }}/privkey.pem -out /var/lidop/certs/{{ item }}{{ domain_name }}.csr -subj "/C=CH/ST=Zurich/L=Zurich/O=Global Security/OU=IT Department/CN={{ item }}{{ public_ipaddress }}.{{ domain_name }}"
+      openssl x509 -req -in /var/lidop/certs/{{ item }}{{ domain_name }}.csr -CA /var/lidop/certs/rootCA.pem -CAkey /var/lidop/certs/rootCA.key -CAcreateserial -out /var/lidop/certs/live/{{ item }}{{ domain_name }}/fullchain.pem -days 365 -sha256 -passin pass:lidop
+    when: 
+      - certificate_creation == "self"
+      - node == "master"
+    with_items:
+      - ""
+
+  - name: start webservice
+    shell: docker stack deploy -c /var/lidop/templates/web.yml portal
+    when: node == "master"
+
+  - name: "wait for web to come up"
+    uri:
+      url: "http://{{ ipaddress }}:80"
+      status_code: 401
+    register: result
+    until: result.status == 401
+    retries: 100
+    delay: 5
+    when: node == "master"
+
+  tags: web

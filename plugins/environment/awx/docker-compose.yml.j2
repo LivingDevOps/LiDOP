@@ -1,0 +1,103 @@
+version: '3.2'
+services:
+  rabbitmq:
+    image: "rabbitmq:3"
+    environment:
+      RABBITMQ_DEFAULT_VHOST: awx
+      RABBITMQ_DEFAULT_USER: {{ root_user }}
+      RABBITMQ_DEFAULT_PASS: {{ secret_password }}
+      RABBITMQ_ERLANG_COOKIE: cookiemonster
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  memcached:
+    image: "memcached:alpine"
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  awx_web:
+    image: "ansible/awx_web:latest"
+    links:
+      - rabbitmq
+      - memcached
+    ports:
+      - target: 8052
+        published: 8093
+        protocol: tcp
+        mode: host
+    hostname: awxweb
+    user: root
+    volumes:
+      - "{{ folder }}/projects:/var/lib/awx/projects:rw"
+    environment:
+      SERVICE_8052_NAME: awx
+      SECRET_KEY: {{ secret_password }}
+      DATABASE_USER: {{ root_user }}
+      DATABASE_PASSWORD: {{ secret_password }}
+      DATABASE_NAME: awx
+      DATABASE_PORT: 5432
+      DATABASE_HOST: db.service.lidop.local
+      RABBITMQ_USER: {{ root_user }}
+      RABBITMQ_PASSWORD: {{ secret_password }}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_VHOST: awx
+      MEMCACHED_HOST: memcached
+      MEMCACHED_PORT: 11211
+      AWX_ADMIN_USER: {{ root_user }}
+      AWX_ADMIN_PASSWORD: {{ secret_password }}
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  awx_task:
+    image: "ansible/awx_task:latest"
+    links:
+      - rabbitmq
+      - memcached
+      - awx_web:awxweb
+    hostname: awx
+    user: root
+    volumes:
+      - "{{ folder }}/projects:/var/lib/awx/projects:rw"
+    environment:
+      SECRET_KEY: {{ secret_password }}
+      DATABASE_USER: {{ root_user }}
+      DATABASE_PASSWORD: {{ secret_password }}
+      DATABASE_NAME: awx
+      DATABASE_PORT: 5432
+      DATABASE_HOST: db.service.lidop.local
+      RABBITMQ_USER: {{ root_user }}
+      RABBITMQ_PASSWORD: {{ secret_password }}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_VHOST: awx
+      MEMCACHED_HOST: memcached
+      MEMCACHED_PORT: 11211
+      AWX_ADMIN_USER: {{ root_user }}
+      AWX_ADMIN_PASSWORD: {{ secret_password }}
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any

@@ -1,0 +1,20 @@
+---
+
+########################################################################
+- name: Start portainer
+########################################################################
+  block:
+
+  - name: start portainer
+    shell: docker stack deploy -c /var/lidop/templates/portainer.yml portainer
+    when: node == "master"
+  
+  - name: "wait for portainer to come up"
+    uri:
+      url: "http://{{ ipaddress }}:8083"
+      status_code: 200
+    register: result
+    until: result.status == 200
+    retries: 100
+    delay: 5
+  tags: portainer

@@ -1,0 +1,45 @@
+---
+general:
+  # online, offline, local
+  install_mode: offline
+  nodes: 0
+  # self, letsencrypt
+  certificate_creation: self
+  domain_name: lidop.local
+  protocol: http
+
+virtualbox:
+  cpus: 4
+  memory: 4096
+  # set the ip adress without the last digit
+  ipaddress: 10.20.30.4
+  online_box_name: LivingDevOps/lidop.online
+  online_box_url: 
+  online_box_version: ">=1.0"
+  offline_box_name: LivingDevOps/lidop.offline
+  offline_box_url: 
+  offline_box_version: ">=1.1"
+  local_box_name: lidop.offline
+  local_box_url: ./.box/lidop.offline.virtualbox.box
+  local_box_version:
+  
+aws:
+  online_box_name: dummy
+  online_box_url: https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box
+  online_box_version:
+  offline_box_name: dummy
+  offline_box_url: https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box
+  offline_box_version:
+  ec3_access_key: ""
+  ec3_secret_access_key: ""
+  region: ""
+  private_key_path: ""
+  keypair_name: ""
+  ssh_user_name: ubuntu
+  private_ip: ""
+
+  ami: ""
+  instance_type: "t2.large"
+  subnet_id: ""
+  security_groups: 
+    - ""

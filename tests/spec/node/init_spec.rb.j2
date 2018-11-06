@@ -1,0 +1,19 @@
+require 'spec_helper'
+
+describe 'Test lidop preconditions' do
+
+  describe user('{{ root_user }}') do
+    it { should exist }
+    it { should belong_to_group '{{ root_user }}' }
+    it { should have_uid 1111 }
+  end
+
+  describe file('/var/lidop') do
+    it { should be_directory }
+  end
+
+  # describe command('ls -al /') do
+  #   its(:stdout) { should match /bin/ }
+  # end
+
+end

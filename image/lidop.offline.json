@@ -1,0 +1,79 @@
+{
+    "builders": [
+
+      {
+        "name":"aws",
+        "type": "amazon-ebs",
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}",
+        "region": "ue-central-1",
+        "source_ami_filter": {
+          "filters": {
+          "virtualization-type": "hvm",
+          "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+          "root-device-type": "ebs"
+          },
+          "owners": ["099720109477"],
+          "most_recent": true
+        },
+        "instance_type": "t2.large",
+        "ssh_username": "ubuntu",
+        "ami_name": "packer-example {{timestamp}}"
+      }      
+
+    ],
+
+    "post-processors": [
+      {
+        "output": "../.box/{{user `box_basename`}}.{{.Provider}}.box",
+        "type": "vagrant"
+      }
+    ],
+
+    "provisioners": [
+      {
+        "environment_vars": [
+          "HOME_DIR=/home/vagrant",
+          "http_proxy={{user `http_proxy`}}",
+          "https_proxy={{user `https_proxy`}}",
+          "no_proxy={{user `no_proxy`}}"
+        ],
+        "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash -eux '{{.Path}}'",
+        "expect_disconnect": true,
+        "scripts": [
+          "scripts/update.sh",
+          "scripts/sshd.sh",
+          "scripts/networking.sh",
+          "scripts/sudoers.sh",
+          "scripts/vagrant.sh",
+          "scripts/virtualbox.sh",
+          "scripts/cleanup.sh",
+          "scripts/software.small.sh",
+          "scripts/downloadDockerImages.sh",
+          "scripts/minimize.sh"
+        ],
+        "type": "shell"
+      }
+    ],
+
+    "variables": {
+      "box_basename": "lidop.offline",
+      "build_timestamp": "{{isotime \"20060102150405\"}}",
+      "cpus": "8",
+      "disk_size": "65536",
+      "headless": "",
+      "http_proxy": "{{env `http_proxy`}}",
+      "https_proxy": "{{env `https_proxy`}}",
+      "iso_checksum": "8ff73f1b622276758475c3bd5190b382774626de5a82c50930519381f6c3a3f8",
+      "iso_checksum_type": "sha256",
+      "iso_name": "ubuntu-17.10.1-server-amd64.iso",
+      "memory": "8000",
+      "mirror": "http://releases.ubuntu.com",
+      "mirror_directory": "17.10",
+      "name": "lidop.offline",
+      "no_proxy": "{{env `no_proxy`}}",
+      "preseed_path": "preseed.cfg",
+      "template": "lidop.offline",
+      "version": "TIMESTAMP"
+    }
+  }

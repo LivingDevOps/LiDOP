@@ -1,0 +1,114 @@
+---
+
+- name: Init
+  block:
+
+  - name: Create folder /var/lidop
+    file:
+      state: "{{ item }}"
+      path: "/var/lidop/"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+    with_items:
+      - directory
+
+  - name: copy config files
+    command: "cp -rf /vagrant/configs/{{ item }} /var/lidop"
+    with_items:
+      - "consul"
+      - "gitbucket"
+      - "jenkins"
+      - "jenkins.sharedlib"
+      - "nginx"
+      - "openldap"
+      - "postgresql"
+      - "www"
+      - "certs"
+      - "registry"
+    when: node == "master"
+
+  - name: copy test files
+    command: "cp -rf /vagrant/tests /var/lidop"
+
+  - name: copy template files
+    command: "cp -rf /vagrant/install/roles/{{ item }}/templates/ /var/lidop/"
+    with_items:
+      - "lidop"
+    when: node == "master"
+
+  - name: gitbucket base_urls
+    set_fact: gitbucket_base_url=""  
+    when: protocol == "http"
+    
+  - name: gitbucket base_urls
+    set_fact: gitbucket_base_url="base_url={{ protocol }}\://{{ public_ipaddress }}.{{ domain_name }}/gitbucket"  
+    when: protocol == "https"
+
+  - name: jenkins base_urls
+    set_fact: jenkins_base_url="{{ protocol }}://{{ public_ipaddress }}/jenkins"  
+    when: protocol == "http"
+    
+  - name: jenkins base_urls
+    set_fact: jenkins_base_url="{{ protocol }}://{{ public_ipaddress }}.{{ domain_name }}/jenkins"  
+    when: protocol == "https"
+
+  - debug:
+      msg: "domain_name: {{ domain_name }}"  
+
+  - name: find all j2 files
+    find:
+      paths: "/var/lidop/"
+      patterns: "*.j2"
+      recurse: true
+    register: j2_files
+    when: node == "master"
+    
+  - name: update config files
+    template:
+      src: "{{ item.path }}"
+      dest: "{{ item.path | replace('.j2','') }}"
+    with_items: "{{ j2_files.files }}"
+    when: node == "master"
+
+  - name: find all sh files
+    find:
+      paths: "/var/lidop/"
+      patterns: "*.sh"
+      recurse: true
+    register: sh_files
+    when: node == "master"
+    
+  - name: update sh files
+    shell: dos2unix {{ item.path }}
+    with_items: "{{ sh_files.files }}"
+    when: node == "master"
+
+  - name: chown
+    shell: >
+      chown -R 1111:1111 /var/lidop/{{ item }}
+    with_items:
+      - "jenkins"
+    when: node == "master"
+
+  - name: fix permissions
+    file:
+      path: "/var/lidop"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      follow: false
+      mode: u=rwX,g=rX,o=rX
+      recurse: true
+    when: node == "master"
+
+  - name: permission hack needs to be removed
+    shell: >
+      chmod 777 -R  /var/lidop/
+    when: node == "master"
+
+  - name: install root certificate
+    shell: |
+      cp /vagrant/configs/certs/rootCA.pem /usr/local/share/ca-certificates/lidop.crt
+      update-ca-certificates
+
+  tags: config

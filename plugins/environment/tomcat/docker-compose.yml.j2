@@ -1,0 +1,21 @@
+version: '3.2'
+
+services:
+  
+  tomcat:
+    image: tomcat:alpine
+    restart: always
+    volumes:
+      - /var/lidop/tomcat/conf/:/usr/local/tomcat/conf/
+      - /var/lidop/tomcat/webapps/manager/context.xml:/usr/local/tomcat/webapps/manager/META-INF/context.xml:ro
+      - /var/lidop/tomcat/webapps/host-manager/context.xml:/usr/local/tomcat/webapps/host-manager/META-INF/context.xml:ro
+    ports:
+      - "8088:8080"
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any

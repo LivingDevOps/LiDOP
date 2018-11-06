@@ -1,0 +1,12 @@
+---
+
+- name: setup LiDOP
+  hosts: localhost
+  become: yes
+
+  pre_tasks:
+    - include_vars: /vagrant/.variables.yaml
+
+  roles:
+    - { role: lidop }
+    - { role: serverspec}

@@ -1,0 +1,142 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.17">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.2.6"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.2.6">
+      <jobProperties/>
+      <triggers/>
+      <parameters/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>ProjectName</name>
+          <description></description>
+          <defaultValue>ProjectName</defaultValue>
+          <trim>true</trim>
+        </hudson.model.StringParameterDefinition>
+        <jp.ikedam.jenkins.plugins.extensible__choice__parameter.ExtensibleChoiceParameterDefinition plugin="extensible-choice-parameter@1.4.2">
+          <name>PluginUrl</name>
+          <description></description>
+          <editable>true</editable>
+          <choiceListProvider class="jp.ikedam.jenkins.plugins.extensible_choice_parameter.SystemGroovyChoiceListProvider">
+            <groovyScript plugin="script-security@1.40">
+              <script>List&lt;String&gt; artifacts = new ArrayList&lt;String&gt;()
+artifacts.add(&quot;&quot;)
+
+try{
+  def data = new groovy.json.JsonSlurper()
+    .parse(new URL(&quot;https://gist.githubusercontent.com/llaaccssaapp/f7d7ba8b784177f9963f33124aa10f4f/raw/plugins.txt&quot;))
+
+  for(item in data){
+    artifacts.add(item)
+  } 
+  return artifacts
+} catch (Exception e) {
+  return artifacts
+}
+</script>
+              <sandbox>true</sandbox>
+            </groovyScript>
+            <usePredefinedVariables>false</usePredefinedVariables>
+          </choiceListProvider>
+        </jp.ikedam.jenkins.plugins.extensible__choice__parameter.ExtensibleChoiceParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>Branch</name>
+          <description></description>
+          <defaultValue>*/master</defaultValue>
+          <trim>true</trim>
+        </hudson.model.StringParameterDefinition>
+        <com.cloudbees.plugins.credentials.CredentialsParameterDefinition plugin="credentials@2.1.16">
+          <name>Credential</name>
+          <description></description>
+          <defaultValue>lidop</defaultValue>
+          <credentialType>com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl</credentialType>
+          <required>true</required>
+        </com.cloudbees.plugins.credentials.CredentialsParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>CopyRepository</name>
+          <description>Copy Repository to GitBucket</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.43">
+    <script>#!groovy
+
+pipeline {
+
+    agent {
+        label &apos;host&apos;
+    }
+
+    stages {
+        
+        stage(&quot;Stash Data&quot;) {
+            agent{
+                label &apos;master&apos;
+            }
+            steps{
+                dir(&quot;${JENKINS_HOME}/jobs/LiDOP/jobs/Load Plugin&quot;){
+                    stash includes: &quot;load_plugin.yml,job_dsl&quot;, name: &apos;data&apos;
+                }
+            }
+        }
+        
+        stage(&apos;Prepare Build Environment&apos;) {
+            steps{
+                sh 'sudo rm -R -f $PWD'
+                script {
+                    currentBuild.displayName = &quot;${params.ProjectName}.${BUILD_NUMBER}&quot;
+                    currentBuild.description = &quot;The best description.&quot;
+                }
+            }
+        }
+
+        stage(&apos;Checkout&apos;) {
+            steps{
+                script{
+                  def gitResult = checkout([
+                    $class: &apos;GitSCM&apos;,
+                    branches: [[name: &quot;${Branch}&quot;]],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [],
+                    submoduleCfg: [],
+                    userRemoteConfigs: [[credentialsId: &quot;${params.Credential}&quot;, url: &quot;${params.PluginUrl}&quot;]]])
+                    env.GIT_RESULT = gitResult.toString()
+                }
+            }
+        }
+
+        stage(&apos;Load Plugin&apos;){
+            steps {
+                withCredentials([usernamePassword(credentialsId: &apos;lidop&apos;, passwordVariable: &apos;root_password&apos;, usernameVariable: &apos;root_user&apos;)]) {
+                    withCredentials([usernamePassword(credentialsId: &apos;lidop_secret_password&apos;, passwordVariable: &apos;secret_password&apos;, usernameVariable: &apos;root_user_secret&apos;)]) {
+
+                        unstash &apos;data&apos;
+                        sh &quot;ansible-playbook load_plugin.yml -v -e \&quot; ipaddress=${env.IPADDRESS} public_ipaddress=${env.PUBLIC_IPADDRESS} project_name='${ProjectName}' credential=${Credential} plugin_url=${params.PluginUrl} copy_repository=${CopyRepository} root_password=${root_password} root_user=${root_user} secret_password=${secret_password} branch=${Branch}\&quot;&quot;
+                    
+                    }
+                }
+            }
+        }
+
+        stage(&apos;Execute Job Dsl Files&apos;) {
+            steps {
+                jobDsl sandbox: true, targets: &apos;./build/*.groovy&apos;
+            }
+        }
+    }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <authToken>CreateBuilds</authToken>
+  <disabled>false</disabled>
+</flow-definition>

@@ -1,0 +1,29 @@
+version: '3.2'
+
+services:
+
+  gitbucket:
+    image: f99aq8ove/gitbucket:alpine
+    ports:
+      - target: 8080
+        published: 8081
+        protocol: tcp
+        mode: host
+      - target: 29418
+        published: 29418
+        protocol: tcp
+        mode: host
+    environment:
+      - SERVICE_8080_NAME=gitbucket
+      - SERVICE_29418_NAME=ssl-gitbucket
+      - GITBUCKET_EXTRA_DEPS=
+      - GITBUCKET_OPTS=--prefix=/gitbucket
+    volumes: 
+      - /var/lidop/gitbucket:/gitbucket
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8
+    deploy:
+      restart_policy:
+        condition: any
+

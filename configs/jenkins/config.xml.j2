@@ -1,0 +1,185 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<hudson>
+  <disabledAdministrativeMonitors/>
+  <version>2.111</version>
+  <installState>
+    <name>RUNNING</name>
+  </installState>
+  <numExecutors>2</numExecutors>
+  <mode>NORMAL</mode>
+  <useSecurity>true</useSecurity>
+  <authorizationStrategy class="hudson.security.GlobalMatrixAuthorizationStrategy">
+    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Create:admins</permission>
+    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Delete:admins</permission>
+    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains:admins</permission>
+    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Update:admins</permission>
+    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.View:admins</permission>
+    <permission>hudson.model.Computer.Build:admins</permission>
+    <permission>hudson.model.Computer.Configure:admins</permission>
+    <permission>hudson.model.Computer.Connect:admins</permission>
+    <permission>hudson.model.Computer.Create:admins</permission>
+    <permission>hudson.model.Computer.Delete:admins</permission>
+    <permission>hudson.model.Computer.Disconnect:admins</permission>
+    <permission>hudson.model.Hudson.Administer:admins</permission>
+    <permission>hudson.model.Hudson.Read:admins</permission>
+    <permission>hudson.model.Hudson.Read:authenticated</permission>
+    <permission>hudson.model.Item.Build:admins</permission>
+    <permission>hudson.model.Item.Build:authenticated</permission>
+    <permission>hudson.model.Item.Cancel:admins</permission>
+    <permission>hudson.model.Item.Configure:admins</permission>
+    <permission>hudson.model.Item.Create:admins</permission>
+    <permission>hudson.model.Item.Delete:admins</permission>
+    <permission>hudson.model.Item.Discover:admins</permission>
+    <permission>hudson.model.Item.Move:admins</permission>
+    <permission>hudson.model.Item.Read:admins</permission>
+    <permission>hudson.model.Item.Read:authenticated</permission>
+    <permission>hudson.model.Item.Workspace:admins</permission>
+    <permission>hudson.model.Run.Delete:admins</permission>
+    <permission>hudson.model.Run.Replay:admins</permission>
+    <permission>hudson.model.Run.Update:admins</permission>
+    <permission>hudson.model.View.Configure:admins</permission>
+    <permission>hudson.model.View.Create:admins</permission>
+    <permission>hudson.model.View.Delete:admins</permission>
+    <permission>hudson.model.View.Read:admins</permission>
+    <permission>hudson.model.View.Read:authenticated</permission>
+    <permission>hudson.scm.SCM.Tag:admins</permission>
+  </authorizationStrategy>
+  <securityRealm class="hudson.security.LDAPSecurityRealm" plugin="ldap@1.18">
+    <disableMailAddressResolver>false</disableMailAddressResolver>
+    <configurations>
+      <jenkins.security.plugins.ldap.LDAPConfiguration>
+        <server>ldap.service.lidop.local</server>
+        <rootDN>dc=lidop,dc=local</rootDN>
+        <inhibitInferRootDN>false</inhibitInferRootDN>
+        <userSearchBase></userSearchBase>
+        <userSearch>uid={0}</userSearch>
+        <groupMembershipStrategy class="jenkins.security.plugins.ldap.FromGroupSearchLDAPGroupMembershipStrategy">
+          <filter></filter>
+        </groupMembershipStrategy>
+        <managerDN>cn=admin,dc=lidop,dc=local</managerDN>
+        <managerPasswordSecret>{{ secret_password }}</managerPasswordSecret>
+        <displayNameAttributeName>givenName</displayNameAttributeName>
+        <mailAddressAttributeName>mail</mailAddressAttributeName>
+        <extraEnvVars class="linked-hash-map">
+          <entry>
+            <string></string>
+            <string></string>
+          </entry>
+        </extraEnvVars>
+      </jenkins.security.plugins.ldap.LDAPConfiguration>
+    </configurations>
+    <userIdStrategy class="jenkins.model.IdStrategy$CaseInsensitive"/>
+    <groupIdStrategy class="jenkins.model.IdStrategy$CaseInsensitive"/>
+    <disableRolePrefixing>true</disableRolePrefixing>
+  </securityRealm>
+  <disableRememberMe>false</disableRememberMe>
+  <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
+  <workspaceDir>${JENKINS_HOME}/workspace/${ITEM_FULL_NAME}</workspaceDir>
+  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <markupFormatter class="hudson.markup.RawHtmlMarkupFormatter" plugin="antisamy-markup-formatter@1.5">
+    <disableSyntaxHighlighting>false</disableSyntaxHighlighting>
+  </markupFormatter>
+  <jdks/>
+  <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
+  <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
+<clouds>
+    <com.nirima.jenkins.plugins.docker.DockerCloud plugin="docker-plugin@1.1.4">
+      <name>docker</name>
+      <templates>
+        <com.nirima.jenkins.plugins.docker.DockerTemplate>
+          <configVersion>2</configVersion>
+          <labelString>docker</labelString>
+          <connector class="io.jenkins.docker.connector.DockerComputerSSHConnector">
+            <sshKeyStrategy class="io.jenkins.docker.connector.DockerComputerSSHConnector$InjectSSHKey">
+              <user>jenkins</user>
+            </sshKeyStrategy>
+            <port>22</port>
+            <jvmOptions></jvmOptions>
+            <javaPath></javaPath>
+            <prefixStartSlaveCmd></prefixStartSlaveCmd>
+            <suffixStartSlaveCmd></suffixStartSlaveCmd>
+          </connector>
+          <remoteFs>/home/jenkins</remoteFs>
+          <instanceCap>2147483647</instanceCap>
+          <mode>NORMAL</mode>
+          <retentionStrategy class="com.nirima.jenkins.plugins.docker.strategy.DockerOnceRetentionStrategy">
+            <idleMinutes>10</idleMinutes>
+          </retentionStrategy>
+          <dockerTemplateBase>
+            <image>jenkins/ssh-slave</image>
+            <pullCredentialsId></pullCredentialsId>
+            <dockerCommand></dockerCommand>
+            <hostname></hostname>
+            <dnsHosts/>
+            <network></network>
+            <volumes/>
+            <volumesFrom2/>
+            <environment/>
+            <bindPorts></bindPorts>
+            <bindAllPorts>false</bindAllPorts>
+            <privileged>false</privileged>
+            <tty>false</tty>
+            <extraHosts class="empty-list"/>
+          </dockerTemplateBase>
+          <removeVolumes>false</removeVolumes>
+          <pullStrategy>PULL_NEVER</pullStrategy>
+          <pullTimeout>300</pullTimeout>
+          <nodeProperties class="empty-list"/>
+          <disabled>
+            <disabledByChoice>false</disabledByChoice>
+          </disabled>
+        </com.nirima.jenkins.plugins.docker.DockerTemplate>
+      </templates>
+      <dockerApi>
+        <dockerHost plugin="docker-commons@1.13">
+          <uri>tcp://{{ ipaddress }}:2375</uri>
+        </dockerHost>
+        <connectTimeout>60</connectTimeout>
+        <readTimeout>60</readTimeout>
+      </dockerApi>
+      <containerCap>100</containerCap>
+      <exposeDockerHost>true</exposeDockerHost>
+      <disabled>
+        <disabledByChoice>false</disabledByChoice>
+      </disabled>
+    </com.nirima.jenkins.plugins.docker.DockerCloud>
+  </clouds>
+  <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
+  <views>
+    <hudson.model.AllView>
+      <owner class="hudson" reference="../../.."/>
+      <name>all</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+    </hudson.model.AllView>
+  </views>
+  <primaryView>all</primaryView>
+  <slaveAgentPort>50000</slaveAgentPort>
+  <disabledAgentProtocols>
+    <string>JNLP-connect</string>
+    <string>JNLP2-connect</string>
+  </disabledAgentProtocols>
+  <label></label>
+  <crumbIssuer class="hudson.security.csrf.DefaultCrumbIssuer">
+    <excludeClientIPFromCrumb>false</excludeClientIPFromCrumb>
+  </crumbIssuer>
+  <nodeProperties/>
+  <globalNodeProperties>
+    <hudson.slaves.EnvironmentVariablesNodeProperty>
+      <envVars serialization="custom">
+        <unserializable-parents/>
+        <tree-map>
+          <default>
+            <comparator class="hudson.util.CaseInsensitiveComparator"/>
+          </default>
+          <int>2</int>
+          <string>IPADDRESS</string>
+          <string>{{ ipaddress }}</string>
+          <string>PUBLIC_IPADDRESS</string>
+          <string>{{ public_ipaddress }}</string>
+        </tree-map>
+      </envVars>
+    </hudson.slaves.EnvironmentVariablesNodeProperty>
+  </globalNodeProperties>
+</hudson>

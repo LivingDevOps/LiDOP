@@ -1,0 +1,21 @@
+---
+
+# root_user: lidop
+# install_mode: online
+# domain_name: lidop.local
+# certificate_creation: self
+
+secret_password_generator: "{{ lookup('password', '/dev/null length=30 chars=ascii_letters,digits') }}"
+msg: |
+  No LiDOP installation extension file defined.
+  You can define an Ansible file to be executed as last step during the installation.
+  export LIDOP_Extend=/path/file.yaml
+seperator_start: |
+  "#####################################################################"
+  "# Start Installation Extension ######################################"
+  "#####################################################################"
+seperator_end: |
+  "#####################################################################"
+  "# End Installation Extension ########################################"
+  "#####################################################################"
+extendFile: ""

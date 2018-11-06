@@ -1,0 +1,22 @@
+
+sonar.web.port=9000
+sonar.core.serverBaseURL=http://{{ ipaddress }}/sonarqube
+#sonar.web.host={{ ipaddress }}
+sonar.web.context=/sonarqube
+
+# LDAP configuration
+# General Configuration
+sonar.security.realm=LDAP
+ldap.url=ldap://ldap.service.lidop.local
+ldap.bindDn=cn=admin,dc=lidop,dc=local
+ldap.bindPassword={{ secret_password }}
+  
+# User Configuration
+ldap.user.baseDn=ou=users,dc=lidop,dc=local
+ldap.user.request=(&(objectClass=inetOrgPerson)(uid={login}))
+ldap.user.realNameAttribute=givenName
+ldap.user.emailAttribute=mail
+ 
+# Group Configuration
+ldap.group.baseDn=ou=groups,dc=lidop,dc=local
+ldap.group.request=(&(objectClass=posixGroup)(memberUid={uid}))

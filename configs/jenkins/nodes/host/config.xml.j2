@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<slave>
+  <name>host</name>
+  <description></description>
+  <remoteFS>/tmp</remoteFS>
+  <numExecutors>4</numExecutors>
+  <mode>NORMAL</mode>
+  <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+  <launcher class="hudson.plugins.sshslaves.SSHLauncher" plugin="ssh-slaves@1.25.1">
+    <host>{{ ipaddress }}</host>
+    <port>22</port>
+    <credentialsId>lidop</credentialsId>
+    <maxNumRetries>10</maxNumRetries>
+    <retryWaitTime>30</retryWaitTime>
+    <sshHostKeyVerificationStrategy class="hudson.plugins.sshslaves.verifiers.NonVerifyingKeyVerificationStrategy"/>
+  </launcher>
+  <label></label>
+  <nodeProperties/>
+</slave>

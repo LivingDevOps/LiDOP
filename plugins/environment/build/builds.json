@@ -1,0 +1,22 @@
+{
+    "Create_Service":{
+        "Script": "./build/service.create.Jenkinsfile",
+        "Parameters": [
+            {
+                "Name":"service",
+                "Type":"Choice",
+                "Choices":["cadvisor","nexus","sonarqube","tomcat","elk","selenium", "awx"]
+            }
+        ]
+    },
+    "Destroy_Service":{
+        "Script": "./build/service.destroy.Jenkinsfile",
+        "Parameters": [
+            {
+                "Name":"service",
+                "Type":"Choice",
+                "Choices":["cadvisor","nexus","sonarqube","tomcat","elk","selenium", "awx"]
+            }
+        ]
+    }
+}

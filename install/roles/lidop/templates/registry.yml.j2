@@ -1,0 +1,34 @@
+version: '3.2'
+services:
+  registry:
+    image: "registry:2"
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+        mode: host
+    volumes:
+      - "/var/lidop/certs/:/certs"
+    environment:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.pem
+      REGISTRY_HTTP_TLS_KEY: /certs/registry.key
+    deploy:
+      restart_policy:
+        condition: any
+
+  registrygui:
+    image: "quiq/docker-registry-ui"
+    ports:
+      - target: 8000
+        published: 8092
+        protocol: tcp
+        mode: host
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8
+    volumes:
+      - "/var/lidop/registry/config.yml:/opt/config.yml:ro"
+    deploy:
+      restart_policy:
+        condition: any
+    

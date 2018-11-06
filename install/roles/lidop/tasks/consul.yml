@@ -1,0 +1,107 @@
+---
+
+########################################################################
+- name: Start consul
+########################################################################
+  block:
+
+  - name: Create folders
+    file:
+      state: "directory"
+      path: "/var/lidop/{{ item }}"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+    with_items:
+      - consul/data
+    when: node == "master"
+
+  - name: start consul server
+    shell: docker service rm consul_master
+    ignore_errors: yes
+    when: node == "master"
+
+  - name: start consul server
+    shell: >
+      docker service create -d \
+      --network host \
+      --mode global \
+      -e 'CONSUL_ALLOW_PRIVILEGED_PORTS=' \
+      --mount type=bind,source=/var/lidop/consul/data,destination=/var/lidop/consul/data \
+      --mount type=bind,source=/var/lidop/consul/config.server,destination=/consul/config \
+      --constraint 'node.role == manager' \
+      --name consul_master \
+      consul:latest agent -dns-port=53
+    when: node == "master"
+
+  - name: remove consul server
+    shell: docker service rm consul_node
+    ignore_errors: yes
+    when: node == "master"
+
+  - name: wait for starting Consul up
+    shell: docker logs $(docker ps -f "name=consul_master" -q)
+    register: result
+    until: result.stdout.find("Started DNS server") != -1
+    retries: 100
+    delay: 5
+    when: node == "master"
+
+  - name: remove consul node
+    shell: docker rm -f consul_node
+    ignore_errors: yes
+    when: node == "worker"
+
+  - name: start consul node
+    shell: >
+      docker run -d \
+      --name=consul_node \
+      -e 'CONSUL_ALLOW_PRIVILEGED_PORTS=' \
+      -v /var/lidop/consul/config.node:/consul/config \
+      --net=host \
+      consul:latest \
+      agent -dns-port=53 -bind={{ ipaddress }} -advertise={{ ipaddress }} -client={{ ipaddress }}
+    when: node == "worker"
+
+  - name: start registrator server
+    shell: docker rm -f consul_registrator
+    ignore_errors: yes
+    
+  - name: start registrator server
+    shell: >
+      docker run -d \
+      --net=host \
+      --dns {{ ipaddress }}
+      --dns 8.8.8.8
+      -v /var/run/docker.sock:/tmp/docker.sock \
+      -v /etc/hosts:/etc/hosts \
+      --name consul_registrator \
+      --restart always \
+      gliderlabs/registrator:latest -ip={{ ipaddress }} -cleanup=true -deregister="always" -resync=60 consul://{{ ipaddress }}:8500
+
+  - name: Change from resolconf to resolved
+    shell: systemctl disable resolvconf      
+    ignore_errors: yes
+  - name: Change from resolconf to resolved
+    shell: systemctl stop resolvconf      
+    ignore_errors: yes
+
+  - name: Change from resolconf to resolved
+    shell: systemctl enable systemd-resolved.service      
+    ignore_errors: yes
+  - name: Change from resolconf to resolved
+    shell: systemctl start systemd-resolved.service      
+    ignore_errors: yes
+
+  - name: "add {{ ipaddress }} as dns to host"
+    lineinfile:
+      path: /etc/systemd/resolved.conf
+      line: "DNS={{ ipaddress }} 8.8.8.8" 
+      
+  - name: "add ln"
+    command: ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+  - name: "restart"
+    command: systemctl restart systemd-resolved.service 
+
+  tags: consul

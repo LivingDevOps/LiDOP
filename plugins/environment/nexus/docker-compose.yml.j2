@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  
+  nexus:
+    image: sonatype/nexus3:latest
+    restart: always
+    ports:
+      - "8085:8081/gitbucket"
+    volumes:
+      - /var/lidop/nexus/:/nexus-data/
+    deploy:
+      mode: replicated
+      replicas: 1
+    dns:
+      - {{ ipaddress }}
+      - 8.8.8.8

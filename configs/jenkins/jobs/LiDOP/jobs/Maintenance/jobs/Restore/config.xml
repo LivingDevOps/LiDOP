@@ -1,0 +1,54 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.17">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.2.6"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.2.6">
+      <jobProperties/>
+      <triggers/>
+      <parameters/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.43">
+    <script>#!groovy
+
+pipeline {
+
+    agent {
+        label &apos;host&apos;
+    }
+
+    stages {
+        stage(&apos;Build Number&apos;) {
+            steps {
+                script {
+                    currentBuild.displayName = &quot;Restore.${BUILD_NUMBER}&quot;
+                }
+            }
+        }
+
+        stage(&apos;Restore&apos;) {
+            steps {
+                withCredentials([usernamePassword(credentialsId: &apos;lidop_secret_password&apos;, passwordVariable: &apos;root_password&apos;, usernameVariable: &apos;root_user&apos;)]) {
+                    sh &apos;docker run -v /vagrant/.backups:/var/backups -e BACKUP_MODE=postgres -e TARGET=restore -e POSTGRES_HOST=db.service.lidop.local -e POSTGRES_DATABASE=gitbucket -e POSTGRES_USER=$root_user -e POSTGRES_PASSWORD=$root_password  registry.service.lidop.local:5000/lidop/backup:latest&apos;
+                    sh &apos;docker run -v /var/lidop/:/var/tobackup -v /vagrant/.backups:/var/backups -e BACKUP_MODE=folder -e TARGET=restore  registry.service.lidop.local:5000/lidop/backup:latest&apos;
+                }
+                sh &apos;docker service update --force openldap_openldapdb&apos;
+                sh &apos;docker service update --force gitbucket_gitbucket&apos;
+                sh &apos;docker service update --force gitbucket_gitbucket&apos;
+                sh &apos;docker service update --force jenkins_jenkins&apos;
+            }
+        }
+    
+    }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <authToken></authToken>
+  <disabled>false</disabled>
+</flow-definition>

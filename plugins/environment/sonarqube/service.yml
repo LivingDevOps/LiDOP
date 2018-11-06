@@ -1,0 +1,99 @@
+---
+
+- name: sonarqube Service
+  hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    folder: "/var/lidop/sonarqube"
+
+  tasks:
+
+    - name: download image
+      shell: "docker pull livingdevops/lidop.sonarqube_scanner"
+      when: state == "present"
+
+    - name: tag image
+      shell: "docker tag livingdevops/lidop.sonarqube_scanner registry.service.lidop.local:5000/lidop/sonarscanner:latest"
+      when: state == "present"
+
+    - name: push image
+      shell: "docker push registry.service.lidop.local:5000/lidop/sonarscanner:latest"
+      when: state == "present"
+
+    - name: set docker-compose
+      template:
+        src: docker-compose.yml.j2
+        dest: ./docker-compose.yml
+
+    - name: delete directory
+      file:
+        path: "{{ folder }}"
+        state: absent
+
+    - name: create directory
+      file:
+        path: "{{ folder }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0777
+      when: state == "present"
+
+    - name: Copy config
+      copy:
+        src: config/
+        dest: "{{ folder }}"
+        mode: 0644
+      when: state == "present"
+
+    - name: Update config
+      template:
+        src: "{{ folder }}/{{ item }}.j2"
+        dest: "{{ folder }}/{{ item }}"
+      when: state == "present"
+      with_items:
+        - conf/sonar.properties
+
+    - name: removing sonarqube
+      shell: docker stack rm sonarqube
+      when: state == "absent"
+
+    - name: start sonarqube
+      shell: docker stack deploy -c ./docker-compose.yml sonarqube
+      when: state == "present"
+
+    - name: Drop database
+      shell: docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -c "DROP DATABASE sonar;"
+      when: state == "absent"
+
+    - name: Create database
+      shell: docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -c "CREATE DATABASE sonar;"
+      when: state == "present"
+
+    - name: wait for starting Sonarqube up
+      shell: docker service logs $(docker service ls -q -f name=sonar)
+      register: result
+      until: result.stdout.find("SonarQube is up") != -1
+      retries: 100
+      delay: 5
+
+    - name: remove default users
+      shell: docker exec -i $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d sonar -c "delete from users;"
+      when: state == "present"
+
+    - name: change admin group name
+      shell: docker exec -i $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d sonar -c  "update "groups" set name='admins' where id=1;"
+      when: state == "present"
+
+    - name: Create webhook
+      uri:
+        url: "http://{{ ipaddress }}/sonarqube/api/webhooks/create?name=lidop&url=http://jenkins.service.lidop.local:8080/jenkins/sonarqube-webhook/"
+        method: POST
+        user: "{{ root_user }}"
+        password: "{{ root_password }}"
+        body: ""
+        force_basic_auth: yes
+        status_code: 200
+        body_format: json
+      when: state == "present"

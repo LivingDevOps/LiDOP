@@ -1,0 +1,185 @@
+---
+
+- name: nexus Service
+  hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    folder: "/var/lidop/nexus"
+
+  tasks:
+######################################################
+    - name: Prepare Config
+######################################################
+      block:
+        - name: set docker-compose
+          template:
+            src: docker-compose.yml.j2
+            dest: ./docker-compose.yml
+
+        - name: delete directory
+          file:
+            path: "{{ folder }}"
+            state: absent
+
+        - name: create directory
+          file:
+            path: "{{ folder }}"
+            state: directory
+            owner: root
+            group: root
+            mode: 0777
+          when: state == "present"
+
+#########################################################
+    - name: copy the libs and scripts for LDAP integration
+#########################################################
+      block:
+      - name: delete .groovy directory
+        file:
+          path: ~/.groovy
+          state: absent
+      
+      - name: delete script directory
+        file:
+          path: ~/scripts
+          state: absent
+
+      - name: create .groovy directory
+        file:
+          path: ~/.groovy
+          state: directory
+        when: state == "present"
+      
+      - name: create script directory
+        file:
+          path: ~/scripts
+          state: directory
+        when: state == "present"
+
+      - name: Update config
+        template:
+          src: "./config/scripts/ldap-provision.groovy.j2"
+          dest: "./config/scripts/ldap-provision.groovy"
+        when: state == "present"
+
+      - name: Copy the required files for LDAP integration
+        shell: |
+          cp -r ./config/libs/ ~/.groovy/grapes/
+          cp -r ./config/scripts/ ~
+        when: state == "present"
+
+#########################################################
+    - name: Start Containers
+#########################################################
+      block:  
+      - docker_service:
+          project_src: .  
+          state: "{{ state }}"
+
+      - name: "wait for Nexus to come up"
+        uri:
+          url: "http://{{ ipaddress }}:8085"
+          status_code: 200
+        register: result
+        until: result.status == 200
+        retries: 60
+        delay: 10
+        when: state == "present"
+
+#########################################################
+    - name: Configure Nexus LDAP Authentication
+#########################################################
+      block:
+      - name: Upload the script files for ldap integration
+        shell: |    
+          cd ~/scripts/
+          groovy uploadScriptToNexus.groovy -u "admin" -p "admin123" -n "ldapprovision" -f "ldap-provision.groovy" -h "http://{{ ipaddress }}:8085"
+          groovy uploadScriptToNexus.groovy -u "admin" -p "admin123" -n "ldaprolemap" -f "ldap-role-mapping.groovy" -h "http://{{ ipaddress }}:8085"
+          groovy uploadScriptToNexus.groovy -u "admin" -p "admin123" -n "ldapverify" -f "ldap-mapping-verify.groovy" -h "http://{{ ipaddress }}:8085"
+        when: state == "present"
+
+      - name: LDAP provisioning
+        uri:
+          url: "http://{{ ipaddress }}:8085/service/rest/v1/script/ldapprovision/run"
+          method: POST
+          status_code: 200
+          headers: 
+            Content-Type: "text/plain"
+          user: admin
+          password: admin123
+          force_basic_auth: yes
+          return_content: yes
+          body_format: json
+        when: state == "present"
+        
+      - name: LDAP Group Mapping
+        uri:
+          url: "http://{{ ipaddress }}:8085/service/rest/v1/script/ldaprolemap/run"
+          method: POST
+          status_code: 200
+          headers: 
+            Content-Type: "text/plain"
+          user: admin
+          password: admin123
+          force_basic_auth: yes
+          return_content: yes
+          body_format: json
+        register: ldaprolemap
+        when: state == "present"
+
+      - name: LDAP Verify Mapping
+        uri:
+          url: "http://{{ ipaddress }}:8085/service/rest/v1/script/ldapverify/run"
+          method: POST
+          status_code: 200
+          headers: 
+            Content-Type: "text/plain"
+          user: admin
+          password: admin123
+          force_basic_auth: yes
+          return_content: yes
+          body_format: json
+        register: ldaverify
+        when: state == "present"
+    
+#########################################################
+    - name: Populating the Nexus Maven Repository with Artifacts 
+#########################################################
+      block:
+      - name: Replace the blob store
+        command: cp -R ./config/store/{{ item }} /var/lidop/nexus/{{ item }}
+        with_items:
+          - "blobs"
+          - "db/component"
+        when: state == "present"
+      
+      - name: Apply appropriate permissions
+        command: chown -R 200:200 /var/lidop/nexus/{{ item }}
+        with_items:
+          - "blobs"
+          - "db/component"
+        when: state == "present"
+
+#########################################################
+    - name: Restart Nexus Service to reflect changes 
+#########################################################
+      block:
+      - name: "wait for Nexus to come up"
+        docker_service:
+          project_src: .
+          services:
+              - nexus
+          restarted: true
+          state: "{{ state }}"
+        when: state == "present"
+
+      - name: "wait for Nexus to come up"
+        uri:
+          url: "http://{{ ipaddress }}:8085"
+          status_code: 200
+        register: result
+        until: result.status == 200
+        retries: 60
+        delay: 10
+        when: state == "present"

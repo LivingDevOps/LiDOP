@@ -1,0 +1,42 @@
+---
+
+- name: Init
+  block:
+
+  - name: create user {{ root_user }}
+    shell: "useradd -u 1111 {{ root_user }}"
+    ignore_errors: yes
+
+  - name: create user {{ root_user }}
+    shell: "mkdir /home/{{ root_user }}"
+    ignore_errors: yes
+
+  - name: create user {{ root_user }}
+    shell: "chown -R 1111:1111 /home/{{ root_user }}"
+    ignore_errors: yes
+
+  - name: create user {{ root_user }}
+    shell: "chmod 775 /home/{{ root_user }}"
+    ignore_errors: yes
+
+  - name: change password for {{ root_user }}
+    expect:
+        command: "passwd {{ root_user }}"
+        responses:
+          (?i)password: "{{ root_password }}"
+
+  - name: create group {{ root_user }}
+    shell: "groupadd -g 1111 {{ root_user }}"
+    ignore_errors: yes
+
+  - name: add user {{ root_user }} to group {{ root_user }}
+    shell: "usermod -a -G {{ root_user }} {{ root_user }}"
+
+  - name: Add {{ root_user }} user to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: "^%{{ root_user }}"
+      line: "%{{ root_user }} ALL=(ALL) NOPASSWD: ALL"
+
+  tags: user

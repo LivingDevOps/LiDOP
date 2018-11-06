@@ -1,0 +1,35 @@
+{ 
+    "Build_Name":
+    {
+        "Script": "./Jenkinsfile",
+        "Parameters": [
+            {
+                "Name":"Param1",
+                "Type":"String",
+                "Default": "Default"
+            },
+            {
+                "Name":"Param2",
+                "Type":"Credential",
+                "Default": "credential"
+            },
+            {
+                "Name":"Param3",
+                "Type":"Choice",
+                "Default": "false"
+            },
+            {
+                "Name":"Param4",
+                "Type":"Choice",
+                "Choices":["cadvisor","nexus","sonarqube","tomcat","elk","selenium","consul"]
+            }
+        ]
+    },
+    
+    "Build2":
+    {
+        "Script": "App.Jenkinsfile",
+        "Token": "Token",
+        "TriggerOnPush" : true
+    }
+}

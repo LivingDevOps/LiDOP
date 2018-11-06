@@ -1,0 +1,32 @@
+---
+
+########################################################################
+- name: Start web
+########################################################################
+  block:
+
+  - name: Create folders
+    file:
+      state: "directory"
+      path: "/home/{{ item }}"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+    with_items:
+      - /backups
+
+  - name: pull image
+    shell: "docker pull livingdevops/lidop.backup"
+    when: 
+      - install_mode == "online"
+      - node == "master"
+
+  - name: tag image
+    shell: "docker tag livingdevops/lidop.backup registry.service.lidop.local:5000/lidop/backup:latest"
+    when: node == "master"
+
+  - name: push image
+    shell: "docker push registry.service.lidop.local:5000/lidop/backup:latest"
+    when: node == "master"
+
+  tags: web

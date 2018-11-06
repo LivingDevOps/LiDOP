@@ -1,0 +1,55 @@
+import groovy.json.JsonOutput
+import org.sonatype.nexus.ldap.persist.LdapConfigurationManager
+import org.sonatype.nexus.ldap.persist.entity.Connection
+import org.sonatype.nexus.ldap.persist.entity.LdapConfiguration
+import org.sonatype.nexus.ldap.persist.entity.Mapping
+import org.sonatype.nexus.security.user.UserSearchCriteria
+
+ldapManager = container.lookup(LdapConfigurationManager.class.name)
+
+
+ldapManager.addLdapServerConfiguration(
+        new LdapConfiguration(
+                name: 'openLdap',
+                connection: new Connection(
+                        host: new Connection.Host(Connection.Protocol.ldap, 'ldap.service.lidop.local', 389),
+                        connectionTimeout: 30,
+                        connectionRetryDelay: 300,
+                        maxIncidentsCount: 3,
+                        searchBase: 'dc=lidop,dc=local',
+                        authScheme: 'simple',
+                        systemUsername: 'cn=admin,dc=lidop,dc=local',
+                        systemPassword: '{{ secret_password }}',
+                ),
+                mapping: new Mapping(
+                        userBaseDn: 'ou=users',
+                        userObjectClass: 'inetOrgPerson',
+                        ldapFilter: '',
+                        userIdAttribute: 'uid',
+                        userSubtree: true,
+                        userRealNameAttribute: 'givenName',
+                        emailAddressAttribute: 'mail',
+                        userPasswordAttribute: '',
+                        ldapGroupsAsRoles: true,
+                        userMemberOfAttribute: 'gidNumber',
+                )
+        )
+)
+
+
+// create external role mappings.
+if (!security.securitySystem.listRoles().any { it.roleId == "Administrators" && it.source == "default" }) {
+    security.addRole(
+            "Administrators",
+            "nx-admin",
+            "Administrator Role (LDAP Administrators)",
+            [],
+            ["nx-admin"])
+}
+
+ldapUsers = security.securitySystem.searchUsers(new UserSearchCriteria(source: 'LDAP'))
+return JsonOutput.toJson([
+        ldapUsers: ldapUsers.sort { it.userId },
+        ldapGroups: security.securitySystem.listRoles('LDAP').sort { it.roleId },
+        roles: security.securitySystem.listRoles().sort { it.roleId },
+])

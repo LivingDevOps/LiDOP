@@ -1,0 +1,33 @@
+---
+
+- name: selenium Service
+  hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    folder: "/var/lidop/selenium"
+
+  tasks:
+    - name: set docker-compose
+      template:
+        src: docker-compose.yml.j2
+        dest: ./docker-compose.yml
+
+    - name: delete directory
+      file:
+        path: "{{ folder }}"
+        state: absent
+
+    - name: create directory
+      file:
+        path: "{{ folder }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0777
+      when: state == "present"
+
+    - name: "Set Container to {{ state }}"
+      docker_service:
+        project_src: .  
+        state: "{{ state }}"

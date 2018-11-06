@@ -1,0 +1,13 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<scriptApproval plugin="script-security@1.44">
+  <approvedScriptHashes/>
+  <approvedSignatures>
+    <string>method groovy.json.JsonSlurper parse java.net.URL</string>
+    <string>new java.util.ArrayList</string>
+  </approvedSignatures>
+  <aclApprovedSignatures/>
+  <approvedClasspathEntries/>
+  <pendingScripts/>
+  <pendingSignatures/>
+  <pendingClasspathEntries/>
+</scriptApproval>

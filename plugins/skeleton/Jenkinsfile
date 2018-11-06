@@ -1,0 +1,31 @@
+#!groovy
+
+pipeline {
+  agent {
+    label 'host'
+  }
+  
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '100', daysToKeepStr: '365'))
+  }
+
+  environment {
+    BuildName = "Skeleton.${BUILD_NUMBER}"
+  }
+
+  stages {
+    stage('Build Number') {
+      steps {
+        script {
+          currentBuild.displayName = "${BuildName}"
+        }
+      }
+    }
+
+    stage("Startup Service") {
+      steps {
+       sh 'docker run...'
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+---
+
+- name: Init
+  block:
+  - set_fact: ipaddress="{{ lookup('env','IPADDRESS') }}"
+  - set_fact: public_ipaddress="{{ lookup('env','PUBLIC_IPADDRESS') }}"
+
+  - set_fact: secret_password="{{ secret_password_generator }}"  
+
+  - debug:
+      msg: "Public IP: {{ public_ipaddress }}"  
+
+  - debug:
+      msg: "Private IP: {{ ipaddress }}"  
+ 
+  - debug:
+      msg: "Install Mode: {{ install_mode }}"  
+
+  - debug:
+      msg: "Secret: {{ secret_password }}"  
+
+  - debug:
+      msg: "protocol: {{ protocol }}"  
+
+  - debug:
+      msg: "certificate_creation: {{ certificate_creation }}"  
+
+  - debug:
+      msg: "Node MasterIpaddress: {{ node_master_ipaddress }}"  
+    when: node == "worker"
+
+  - local_action: copy content={{ secret_password }} dest=./../.secret
+
+  tags: init

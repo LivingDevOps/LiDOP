@@ -1,0 +1,25 @@
+---
+
+- name: Init
+  block:
+
+  - name: Enable mout for /var/lidop
+    lineinfile:
+      create: yes
+      state: present
+      dest: /etc/exports
+      regexp: '^/var/lidop'
+      line: /var/lidop  *(rw,async,no_subtree_check,no_root_squash)
+    when: node == "master"
+
+  - name: restart nfs service
+    shell: >
+      systemctl restart nfs-kernel-server
+    when: node == "master"
+
+  - name: "mount /var/lidop from {{ node_master_ipaddress }}"
+    shell: >
+      mount {{ node_master_ipaddress }}:/var/lidop /var/lidop
+    when: node == "worker"
+
+  tags: mount
