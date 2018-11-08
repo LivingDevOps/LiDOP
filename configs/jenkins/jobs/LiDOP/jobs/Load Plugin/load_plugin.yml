@@ -59,10 +59,10 @@
         when: copy_repository == "true"
 
       - name: Set variable PluginUrl
-        set_fact: plugin_url2="http://{{ public_ipaddress }}:8081/gitbucket/git/LiDOP/{{ project_name | replace(' ', '_')}}.git"
+        set_fact: plugin_url2="http://gitbucket.service.lidop.local:8081/gitbucket/git/LiDOP/{{ project_name | replace(' ', '_')}}.git"
         when: copy_repository == "true"
       - name: Set variable PluginUrl
-        set_fact: plugin_url_link="http://{{ public_ipaddress }}:8081/gitbucket/LiDOP/{{ project_name | replace(' ', '_')}}"
+        set_fact: plugin_url_link="https://{{ public_ipaddress }}/gitbucket/LiDOP/{{ project_name | replace(' ', '_')}}"
         when: copy_repository == "true"
 
       - name: Set variable PluginUrl
