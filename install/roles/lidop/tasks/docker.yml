@@ -30,7 +30,7 @@
     backrefs: yes
     dest: /lib/systemd/system/docker.service
     regexp: '^ExecStart='
-    line: ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375 --api-cors-header="*" --insecure-registry registry.service.lidop.local:5000
+    line: ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375 --api-cors-header="*" --insecure-registry registry.service.lidop.local:5000
   notify: 
     - Reload systemd
     - Restart docker
