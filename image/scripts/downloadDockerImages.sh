@@ -14,6 +14,7 @@ images=(ubuntu:latest \
     livingdevops/lidop.backup \
     livingdevops/lidop.gitbucket \
     livingdevops/lidop.serverspec \
+    livingdevops/lidop.sonarqube \
     livingdevops/lidop.sonarqube_scanner \
 
     tiredofit/self-service-password:latest\
