@@ -23,7 +23,7 @@ server {
     # ports
     location ~ /port/(?<port>\d\d\d\d) {
         auth_ldap               off;
-        set $upstream           http://$host:$port;
+        set $upstream           http://jenkins.service.lidop.local:$port;
         rewrite                 /port/\d\d\d\d/(.*) /$1 break;
         proxy_pass              $upstream;
         proxy_set_header        Host $host;
