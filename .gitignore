@@ -8,3 +8,4 @@ builds
 docker-compose.yml
 **.retry
 backup.tgz
+**/rootCA.srl

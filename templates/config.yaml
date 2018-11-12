@@ -6,7 +6,7 @@ general:
   # self, letsencrypt
   certificate_creation: self
   domain_name: lidop.local
-  protocol: http
+  protocol: https
 
 virtualbox:
   cpus: 4
