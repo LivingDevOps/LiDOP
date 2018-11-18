@@ -37,24 +37,33 @@
       - "lidop"
     when: node == "master"
 
-  - name: gitbucket base_urls
-    set_fact: gitbucket_base_url=""  
-    when: protocol == "http"
+  - name: set base_urls to ip
+    set_fact: 
+      base_url: "{{ protocol }}://{{ public_ipaddress }}"
+      jenkins_base_url: "{{ protocol }}://{{ public_ipaddress }}/jenkins"  
+      gitbucket_base_url: "{{ protocol }}://{{ public_ipaddress }}/gitbucket"  
+    when: domain_name == "lidop.local"
     
-  - name: gitbucket base_urls
-    set_fact: gitbucket_base_url="base_url={{ protocol }}\://{{ public_ipaddress }}.{{ domain_name }}/gitbucket"  
-    when: protocol == "https"
+  - name: set base_urls to xip.io
+    set_fact: 
+      base_url: "{{ protocol }}://www.{{ public_ipaddress }}.{{ domain_name }}"  
+      jenkins_base_url: "{{ protocol }}://www.{{ public_ipaddress }}.{{ domain_name }}/jenkins"  
+      gitbucket_base_url: "{{ protocol }}://www.{{ public_ipaddress }}.{{ domain_name }}/gitbucket"  
+    when: domain_name == "xip.io"
 
-  - name: jenkins base_urls
-    set_fact: jenkins_base_url="{{ protocol }}://{{ public_ipaddress }}/jenkins"  
-    when: protocol == "http"
-    
-  - name: jenkins base_urls
-    set_fact: jenkins_base_url="{{ protocol }}://{{ public_ipaddress }}.{{ domain_name }}/jenkins"  
-    when: protocol == "https"
+  - name: set base_urls to domain name
+    set_fact: 
+      base_url: "{{ protocol }}://{{ domain_name }}"  
+      jenkins_base_url: "{{ protocol }}://{{ domain_name }}/jenkins"  
+      gitbucket_base_url: "{{ protocol }}://{{ domain_name }}/gitbucket" 
+    when: 
+      - domain_name != "lidop.local"
+      - domain_name != "xip.io"
+
+  - local_action: copy content={{ base_url }} dest=./../.base_url
 
   - debug:
-      msg: "domain_name: {{ domain_name }}"  
+      msg: "gitbucket_base_url: {{ gitbucket_base_url }}"  
 
   - name: find all j2 files
     find:

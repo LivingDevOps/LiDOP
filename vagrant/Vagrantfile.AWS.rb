@@ -15,6 +15,7 @@ class AWS
         aws.subnet_id = configuration["aws"]["subnet_id"]
         aws.security_groups = configuration["aws"]["security_groups"]
         aws.private_ip_address = configuration["aws"]["private_ip"]
+        aws.elastic_ip = configuration["aws"]["elastic_ip"]
         aws.block_device_mapping = [{ 'DeviceName' => '/dev/sda1', 'Ebs.VolumeSize' => 50 }]
 
         # set ssh configuration
@@ -61,6 +62,7 @@ class AWS
             override.vm.provision "readSwarmToken", type: "local_shell", variable: "swarm_worker_token", command: "vagrant ssh lidop_0 -c \"sudo docker swarm join-token -q worker\""
             override.vm.provision "readPublicAddress", type: "local_shell", variable: "public_ipaddress", command: "vagrant ssh lidop_0 -c \"curl -s http://169.254.169.254/latest/meta-data/public-ipv4\""
             override.vm.provision "readSecretPassword", type: "local_shell", variable: "secret_password", command: "vagrant ssh lidop_0 -c \"cat /vagrant/.secret\""
+            override.vm.provision "readBaseUrl", type: "local_shell", variable: "base_url", command: "vagrant ssh lidop_0 -c \"cat /vagrant/.base_url\""
         elsif
 
             # adapt script for node installation

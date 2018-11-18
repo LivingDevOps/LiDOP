@@ -37,8 +37,8 @@
 
   - name: create ssl certificate with letsencrypt
     shell: >
-      docker run --rm -i -v /var/lidop/www/certbot:/var/www/html -v /var/lidop/certs:/etc/letsencrypt  certbot/certbot 
-      certonly --webroot -d {{ item }}{{ domain_name }} -m test@test.com --agree-tos --webroot-path /var/www/html -n --staging
+      docker run --rm --net host -i -v /var/lidop/certs:/etc/letsencrypt  certbot/certbot 
+      certonly --standalone -d {{ item }}{{ domain_name }} -m lidop@{{ domain_name }} --agree-tos -n
     when: 
       - certificate_creation == "letsencrypt"
       - node == "master"

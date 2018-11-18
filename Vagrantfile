@@ -85,7 +85,7 @@ Vagrant.configure("2") do |config|
             machine_config.vm.provider :virtualbox do |v, override|
                 Virtualbox.init(v, override, worker, settings, configuration, ansible_script, test_script)
                 if(worker == workers)
-                    override.vm.provision "message1", type: "local_shell", message: "LiDOP ist ready to use. \nUser: #{settings.user_name}\nAccess under: ", show: "node_master_ipaddress"
+                    override.vm.provision "message1", type: "local_shell", message: "LiDOP ist ready to use. \nUser: #{settings.user_name}\nAccess under: ", show: "base_url"
                     override.vm.provision "message2", type: "local_shell", message: "Secret Password: ", show: "secret_password"
                 end
             end
@@ -94,7 +94,7 @@ Vagrant.configure("2") do |config|
             machine_config.vm.provider :aws do |aws, override|
                 AWS.init(aws, override, worker, settings, configuration, ansible_script, test_script)
                 if(worker == workers)
-                    override.vm.provision "message1", type: "local_shell", message: "LiDOP ist ready to use. \nUser: #{settings.user_name}\nAccess under: ", show: "public_ipaddress"
+                    override.vm.provision "message1", type: "local_shell", message: "LiDOP ist ready to use. \nUser: #{settings.user_name}\nAccess under: ", show: "base_url"
                     override.vm.provision "message2", type: "local_shell", message: "Secret Password: ", show: "secret_password"
                 end
             end
