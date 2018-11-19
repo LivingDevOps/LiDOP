@@ -24,3 +24,5 @@
 - debug:
     msg: "{{ seperator_end.split('\n') }}"
   when: extend_file !=  ""
+
+  tags: extend

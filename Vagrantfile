@@ -32,6 +32,12 @@ end
 # start vagrant part
 Vagrant.configure("2") do |config|
 
+    # if a extend script is defined, copy the file to remote machine
+    if "#{ENV['LIDOP_EXTEND']}" != ""
+        config.vm.provision "file", source: ENV['LIDOP_EXTEND'], destination: "/tmp/extend.yml"
+        ENV['LIDOP_EXTEND_NEW'] = "/tmp/extend.yml"
+    end
+
     # define default installation script
     ansible_script = <<-SCRIPT 
         export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg
@@ -66,12 +72,6 @@ Vagrant.configure("2") do |config|
 
             # set the hostname
             machine_config.vm.hostname = "LiDOP#{worker}"  
-
-            # if a extend script is defined, copy the file to remote machine
-            if "#{ENV['LIDOP_EXTEND']}" != ""
-                override.vm.provision "file", source: ENV['LIDOP_EXTEND'], destination: "/tmp/extend.yml"
-                ENV['LIDOP_EXTEND_NEW'] = "/tmp/extend.yml"
-            end
             
             # common scripts
             if configuration["general"]["install_mode"]== "local"
