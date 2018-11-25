@@ -83,4 +83,18 @@
           }
         }
 
+  - name: pull image
+    shell: "docker pull livingdevops/lidop.ssh-slave-docker"
+    when: 
+      - install_mode == "online"
+      - node == "master"
+
+  - name: tag image
+    shell: "docker tag livingdevops/lidop.ssh-slave-docker registry.service.lidop.local:5000/lidop/ssh-slave-docker:latest"
+    when: node == "master"
+
+  - name: push image
+    shell: "docker push registry.service.lidop.local:5000/lidop/ssh-slave-docker:latest"
+    when: node == "master"
+
   tags: jenkins

@@ -16,6 +16,7 @@ images=(ubuntu:latest \
     livingdevops/lidop.serverspec \
     livingdevops/lidop.sonarqube \
     livingdevops/lidop.sonarqube_scanner \
+    livingdevops/lidop.ssh-slave-docker \
 
     tiredofit/self-service-password:latest\
 
@@ -46,11 +47,11 @@ images=(ubuntu:latest \
     selenium/node-chrome \
     selenium/node-firefox \
 
-    docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0 \
-    docker.elastic.co/kibana/kibana-oss:6.3.0 \
-    docker.elastic.co/logstash/logstash-oss:6.3.0 \
-    docker.elastic.co/beats/metricbeat:6.3.0 \
-    docker.elastic.co/beats/filebeat:6.3.0 \
+    docker.elastic.co/elasticsearch/elasticsearch-oss:6.5.1 \
+    docker.elastic.co/kibana/kibana-oss:6.5.1 \
+    docker.elastic.co/logstash/logstash-oss:6.5.1 \
+    docker.elastic.co/beats/metricbeat:6.5.1 \
+    docker.elastic.co/beats/filebeat:6.5.1 \
 
     rabbitmq:3 \
     memcached:alpine \
@@ -63,6 +64,13 @@ images=(ubuntu:latest \
 
 for i in "${images[@]}"
 do
-    echo "Download ${i}"
-    docker pull $i
+    { 
+        echo "Download ${i}"
+        docker pull "$i"
+    } || { 
+        echo "ReTry Download ${i}"
+        sleep 5
+        docker pull "$i"
+    }
+
 done

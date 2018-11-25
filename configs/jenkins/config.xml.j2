@@ -106,23 +106,23 @@
             <idleMinutes>10</idleMinutes>
           </retentionStrategy>
           <dockerTemplateBase>
-            <image>jenkins/ssh-slave</image>
+            <image>registry.service.lidop.local:5000/lidop/ssh-slave-docker</image>
             <pullCredentialsId></pullCredentialsId>
             <dockerCommand></dockerCommand>
             <hostname></hostname>
             <dnsHosts/>
             <network></network>
-            <volumes/>
+            <volumes></volumes>
             <volumesFrom2/>
             <environment/>
             <bindPorts></bindPorts>
             <bindAllPorts>false</bindAllPorts>
-            <privileged>false</privileged>
+            <privileged>true</privileged>
             <tty>false</tty>
             <extraHosts class="empty-list"/>
           </dockerTemplateBase>
           <removeVolumes>false</removeVolumes>
-          <pullStrategy>PULL_NEVER</pullStrategy>
+          <pullStrategy>PULL_LATEST</pullStrategy>
           <pullTimeout>300</pullTimeout>
           <nodeProperties class="empty-list"/>
           <disabled>
@@ -138,7 +138,7 @@
         <readTimeout>60</readTimeout>
       </dockerApi>
       <containerCap>100</containerCap>
-      <exposeDockerHost>true</exposeDockerHost>
+      <exposeDockerHost>false</exposeDockerHost>
       <disabled>
         <disabledByChoice>false</disabledByChoice>
       </disabled>
