@@ -1,0 +1,260 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Resources": {
+		"VPC": {
+			"Type": "AWS::EC2::VPC",
+			"Properties": {
+				"CidrBlock": "172.31.0.0/16",
+				"EnableDnsHostnames": "true",
+				"EnableDnsSupport": "true",
+				"InstanceTenancy": "default"
+			}
+		},
+		"InternetGateway": {
+			"Type": "AWS::EC2::InternetGateway",
+			"Properties": {}
+		},
+		"VpcGatewayAttachment": {
+			"Type": "AWS::EC2::VPCGatewayAttachment",
+			"Properties": {
+				"InternetGatewayId": {
+					"Ref": "InternetGateway"
+				},
+				"VpcId": {
+					"Ref": "VPC"
+				}
+			}
+		},
+		"SubnetA": {
+			"Type": "AWS::EC2::Subnet",
+			"Properties": {
+				"AvailabilityZone": "eu-central-1a",
+				"CidrBlock": "172.31.0.0/20",
+				"MapPublicIpOnLaunch": true,
+				"VpcId": {
+					"Ref": "VPC"
+				}
+			}
+		},
+		"RouteTable": {
+			"Type": "AWS::EC2::RouteTable",
+			"Properties": {
+				"VpcId": {
+					"Ref": "VPC"
+				}
+			}
+		},
+		"InternetRoute": {
+			"Type": "AWS::EC2::Route",
+			"Properties": {
+				"DestinationCidrBlock": "0.0.0.0/0",
+				"GatewayId": {
+					"Ref": "InternetGateway"
+				},
+				"RouteTableId": {
+					"Ref": "RouteTable"
+				}
+			}
+		},
+		"SubnetARouteTableAssociation": {
+			"Type": "AWS::EC2::SubnetRouteTableAssociation",
+			"Properties": {
+				"RouteTableId": {
+					"Ref": "RouteTable"
+				},
+				"SubnetId": {
+					"Ref": "SubnetA"
+				}
+			}
+		},
+		"SecurityGroup": {
+			"Type": "AWS::EC2::SecurityGroup",
+			"Properties": {
+				"GroupName": "Internet Group",
+				"GroupDescription": "SSH traffic in, all traffic out.",
+				"VpcId": {
+					"Ref": "VPC"
+				},
+				"SecurityGroupIngress": [{
+						"IpProtocol": "tcp",
+						"FromPort": "22",
+						"ToPort": "22",
+						"CidrIp": "0.0.0.0/0"
+					},
+					{
+						"IpProtocol": "tcp",
+						"FromPort": "80",
+						"ToPort": "80",
+						"CidrIp": "0.0.0.0/0"
+					},
+					{
+						"IpProtocol": "tcp",
+						"FromPort": "443",
+						"ToPort": "443",
+						"CidrIp": "0.0.0.0/0"
+					}
+				],
+				"SecurityGroupEgress": [{
+					"IpProtocol": -1,
+					"CidrIp": "0.0.0.0/0"
+				}]
+			}
+		},
+		"Node0": {
+			"Type": "AWS::EC2::Instance",
+			"Properties": {
+				"ImageId": {
+					"Fn::FindInMap": [
+						"RegionMap",
+						{
+							"Ref": "AWS::Region"
+						},
+						"AMI"
+					]
+				},
+				"BlockDeviceMappings": [{
+					"DeviceName": "/dev/sda1",
+					"Ebs": {
+						"DeleteOnTermination": "true",
+						"VolumeSize": 50,
+						"VolumeType": "gp2"
+					}
+				}],
+				"InstanceType": "t2.xlarge",
+				"KeyName": {
+					"Ref": "KeyName"
+				},
+				"NetworkInterfaces": [{
+					"AssociatePublicIpAddress": "true",
+					"DeleteOnTermination": "true",
+					"SubnetId": {
+						"Ref": "SubnetA"
+					},
+					"DeviceIndex": "0",
+					"GroupSet": [{
+						"Ref": "SecurityGroup"
+					}]
+				}],
+				"Tags": [{
+					"Key": "Name",
+					"Value": {
+						"Fn::Join": [
+							"-",
+							[{
+									"Ref": "AWS::StackName"
+								},
+								"_Instance"
+							]
+						]
+					}
+				}],
+				"UserData": {
+					"Fn::Base64": {
+						"Fn::Join": [
+							"",
+							[
+								"#!/bin/bash\n",
+								"git clone https://github.com/LivingDevOps/LiDOP.git /vagrant \n",
+								"bash /vagrant/scripts/vagrant.sh \n",
+								"bash /vagrant/scripts/ansible.sh  \n",
+								"echo prepare  \n",
+								"mkdir /home/vagrant \n",
+								"export HOME=/home/vagrant \n",
+								"echo 'install_mode: online' >> /vagrant/.variables.yaml  \n",
+								"echo 'nodes: 0' >> /vagrant/.variables.yaml  \n",
+								"echo 'certificate_creation: self' >> /vagrant/.variables.yaml  \n",
+								"echo 'domain_name: xip.io' >> /vagrant/.variables.yaml  \n",
+								"echo 'protocol: https' >> /vagrant/.variables.yaml  \n",							
+								
+								"export IPADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4) \n",
+								"export PUBLIC_IPADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) \n",
+								"if [[ $PUBLIC_IPADDRESS = *\"404 - Not Found\"* ]]; then export PUBLIC_IPADDRESS=$IPADDRESS; fi \n",
+								"export NODE_MASTER_IPADDRESS=$PUBLIC_IPADDRESS \n",
+								"export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg \n",
+								"export LIDOP_EXTEND=#{ENV['LIDOP_EXTEND_NEW']} \n",
+								"echo start ansible  \n",
+								"ansible-playbook -v /vagrant/install/install.yml -e ' ",
+								"root_password=", { "Ref": "Password" }, " ",
+								"root_user=", { "Ref": "Username" }, " ",
+								"node=master '" ,
+						
+								"\n",
+								"curl -X PUT -H 'Content-Type:' --data-binary '{\"Status\" : \"SUCCESS\",",
+								"\"Reason\" : \"LiDOP is ready\",",
+								"\"UniqueId\" : \"Node0\",",
+								"\"Data\" : \"Done\"}' ",
+								"\"", {
+									"Ref": "WaitConditionHandle"
+								}, "\"\n"
+
+							]
+						]
+					}
+				}
+			}
+		},
+
+		"WaitConditionHandle": {
+			"Type": "AWS::CloudFormation::WaitConditionHandle",
+			"Properties": {}
+		},
+		"WaitCondition": {
+			"Type": "AWS::CloudFormation::WaitCondition",
+			"DependsOn": "Node0",
+			"Properties": {
+				"Handle": {
+					"Ref": "WaitConditionHandle"
+				},
+				"Timeout": "1800"
+			}
+		}
+	},
+	"Parameters": {
+		"Username": {
+			"Default": "lidop",
+			"Description": "admin account username. Username can not be set to 'admin' or 'Admin' and it must contain only letters and numbers. Minimum length is 3.",
+			"Type": "String",
+			"MinLength": "3",
+			"AllowedPattern": "(?!admin|Admin)[A-Za-z0-9.]*",
+			"ConstraintDescription": "Username can not be set to 'admin' or 'Admin' and it must contain only letters and numbers and minimum length is 3."
+		},
+		"Password": {
+			"NoEcho": "true",
+			"Description": "LiDOP admin account password. Must be at least 8 characters long and contain at least one number, and cannot contain word \"password\" or your username",
+			"Type": "String",
+			"MinLength": "8",
+			"AllowedPattern": "(?!password|Password)[A-Za-z0-9]*([a-zA-Z]+[0-9]+|[0-9]+[a-zA-Z]+)",
+			"ConstraintDescription": "Password must contain only letters and numbers, it must contain at least one number, and cannot contain your username or word \"password\""
+		},
+		"KeyName": {
+			"Description": "Key-pair name to use. Note : Make sure you choose a key which you have.",
+			"Type": "AWS::EC2::KeyPair::KeyName"
+		}
+	},
+	"Outputs": {
+		"ReleaseNote": {
+			"Description": "This is your starting point, please copy this URL into your web browser.",
+			"Value": {
+				"Fn::Join": [
+					"", [
+						"https://www.", {
+							"Fn::GetAtt": [
+								"Node0",
+								"PublicIp"
+							]
+						},
+						".xip.io/"
+					]
+				]
+			}
+		}
+	},
+	"Mappings": {
+		"RegionMap": {
+			"eu-central-1": {
+				"AMI": "ami-0c6e204396d55eeec"
+			}
+		}
+	}
+
+}
