@@ -6,7 +6,7 @@ services:
     image: sonatype/nexus3:latest
     restart: always
     ports:
-      - "8085:8081/gitbucket"
+      - "8085:8081"
     volumes:
       - /var/lidop/nexus/:/nexus-data/
     deploy:
