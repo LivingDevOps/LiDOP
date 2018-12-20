@@ -1,3 +1,6 @@
+require 'yaml'
+require 'fileutils'
+
 class Settings
     attr_accessor :user_name
     attr_accessor :password
@@ -5,7 +8,7 @@ class Settings
     def initialize()
     end
 
-    def init1()
+    def init()
 
         if((ENV["USERNAME"] || "") != "")
             puts "Read username from ENV: #{ENV["USERNAME"]}"     
@@ -39,6 +42,25 @@ class Settings
                 @password = "lidop"
             end
         end
-
     end
+
+    def readConfig()
+        config_file = "#{File.dirname(__FILE__)}/../.config.yaml"
+        if((ENV["lidop_config"] || "") != "")
+            puts "Use config file: #{config_file}"
+            config_file = ENV["lidop_config"]
+        end
+
+        config = YAML.load_file(config_file)
+        config.each do |key, value|
+            value.each do |sub_key, sub_value|
+                if((ENV["#{key}_#{sub_key}"] || "") != "")
+                    puts "Read #{key} -> #{sub_key} from ENV"
+                    config[key][sub_key] = ENV["#{key}_#{sub_key}"]
+                end
+            end
+        end
+        return config
+    end
+
 end

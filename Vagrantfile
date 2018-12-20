@@ -4,7 +4,6 @@ require 'fileutils'
 # load all needed vagrant helper files
 Dir["#{File.dirname(__FILE__)}/vagrant/Vagrantfile.*.rb"].each {|file| require file }
 
-
 # if the .config file not exists, create a default one out of the template
 config_file="#{File.dirname(__FILE__)}/.config.yaml"
 if(File.exist?(config_file)) 
@@ -12,11 +11,11 @@ else
     FileUtils.cp("#{File.dirname(__FILE__)}/templates/config.yaml", config_file)
 end
 
-# load the configuration out of .config.yaml
-configuration = YAML.load_file("#{File.dirname(__FILE__)}/.config.yaml")
-
 # init new settins (user and password question)
 settings = Settings.new
+
+# load the configuration out of .config.yaml
+configuration = settings.readConfig
 
 # init variables file
 if ARGV.include? "up"
@@ -26,7 +25,7 @@ end
 
 # ask for username and password
 if ARGV.include? "up" or ARGV.include? "provision"
-    settings.init1()
+    settings.init()
 end
 
 # start vagrant part
