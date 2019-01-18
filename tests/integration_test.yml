@@ -2,7 +2,8 @@
 
 # You can set needed variables over the environment variable LIDOP_ENV
 # For this example we need custom_user and custom_password
-# LIDOP_EXTEND=tests/integration_test.yml
+# export LIDOP_EXTEND=tests/integration_test.yml
+# [Environment]::SetEnvironmentVariable("LIDOP_EXTEND", "tests/integration_test.yml", "Process")
 # export LIDOP_ENV="custom_user=myUserName custom_password=mySecretPassword"
 
 

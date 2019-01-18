@@ -3,6 +3,9 @@
   <approvedScriptHashes/>
   <approvedSignatures>
     <string>method groovy.json.JsonSlurper parse java.net.URL</string>
+    <string>method hudson.model.Cause$RemoteCause getNote</string>
+    <string>method hudson.model.Run getCause java.lang.Class</string>
+    <string>method org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper getRawBuild</string>
     <string>new java.util.ArrayList</string>
   </approvedSignatures>
   <aclApprovedSignatures/>
