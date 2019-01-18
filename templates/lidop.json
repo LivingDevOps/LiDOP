@@ -83,7 +83,7 @@
 					},
 					{
 						"IpProtocol": "tcp",
-						"FromPort": "80",
+						"FromPort": "50000",
 						"ToPort": "50000",
 						"CidrIp": "0.0.0.0/0"
 					},
