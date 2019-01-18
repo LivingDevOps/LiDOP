@@ -6,7 +6,7 @@ general:
   # self, letsencrypt
   certificate_creation: self
   # lidop.local, xip.io, mydomain.xyz
-  domain_name: lidop.local
+  domain_name: xip.io
   protocol: https
 
 virtualbox:
@@ -19,7 +19,7 @@ virtualbox:
   online_box_version: ">=1.0"
   offline_box_name: LivingDevOps/lidop.offline
   offline_box_url: 
-  offline_box_version: ">=1.4"
+  offline_box_version: ">=1.6"
   local_box_name: lidop.offline
   local_box_url: ./.box/lidop.offline.virtualbox.box
   local_box_version:

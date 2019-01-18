@@ -173,7 +173,7 @@
           <default>
             <comparator class="hudson.util.CaseInsensitiveComparator"/>
           </default>
-          <int>4</int>
+          <int>6</int>
           <string>IPADDRESS</string>
           <string>{{ ipaddress }}</string>
           <string>PUBLIC_IPADDRESS</string>
@@ -182,6 +182,10 @@
           <string>{{ domain_name }}</string>
           <string>BASE_URL</string>
           <string>{{ base_url }}</string>
+          <string>JENKINS_BASE_URL</string>
+          <string>{{ jenkins_base_url }}</string>
+          <string>GITBUCKET_BASE_URL</string>
+          <string>{{ gitbucket_base_url }}</string>
         </tree-map>
       </envVars>
     </hudson.slaves.EnvironmentVariablesNodeProperty>

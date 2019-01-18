@@ -18,6 +18,7 @@ services:
       - SERVICE_50000_NAME=slave-jenkins
       - JENKINS_OPTS="--prefix=/jenkins"
     volumes: 
+      - /var/lidop/certs:/certs 
       - /var/lidop/jenkins:/var/jenkins_home 
     dns:
       - {{ ipaddress }}
