@@ -24,6 +24,7 @@ class Virtualbox
         if worker == 0
             # forward ports (needed for accessing lidop over the guest ip machine)
             override.vm.network :forwarded_port, guest: 80, host: 80, auto_correct: true
+            override.vm.network :forwarded_port, guest: 443, host: 443, auto_correct: true
             override.vm.network :forwarded_port, guest: 4243, host: 4243, auto_correct: true
             override.vm.network :forwarded_port, guest: 2377, host: 2377, auto_correct: true
             override.vm.network :forwarded_port, guest: 8301, host: 8301, auto_correct: true
