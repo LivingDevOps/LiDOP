@@ -1,84 +1,20 @@
-resources:
-- repo: self
-server: true
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
 steps:
-- task: InvokeRESTAPI@1
-  displayName: 'Trigger Jenkins Build'
-  inputs:
-    serviceConnection: 'Docker_Hub'
+- script: export LIDOP_EXTEND=tests/integration_test.yml
+  displayName: 'Prepare'
 
-    body: '{"docker_tag": "latest"}'
+- script: ls $(build.sourcesDirectory)
 
-    urlSuffix: 'u/livingdevops/lidop.jenkins/trigger/f34bce3a-2aec-4415-9f87-18588070215c/'
-
-
-- task: InvokeRESTAPI@1
-  displayName: 'Trigger sonarqube Build'
-  inputs:
-    serviceConnection: 'Docker_Hub'
-
-    body: '{"docker_tag": "latest"}'
-
-    urlSuffix: 'u/livingdevops/lidop.sonarqube/trigger/1bb1ed7d-912a-4fa0-89cc-262a9c56aaf2/'
-
-
-- task: InvokeRESTAPI@1
-  displayName: 'Trigger lidop.sonarqube_scanner Build'
-  inputs:
-    serviceConnection: 'Docker_Hub'
-
-    body: '{"docker_tag": "latest"}'
-
-    urlSuffix: 'u/livingdevops/lidop.sonarqube_scanner/trigger/a7d62f64-7e2c-40fd-80f0-3b26d833969e/'
-
-
-- task: InvokeRESTAPI@1
-  displayName: 'Trigger lidop.ssh-slave-docker Build'
-  inputs:
-    serviceConnection: 'Docker_Hub'
-
-    body: '{"docker_tag": "latest"}'
-
-    urlSuffix: 'u/livingdevops/lidop.ssh-slave-docker/trigger/456c0127-f1a8-4c4f-a7be-7990c914088e/'
-
-
-- task: InvokeRESTAPI@1
-  displayName: 'Trigger serverspec Build'
-  inputs:
-    serviceConnection: 'Docker_Hub'
-
-    body: '{"docker_tag": "latest"}'
-
-    urlSuffix: 'u/livingdevops/lidop.serverspec/trigger/ccf0b2a5-3bad-46cc-adfc-057a62f45e15/'
-
-
-- task: InvokeRESTAPI@1
-  displayName: 'Trigger gitbucket Build'
-  inputs:
-    serviceConnection: 'Docker_Hub'
-
-    body: '{"docker_tag": "latest"}'
-
-    urlSuffix: 'u/livingdevops/lidop.gitbucket/trigger/ed17e899-b95f-46ec-9cd6-feab10b863c6/'
-
-
-- task: InvokeRESTAPI@1
-  displayName: 'Trigger backup Build'
-  inputs:
-    serviceConnection: 'Docker_Hub'
-
-    body: '{"docker_tag": "latest"}'
-
-    urlSuffix: 'u/livingdevops/lidop.backup/trigger/2364dde2-643a-4457-8732-57146d276664/'
-
-
-- task: InvokeRESTAPI@1
-  displayName: 'Trigger nginx Build'
-  inputs:
-    serviceConnection: 'Docker_Hub'
-
-    body: '{"docker_tag": "latest"}'
-
-    urlSuffix: 'u/livingdevops/lidop.nginx/trigger/2435bd66-b791-4158-b12b-eb03380e2ba7/'
-
-
+- script: |
+    docker run --rm \
+    -e SENDERROR=yes \
+    -e USERNAME=lidop \
+    -e PASSWORD=lidop \
+    -v $(build.sourcesDirectory):/work \
+    livingdevops/lidop.build vagrant up --provider=aws
+  displayName: 'Start Vagrant'
