@@ -122,6 +122,6 @@
 
   - name: configure git
     shell: |
-      git config --system http.sslCAInfo /var/lidop/certs/rootCA.pem
+      git config --system http.sslVerify false
 
   tags: config
