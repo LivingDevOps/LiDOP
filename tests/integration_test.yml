@@ -19,7 +19,7 @@
 
 - name: Create Demo Builds
   uri:
-    url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load%20Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Demo&PluginUrl=https://github.com/LivingDevOps/LiDOP.helloworld_nodejs.git&Branch=*/master'
+    url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load%20Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Demo&CopyRepository=true&PluginUrl=https://github.com/LivingDevOps/LiDOP.helloworld_nodejs.git&Branch=*/master'
     status_code: 201
     user: "{{ root_user }}"
     password: "{{ root_password }}"
@@ -64,7 +64,7 @@
   pause:
     seconds: 60
 
-- name: "wait for Selenium to come up"
+- name: "wait for Sonarqube to come up"
   uri:
     url: "http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/1/api/json"
     status_code: 200
@@ -89,7 +89,7 @@
   delay: 5
 
 
-- name: Create nodejs Builds
+- name: Start Application Build
   uri:
     url: 'http://{{ ipaddress }}/jenkins/job/Demo/job/Build_Application//build'
     method: POST
@@ -106,7 +106,7 @@
 
 - name: "wait for nodejs build"
   uri:
-    url: "http://{{ ipaddress }}/jenkins/job/Demo/job/Build_Application//1/api/json"
+    url: "http://{{ ipaddress }}/jenkins/job/Demo/job/Build_Application/1/api/json"
     status_code: 200
     user: "{{ root_user }}"
     password: "{{ root_password }}"
@@ -120,6 +120,9 @@
   uri:
     url: "http://{{ ipaddress }}/port/9100/"
     status_code: 200
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    force_basic_auth: yes
   register: result
   until: result.status == 200
   retries: 100

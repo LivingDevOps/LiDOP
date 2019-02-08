@@ -59,6 +59,8 @@ images=(ubuntu:latest \
     ansible/awx_task:latest \
 
     certbot/certbot \
+
+    hashicorp/terraform \
     
     hello-world)
 

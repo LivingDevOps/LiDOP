@@ -32,16 +32,36 @@ pipelineJob("{{ project_name | replace(' ', '_')}}/{{ pipeline }}") {
     parameters {
     {% for param in pipelines[pipeline].Parameters%}
         {%if param.Type == "String"%}
-        stringParam("{{ param.Name }}", "{{ param.Default }}", "")
+            {% if param.Description is defined %}
+                stringParam("{{ param.Name }}", "{{ param.Default }}", "{{ param.Description }}")
+            {% else %}
+                stringParam("{{ param.Name }}", "{{ param.Default }}", "")
+            {% endif %}
+
         {%endif%}
+
         {%if param.Type == "Credential"%}
-        credentialsParam("{{ param.Name }}") {}
+            {% if param.CredentialTypeType is defined %}
+                credentialsParam("{{ param.Name }}") {
+                    type("{{ param.CredentialTypeType }}")
+                    {% if param.Description is defined %}
+                    description("{{ param.Description }}")
+                    {% endif %}
+                }
+            {% else %}
+                credentialsParam("{{ param.Name }}") {
+                    {% if param.Description is defined %}
+                    description("{{ param.Description }}")
+                    {% endif %}
+                }
+            {% endif %}
         {%endif%}
+
         {%if param.Type == "Boolean"%}
-        booleanParam("{{ param.Name }}", "{{ param.Default }}", "")
+            booleanParam("{{ param.Name }}", "{{ param.Default }}", "")
         {%endif%}
         {%if param.Type == "Choice"%}
-        choiceParam("{{ param.Name }}", {{ param.Choices | to_json }}, "")
+            choiceParam("{{ param.Name }}", {{ param.Choices | to_json }}, "")
         {%endif%}
     {% endfor %}
     }
