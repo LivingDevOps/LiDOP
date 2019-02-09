@@ -1,0 +1,20 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- script: export LIDOP_EXTEND=tests/integration_test.yml
+  displayName: 'Prepare'
+
+- script: ls $(build.sourcesDirectory)
+
+- script: |
+    docker run --rm \
+    -e SENDERROR=yes \
+    -e USERNAME=lidop \
+    -e PASSWORD=lidop \
+    -v $(build.sourcesDirectory):/work \
+    livingdevops/lidop.build vagrant up --provider=aws
+  displayName: 'Start Vagrant'
