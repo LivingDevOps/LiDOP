@@ -1,0 +1,12 @@
+---
+# online, offline, local
+install_mode: offline
+nodes: 0
+# self, letsencrypt
+certificate_creation: self
+# lidop.local, xip.io, mydomain.xyz
+domain_name: xip.io
+protocol: https
+
+# some user values. you can also use vault encrypted variables (use the same password as you use for lidop)
+dummy: value

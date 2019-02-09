@@ -3,9 +3,9 @@ class Virtualbox
 
     def self.init(virtualbox, override, worker, settings, configuration, ansible_script, test_script)
 
-        override.vm.box = configuration["virtualbox"]["#{configuration["general"]["install_mode"]}_box_name"]
-        override.vm.box_url = configuration["virtualbox"]["#{configuration["general"]["install_mode"]}_box_url"]
-        override.vm.box_version = configuration["virtualbox"]["#{configuration["general"]["install_mode"]}_box_version"]
+        override.vm.box = configuration["virtualbox"]["#{configuration["install_mode"]}_box_name"]
+        override.vm.box_url = configuration["virtualbox"]["#{configuration["install_mode"]}_box_url"]
+        override.vm.box_version = configuration["virtualbox"]["#{configuration["install_mode"]}_box_version"]
         
         # Set Virtualbox configuration
         virtualbox.memory = configuration["virtualbox"]["memory"]
@@ -18,7 +18,7 @@ class Virtualbox
         override.vm.network :private_network, ip: "#{ipaddress}"
 
         # copy extra variables file
-        override.vm.provision "file", source: "./.variables.yaml", destination: "/vagrant/.variables.yaml"
+        override.vm.provision "file", source: "./.lidop_config.yaml", destination: "/vagrant/.lidop_config.yaml"
 
         # worker 0 is the master
         if worker == 0

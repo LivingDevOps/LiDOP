@@ -5,23 +5,23 @@ require 'fileutils'
 Dir["#{File.dirname(__FILE__)}/vagrant/Vagrantfile.*.rb"].each {|file| require file }
 
 # if the .config file not exists, create a default one out of the template
-config_file="#{File.dirname(__FILE__)}/.config.yaml"
+config_file="#{File.dirname(__FILE__)}/.lidop_config.yaml"
 if(File.exist?(config_file)) 
 else 
-    FileUtils.cp("#{File.dirname(__FILE__)}/templates/config.yaml", config_file)
+    FileUtils.cp("#{File.dirname(__FILE__)}/templates/lidop_config.yaml", config_file)
+end
+
+config_file="#{File.dirname(__FILE__)}/.vagrant_config.yaml"
+if(File.exist?(config_file)) 
+else 
+    FileUtils.cp("#{File.dirname(__FILE__)}/templates/vagrant_config.yaml", config_file)
 end
 
 # init new settins (user and password question)
 settings = Settings.new
 
-# load the configuration out of .config.yaml
+# load the configuration out of *.config.yaml
 configuration = settings.readConfig
-
-# init variables file
-if ARGV.include? "up"
-    variable_file="#{File.dirname(__FILE__)}/.variables.yaml"
-    File.open("#{File.dirname(__FILE__)}/.variables.yaml", 'w') {|f| f.write configuration["general"].to_yaml } #Store
-end
 
 # ask for username and password
 if ARGV.include? "up" or ARGV.include? "provision"
@@ -41,7 +41,9 @@ Vagrant.configure("2") do |config|
     ansible_script = <<-SCRIPT 
         export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg
         export LIDOP_EXTEND=#{ENV['LIDOP_EXTEND_NEW']}
-        ansible-playbook -v /vagrant/install/install.yml -e '
+        export ANSIBLE_VAULT_PASSWORD=#{settings.password}
+        chmod +x /vagrant/install/vault-env
+        ansible-playbook -v /vagrant/install/install.yml --vault-password-file /vagrant/install/vault-env -e '
         root_password=#{settings.password} 
         root_user=#{settings.user_name} 
     SCRIPT
@@ -63,7 +65,7 @@ Vagrant.configure("2") do |config|
     ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 
     # read the number of workers and loop
-    workers = configuration["general"]["nodes"]
+    workers = configuration["nodes"]
     (0..workers).each do |worker|
 
         # set the name of the vagrant machine
@@ -73,10 +75,10 @@ Vagrant.configure("2") do |config|
             machine_config.vm.hostname = "LiDOP#{worker}"  
             
             # common scripts
-            if configuration["general"]["install_mode"]== "local"
-            elsif configuration["general"]["install_mode"] == "online"
+            if configuration["install_mode"]== "local"
+            elsif configuration["install_mode"] == "online"
                 machine_config.vm.provision "shell", path: "./scripts/ansible.sh"
-            elsif configuration["general"]["install_mode"] == "offline"
+            elsif configuration["install_mode"] == "offline"
             end
             machine_config.vm.provision "shell", path: "./scripts/vagrant.sh"
     

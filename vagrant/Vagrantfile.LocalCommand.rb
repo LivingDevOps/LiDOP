@@ -26,7 +26,11 @@ module LocalCommand
 
     class Provisioner < Vagrant.plugin("2", :provisioner)
         def provision
-            data = YAML.load_file("#{File.dirname(__FILE__)}/../.variables.yaml")
+            if(!File.exist?("#{File.dirname(__FILE__)}/../.temp.yaml")) 
+                File.open("#{File.dirname(__FILE__)}/../.temp.yaml", "w") {|f| f.write("---\ntemp: dummy") }                
+            end
+
+            data = YAML.load_file("#{File.dirname(__FILE__)}/../.temp.yaml")
 
             if(config.command != nil)
                 puts("run local command: #{config.command} #{config.args}")
@@ -51,7 +55,7 @@ module LocalCommand
                 data[config.variable] = config.result
             end
 
-            File.open("#{File.dirname(__FILE__)}/../.variables.yaml", 'w') {|f| f.write data.to_yaml } #Store
+            File.open("#{File.dirname(__FILE__)}/../.temp.yaml", 'w') {|f| f.write data.to_yaml } #Store
         end
     end
 end

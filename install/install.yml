@@ -5,7 +5,9 @@
   become: yes
 
   pre_tasks:
-    - include_vars: /vagrant/.variables.yaml
+    - include_vars: /vagrant/.lidop_config.yaml
+    - include_vars: /vagrant/.temp.yaml
+      ignore_errors: yes
 
   roles:
     - { role: lidop }

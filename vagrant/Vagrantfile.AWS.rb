@@ -32,7 +32,7 @@ class AWS
         override.vm.provision "file", source: "./tests", destination: "/vagrant/tests"
     
         # copy extra variables file
-        override.vm.provision "file", source: "./.variables.yaml", destination: "/vagrant/.variables.yaml"
+        override.vm.provision "file", source: "./.lidop_config.yaml", destination: "/vagrant/.lidop_config.yaml"
 
         # worker 0 is the master
         if worker == 0

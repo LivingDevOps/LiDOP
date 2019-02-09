@@ -26,7 +26,7 @@ class Settings
             puts "Read password from ENV"     
             @password = ENV["PASSWORD"]
         else
-            print "Enter Password (the Password is not anywhere saved encrypted): [lidop]: "
+            print "Enter Password: [lidop]: "
             @password = STDIN.noecho(&:gets).chomp
             print "\n"    
 
@@ -45,19 +45,25 @@ class Settings
     end
 
     def readConfig()
-        config_file = "#{File.dirname(__FILE__)}/../.config.yaml"
+        lidop_config_file = "#{File.dirname(__FILE__)}/../.lidop_config.yaml"
         if((ENV["lidop_config"] || "") != "")
-            puts "Use config file: #{config_file}"
-            config_file = ENV["lidop_config"]
+            puts "Use config file: #{lidop_config_file}"
+            lidop_config_file = ENV["lidop_config"]
         end
 
-        config = YAML.load_file(config_file)
+        vagrant_config_file = "#{File.dirname(__FILE__)}/../.vagrant_config.yaml"
+        if((ENV["vagrant_config"] || "") != "")
+            puts "Use config file: #{vagrant_config_file}"
+            vagrant_config_file = ENV["vagrant_config"]
+        end
+
+        lidop_config = YAML.load_file(lidop_config_file)
+        vagrant_config = YAML.load_file(vagrant_config_file)
+        config = lidop_config.merge!(vagrant_config)
         config.each do |key, value|
-            value.each do |sub_key, sub_value|
-                if((ENV["#{key}_#{sub_key}"] || "") != "")
-                    puts "Read #{key} -> #{sub_key} from ENV"
-                    config[key][sub_key] = ENV["#{key}_#{sub_key}"]
-                end
+            if((ENV["#{key}"] || "") != "")
+                puts "Read #{key} from ENV"
+                config[key] = ENV["#{key}"]
             end
         end
         return config
