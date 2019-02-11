@@ -42,7 +42,6 @@ class AWS
                 export IPADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
                 export PUBLIC_IPADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
                 if [[ $PUBLIC_IPADDRESS = *"404 - Not Found"* ]]; then export PUBLIC_IPADDRESS=$IPADDRESS; fi
-                export NODE_MASTER_IPADDRESS=$PUBLIC_IPADDRESS
                 #{ansible_script}
                 node=master 
                 #{ENV['LIDOP_ENV']}'
@@ -57,21 +56,16 @@ class AWS
             SCRIPT
             override.vm.provision "shell", inline: test
 
-            # # save master information into extra variables file (needed for the nodes to know the master)
-            # override.vm.provision "readSwarmMaster", type: "local_shell", variable: "node_master_ipaddress", command: "vagrant ssh lidop_0 -c \"curl -s http://169.254.169.254/latest/meta-data/local-ipv4\""
-            # override.vm.provision "readSwarmToken", type: "local_shell", variable: "swarm_worker_token", command: "vagrant ssh lidop_0 -c \"sudo docker swarm join-token -q worker\""
-            # override.vm.provision "readPublicAddress", type: "local_shell", variable: "public_ipaddress", command: "vagrant ssh lidop_0 -c \"curl -s http://169.254.169.254/latest/meta-data/public-ipv4\""
-            # override.vm.provision "readSecretPassword", type: "local_shell", variable: "secret_password", command: "vagrant ssh lidop_0 -c \"cat /var/lidop/.secret\""
-            # override.vm.provision "readBaseUrl", type: "local_shell", variable: "base_url", command: "vagrant ssh lidop_0 -c \"cat /var/lidop/.base_url\""
         elsif
 
             # adapt script for node installation
-            script = <<-SCRIPT
+            # TBD:    # consul_ip=#{ipaddress_template}0
+                script = <<-SCRIPT
                 export IPADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
                 export PUBLIC_IPADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
                 if [[ $PUBLIC_IPADDRESS = *"404 - Not Found"* ]]; then export PUBLIC_IPADDRESS=$IPADDRESS; fi
                 #{ansible_script}
-                node=worker 
+                node=worker
                 #{ENV['LIDOP_ENV']}'
                 SCRIPT
             override.vm.provision "shell", inline: script

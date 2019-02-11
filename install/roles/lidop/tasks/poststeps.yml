@@ -64,8 +64,20 @@
         value: "{{ ipaddress }}"
     when: node == "master"
 
-  - name: read swarm manager token
+  - name: read swarm worker token
     shell: sudo docker swarm join-token -q worker
+    register: swarm_worker_token
+    when: node == "master"
+
+  - name: Store swarm worker token
+    consul_kv:
+        key: config/swarm_worker_token
+        host: "{{ ipaddress }}"
+        value: "{{ swarm_worker_token.stdout }}"
+    when: node == "master"
+
+  - name: read swarm manager token
+    shell: sudo docker swarm join-token -q manager
     register: swarm_manager_token
     when: node == "master"
 

@@ -5,8 +5,6 @@
   - set_fact: ipaddress="{{ lookup('env','IPADDRESS') }}"
   - set_fact: public_ipaddress="{{ lookup('env','PUBLIC_IPADDRESS') }}"
 
-  - set_fact: secret_password="{{ secret_password_generator }}"  
-
   - name: set base_urls to ip
     set_fact: 
       base_url: "{{ protocol }}://{{ public_ipaddress }}"
@@ -30,16 +28,59 @@
       - domain_name != "lidop.local"
       - domain_name != "xip.io"
 
-  - name: Read swarm manager ip
+  - name: Read swarm_manager_ip
     consul_kv:
-        key: "config/{{ item }}"
-        host: "{{ ipaddress }}"
-    register: "{{ item }}"
+        key: "config/swarm_manager_ip"
+        host: "{{ consul_ip }}"
+    register: swarm_manager_ip
     when: node == "worker"
-    with_items:
-      - swarm_manager_ip
-      - swarm_manager_token
-      - secret_password
+  - set_fact: swarm_manager_ip="{{ swarm_manager_ip.data.Value }}"  
+    when: node == "worker"
+
+  - name: Read swarm_manager_token
+    consul_kv:
+        key: "config/swarm_manager_token"
+        host: "{{ consul_ip }}"
+    register: swarm_manager_token
+    when: node == "worker"
+  - set_fact: swarm_manager_token="{{ swarm_manager_token.data.Value }}"  
+    when: node == "worker"
+
+  - name: Read swarm_worker_token
+    consul_kv:
+        key: "config/swarm_worker_token"
+        host: "{{ consul_ip }}"
+    register: swarm_worker_token
+    when: node == "worker"
+  - set_fact: swarm_worker_token="{{ swarm_worker_token.data.Value }}"  
+    when: node == "worker"
+
+  - name: Read secret_password
+    consul_kv:
+        key: "config/secret_password"
+        host: "{{ consul_ip }}"
+    register: secret_password
+    when: node == "worker"
+  - set_fact: secret_password="{{ secret_password.data.Value }}"  
+    when: node == "worker"
+  - set_fact: secret_password="{{ secret_password_generator }}"  
+    when: node == "master"
+
+  - debug:
+      msg: "swarm_manager_ip: {{ swarm_manager_ip }}"  
+    when: node == "worker"
+
+  - debug:
+      msg: "swarm_worker_token: {{ swarm_worker_token }}"  
+    when: node == "worker"
+
+  - debug:
+      msg: "swarm_manager_token: {{ swarm_manager_token }}"  
+    when: node == "worker"
+
+  - debug:
+      msg: "secret_password: {{ secret_password }}"  
+    when: node == "worker"
 
   - debug:
       msg: "Public IP: {{ public_ipaddress }}"  
@@ -60,7 +101,7 @@
       msg: "certificate_creation: {{ certificate_creation }}"  
 
   - debug:
-      msg: "Node MasterIpaddress: {{ node_master_ipaddress }}"  
+      msg: "Node MasterIpaddress: {{ swarm_manager_ip }}"  
     when: node == "worker"
 
   tags: init

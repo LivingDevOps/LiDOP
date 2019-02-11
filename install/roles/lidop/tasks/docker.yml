@@ -45,7 +45,7 @@
 
 - name: add swarm worker
   shell: >
-    docker swarm join --token {{ swarm_worker_token }} {{ node_master_ipaddress }}:2377
+    docker swarm join --token {{ swarm_worker_token }} {{ swarm_manager_ip }}:2377
   when: node == "worker"
 
 - name: Add Vagrant user to docker group

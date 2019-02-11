@@ -51,18 +51,13 @@ class Virtualbox
             SCRIPT
             override.vm.provision "shell", inline: test
 
-            # save master information into extra variables file (needed for the nodes to know the master)
-            # override.vm.provision "readSwarmMaster", type: "local_shell", variable: "node_master_ipaddress", result: "#{ipaddress}"
-            # override.vm.provision "readSwarmToken", type: "local_shell", variable: "swarm_worker_token", command: "vagrant ssh lidop_0 -c \"sudo docker swarm join-token -q worker\""
-            # override.vm.provision "readSecretPassword", type: "local_shell", variable: "secret_password", command: "vagrant ssh lidop_0 -c \"cat /vagrant/.secret\""
-            # override.vm.provision "readBaseUrl", type: "local_shell", variable: "base_url", command: "vagrant ssh lidop_0 -c \"cat /vagrant/.base_url\""
         elsif
             # adapt script for node installation
             script = <<-SCRIPT
             export IPADDRESS=#{ipaddress}
             export PUBLIC_IPADDRESS=#{ipaddress}
                 #{ansible_script}
-                node=worker 
+                node=worker consul_ip=#{ipaddress_template}0
                 #{ENV['LIDOP_ENV']}'
             SCRIPT
             override.vm.provision "shell", inline: script

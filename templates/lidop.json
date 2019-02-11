@@ -175,7 +175,6 @@
 								"export IPADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4) \n",
 								"export PUBLIC_IPADDRESS=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) \n",
 								"if [[ $PUBLIC_IPADDRESS = *\"404 - Not Found\"* ]]; then export PUBLIC_IPADDRESS=$IPADDRESS; fi \n",
-								"export NODE_MASTER_IPADDRESS=$PUBLIC_IPADDRESS \n",
 								"export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg \n",
 								"export LIDOP_EXTEND=#{ENV['LIDOP_EXTEND_NEW']} \n",
 								"echo start ansible  \n",
