@@ -7,6 +7,40 @@
 
   - set_fact: secret_password="{{ secret_password_generator }}"  
 
+  - name: set base_urls to ip
+    set_fact: 
+      base_url: "{{ protocol }}://{{ public_ipaddress }}"
+      jenkins_base_url: "{{ protocol }}://{{ public_ipaddress }}/jenkins"  
+      gitbucket_base_url: "{{ protocol }}://{{ public_ipaddress }}/gitbucket"  
+    when: domain_name == "lidop.local"
+    
+  - name: set base_urls to xip.io
+    set_fact: 
+      base_url: "{{ protocol }}://www.{{ public_ipaddress }}.{{ domain_name }}"  
+      jenkins_base_url: "{{ protocol }}://www.{{ public_ipaddress }}.{{ domain_name }}/jenkins"  
+      gitbucket_base_url: "{{ protocol }}://www.{{ public_ipaddress }}.{{ domain_name }}/gitbucket"  
+    when: domain_name == "xip.io"
+
+  - name: set base_urls to domain name
+    set_fact: 
+      base_url: "{{ protocol }}://{{ domain_name }}"  
+      jenkins_base_url: "{{ protocol }}://{{ domain_name }}/jenkins"  
+      gitbucket_base_url: "{{ protocol }}://{{ domain_name }}/gitbucket" 
+    when: 
+      - domain_name != "lidop.local"
+      - domain_name != "xip.io"
+
+  - name: Read swarm manager ip
+    consul_kv:
+        key: "config/{{ item }}"
+        host: "{{ ipaddress }}"
+    register: "{{ item }}"
+    when: node == "worker"
+    with_items:
+      - swarm_manager_ip
+      - swarm_manager_token
+      - secret_password
+
   - debug:
       msg: "Public IP: {{ public_ipaddress }}"  
 
@@ -28,7 +62,5 @@
   - debug:
       msg: "Node MasterIpaddress: {{ node_master_ipaddress }}"  
     when: node == "worker"
-
-  - local_action: copy content={{ secret_password }} dest=./../.secret
 
   tags: init

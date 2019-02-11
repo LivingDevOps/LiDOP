@@ -13,6 +13,9 @@
     with_items:
       - directory
 
+  - name: save secret_password to local file
+    local_action: copy content={{ secret_password }} dest=/var/lidop/.secret
+
   - name: copy config files
     command: "cp -rf /vagrant/configs/{{ item }} /var/lidop"
     with_items:
@@ -37,30 +40,7 @@
       - "lidop"
     when: node == "master"
 
-  - name: set base_urls to ip
-    set_fact: 
-      base_url: "{{ protocol }}://{{ public_ipaddress }}"
-      jenkins_base_url: "{{ protocol }}://{{ public_ipaddress }}/jenkins"  
-      gitbucket_base_url: "{{ protocol }}://{{ public_ipaddress }}/gitbucket"  
-    when: domain_name == "lidop.local"
-    
-  - name: set base_urls to xip.io
-    set_fact: 
-      base_url: "{{ protocol }}://www.{{ public_ipaddress }}.{{ domain_name }}"  
-      jenkins_base_url: "{{ protocol }}://www.{{ public_ipaddress }}.{{ domain_name }}/jenkins"  
-      gitbucket_base_url: "{{ protocol }}://www.{{ public_ipaddress }}.{{ domain_name }}/gitbucket"  
-    when: domain_name == "xip.io"
-
-  - name: set base_urls to domain name
-    set_fact: 
-      base_url: "{{ protocol }}://{{ domain_name }}"  
-      jenkins_base_url: "{{ protocol }}://{{ domain_name }}/jenkins"  
-      gitbucket_base_url: "{{ protocol }}://{{ domain_name }}/gitbucket" 
-    when: 
-      - domain_name != "lidop.local"
-      - domain_name != "xip.io"
-
-  - local_action: copy content={{ base_url }} dest=./../.base_url
+  - local_action: copy content={{ base_url }} dest=/var/lidop/.base_url
 
   - debug:
       msg: "gitbucket_base_url: {{ gitbucket_base_url }}"  

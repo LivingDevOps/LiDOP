@@ -52,10 +52,10 @@ class Virtualbox
             override.vm.provision "shell", inline: test
 
             # save master information into extra variables file (needed for the nodes to know the master)
-            override.vm.provision "readSwarmMaster", type: "local_shell", variable: "node_master_ipaddress", result: "#{ipaddress}"
-            override.vm.provision "readSwarmToken", type: "local_shell", variable: "swarm_worker_token", command: "vagrant ssh lidop_0 -c \"sudo docker swarm join-token -q worker\""
-            override.vm.provision "readSecretPassword", type: "local_shell", variable: "secret_password", command: "vagrant ssh lidop_0 -c \"cat /vagrant/.secret\""
-            override.vm.provision "readBaseUrl", type: "local_shell", variable: "base_url", command: "vagrant ssh lidop_0 -c \"cat /vagrant/.base_url\""
+            # override.vm.provision "readSwarmMaster", type: "local_shell", variable: "node_master_ipaddress", result: "#{ipaddress}"
+            # override.vm.provision "readSwarmToken", type: "local_shell", variable: "swarm_worker_token", command: "vagrant ssh lidop_0 -c \"sudo docker swarm join-token -q worker\""
+            # override.vm.provision "readSecretPassword", type: "local_shell", variable: "secret_password", command: "vagrant ssh lidop_0 -c \"cat /vagrant/.secret\""
+            # override.vm.provision "readBaseUrl", type: "local_shell", variable: "base_url", command: "vagrant ssh lidop_0 -c \"cat /vagrant/.base_url\""
         elsif
             # adapt script for node installation
             script = <<-SCRIPT

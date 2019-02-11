@@ -27,4 +27,8 @@
       shell: pip install docker-compose
       when: install_mode == "online"
 
+    - name: install python-consul
+      shell: pip install python-consul
+      when: install_mode == "online"
+
   tags: software

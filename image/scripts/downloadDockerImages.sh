@@ -47,11 +47,11 @@ images=(ubuntu:latest \
     selenium/node-chrome \
     selenium/node-firefox \
 
-    docker.elastic.co/elasticsearch/elasticsearch-oss:6.5.1 \
-    docker.elastic.co/kibana/kibana-oss:6.5.1 \
-    docker.elastic.co/logstash/logstash-oss:6.5.1 \
-    docker.elastic.co/beats/metricbeat:6.5.1 \
-    docker.elastic.co/beats/filebeat:6.5.1 \
+    docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0 \
+    docker.elastic.co/kibana/kibana-oss:6.6.0 \
+    docker.elastic.co/logstash/logstash-oss:6.6.0 \
+    docker.elastic.co/beats/metricbeat:6.6.0 \
+    docker.elastic.co/beats/filebeat:6.6.0 \
 
     rabbitmq:3 \
     memcached:alpine \

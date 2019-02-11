@@ -59,6 +59,7 @@
       -e 'CONSUL_ALLOW_PRIVILEGED_PORTS=' \
       -v /var/lidop/consul/config.node:/consul/config \
       --net=host \
+      --restart always \
       consul:latest \
       agent -dns-port=53 -bind={{ ipaddress }} -advertise={{ ipaddress }} -client={{ ipaddress }}
     when: node == "worker"

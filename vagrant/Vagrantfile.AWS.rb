@@ -31,7 +31,7 @@ class AWS
         override.vm.provision "file", source: "./plugins", destination: "/vagrant/plugins"
         override.vm.provision "file", source: "./tests", destination: "/vagrant/tests"
     
-        # copy extra variables file
+        # copy config file
         override.vm.provision "file", source: "./.lidop_config.yaml", destination: "/vagrant/.lidop_config.yaml"
 
         # worker 0 is the master
@@ -57,12 +57,12 @@ class AWS
             SCRIPT
             override.vm.provision "shell", inline: test
 
-            # save master information into extra variables file (needed for the nodes to know the master)
-            override.vm.provision "readSwarmMaster", type: "local_shell", variable: "node_master_ipaddress", command: "vagrant ssh lidop_0 -c \"curl -s http://169.254.169.254/latest/meta-data/local-ipv4\""
-            override.vm.provision "readSwarmToken", type: "local_shell", variable: "swarm_worker_token", command: "vagrant ssh lidop_0 -c \"sudo docker swarm join-token -q worker\""
-            override.vm.provision "readPublicAddress", type: "local_shell", variable: "public_ipaddress", command: "vagrant ssh lidop_0 -c \"curl -s http://169.254.169.254/latest/meta-data/public-ipv4\""
-            override.vm.provision "readSecretPassword", type: "local_shell", variable: "secret_password", command: "vagrant ssh lidop_0 -c \"cat /vagrant/.secret\""
-            override.vm.provision "readBaseUrl", type: "local_shell", variable: "base_url", command: "vagrant ssh lidop_0 -c \"cat /vagrant/.base_url\""
+            # # save master information into extra variables file (needed for the nodes to know the master)
+            # override.vm.provision "readSwarmMaster", type: "local_shell", variable: "node_master_ipaddress", command: "vagrant ssh lidop_0 -c \"curl -s http://169.254.169.254/latest/meta-data/local-ipv4\""
+            # override.vm.provision "readSwarmToken", type: "local_shell", variable: "swarm_worker_token", command: "vagrant ssh lidop_0 -c \"sudo docker swarm join-token -q worker\""
+            # override.vm.provision "readPublicAddress", type: "local_shell", variable: "public_ipaddress", command: "vagrant ssh lidop_0 -c \"curl -s http://169.254.169.254/latest/meta-data/public-ipv4\""
+            # override.vm.provision "readSecretPassword", type: "local_shell", variable: "secret_password", command: "vagrant ssh lidop_0 -c \"cat /var/lidop/.secret\""
+            # override.vm.provision "readBaseUrl", type: "local_shell", variable: "base_url", command: "vagrant ssh lidop_0 -c \"cat /var/lidop/.base_url\""
         elsif
 
             # adapt script for node installation

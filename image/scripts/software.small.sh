@@ -31,6 +31,7 @@ sudo apt-get install -y docker-ce \
 
 pip install docker
 pip install docker-compose
+pip install python-consul
 
 echo "###########################################################"
 echo "Install Docker Compose"
