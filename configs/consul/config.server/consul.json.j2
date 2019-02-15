@@ -7,6 +7,10 @@
   "bind_addr" : "{{ ipaddress }}",
   "advertise_addr" : "{{ ipaddress }}",
   "client_addr" : "{{ ipaddress }}",
+  "recursors" : [ "8.8.8.8" ],
+  "ports" : {
+    "dns" : 53
+  },
   "server" : true,
   "bootstrap_expect": 1,
   "ui" : true,

@@ -31,7 +31,7 @@
       --mount type=bind,source=/var/lidop/consul/config.server,destination=/consul/config \
       --constraint 'node.role == manager' \
       --name consul_master \
-      consul:latest agent -dns-port=53
+      consul:latest agent
     when: node == "master"
 
   - name: remove consul server
@@ -61,7 +61,7 @@
       --net=host \
       --restart always \
       consul:latest \
-      agent -dns-port=53 -bind={{ ipaddress }} -advertise={{ ipaddress }} -client={{ ipaddress }}
+      agent -bind={{ ipaddress }} -advertise={{ ipaddress }} -client={{ ipaddress }}
     when: node == "worker"
 
   - name: start registrator server
@@ -73,7 +73,6 @@
       docker run -d \
       --net=host \
       --dns {{ ipaddress }}
-      --dns 8.8.8.8
       -v /var/run/docker.sock:/tmp/docker.sock \
       -v /etc/hosts:/etc/hosts \
       --name consul_registrator \
@@ -97,7 +96,7 @@
   - name: "add {{ ipaddress }} as dns to host"
     lineinfile:
       path: /etc/systemd/resolved.conf
-      line: "DNS={{ ipaddress }} 8.8.8.8" 
+      line: "DNS={{ ipaddress }}" 
       
   - name: "add ln"
     command: ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf

@@ -13,7 +13,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       mode: global
       restart_policy:
@@ -33,7 +32,6 @@ services:
       - portainer_data:/data
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       mode: replicated
       replicas: 1

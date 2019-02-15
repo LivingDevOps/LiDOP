@@ -3,7 +3,7 @@ version: '3.2'
 services:
   
   sonarqube:
-    image: livingdevops/lidop.sonarqube
+    image: livingdevops/lidop.sonarqube:{{ docker_image_version }}
     restart: always
     ports:
       - target: 9000
@@ -23,7 +23,6 @@ services:
 #      - /vagrant/.temp/sonarqube/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       mode: replicated
       replicas: 1

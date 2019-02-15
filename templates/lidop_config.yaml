@@ -5,8 +5,16 @@ nodes: 0
 # self, letsencrypt
 certificate_creation: self
 # lidop.local, xip.io, mydomain.xyz
-domain_name: xip.io
+domain_name: www.{{ public_ipaddress }}.nip.io
+# http, https
 protocol: https
+# latest, dev
+docker_image_version: latest
 
 # some user values. you can also use vault encrypted variables (use the same password as you use for lidop)
 dummy: value
+
+# encrypted
+#aws_access_key: !vault |
+#  $ANSIBLE_VAULT;1.1;AES256
+#  7598472547598247589475829437589475893724895734985729834798753

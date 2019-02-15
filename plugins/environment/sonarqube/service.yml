@@ -10,15 +10,15 @@
   tasks:
 
     - name: download image
-      shell: "docker pull livingdevops/lidop.sonarqube_scanner"
+      shell: "docker pull livingdevops/lidop.sonarqube_scanner:{{ docker_image_version }}"
       when: state == "present"
 
     - name: tag image
-      shell: "docker tag livingdevops/lidop.sonarqube_scanner registry.service.lidop.local:5000/lidop/sonarscanner:latest"
+      shell: "docker tag livingdevops/lidop.sonarqube_scanner:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/sonarscanner:{{ docker_image_version }}"
       when: state == "present"
 
     - name: push image
-      shell: "docker push registry.service.lidop.local:5000/lidop/sonarscanner:latest"
+      shell: "docker push registry.service.lidop.local:5000/lidop/sonarscanner:{{ docker_image_version }}"
       when: state == "present"
 
     - name: set docker-compose

@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   web:
-    image: registry.service.lidop.local:5000/lidop/nginx:latest
+    image: registry.service.lidop.local:5000/lidop/nginx:{{ docker_image_version }}
     ports:
       - target: 80
         published: 80
@@ -22,7 +22,6 @@ services:
       - /var/lidop/certs:/certs
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       mode: global
       restart_policy:

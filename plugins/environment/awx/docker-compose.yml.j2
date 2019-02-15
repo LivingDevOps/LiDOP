@@ -9,7 +9,6 @@ services:
       RABBITMQ_ERLANG_COOKIE: cookiemonster
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       mode: replicated
       replicas: 1
@@ -20,7 +19,6 @@ services:
     image: "memcached:alpine"
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       mode: replicated
       replicas: 1
@@ -60,7 +58,6 @@ services:
       AWX_ADMIN_PASSWORD: {{ secret_password }}
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       mode: replicated
       replicas: 1
@@ -95,7 +92,6 @@ services:
       AWX_ADMIN_PASSWORD: {{ secret_password }}
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       mode: replicated
       replicas: 1

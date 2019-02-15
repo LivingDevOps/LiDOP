@@ -3,7 +3,7 @@ version: '3.2'
 services:
 
   gitbucket:
-    image: f99aq8ove/gitbucket:alpine
+    image: registry.service.lidop.local:5000/lidop/gitbucket:{{ docker_image_version }}
     ports:
       - target: 8080
         published: 8081
@@ -22,7 +22,6 @@ services:
       - /var/lidop/gitbucket:/gitbucket
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       restart_policy:
         condition: any

@@ -25,7 +25,6 @@ services:
         mode: host
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     volumes:
       - "/var/lidop/registry/config.yml:/opt/config.yml:ro"
     deploy:

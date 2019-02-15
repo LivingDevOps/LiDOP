@@ -18,7 +18,6 @@ services:
       SERVICE_NAME: db
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       placement:
         constraints: [node.role == manager]
@@ -33,7 +32,6 @@ services:
       - 8082:8080
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     user: 1111:1111
     deploy:
       restart_policy:

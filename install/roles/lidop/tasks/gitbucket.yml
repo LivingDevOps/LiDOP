@@ -1,12 +1,12 @@
 ---
   - name: pull image
-    shell: "docker pull livingdevops/lidop.gitbucket"
+    shell: "docker pull livingdevops/lidop.gitbucket:{{ docker_image_version }}"
     when: 
       - install_mode == "online"
       - node == "master"
 
   - name: build image
-    shell: "docker tag livingdevops/lidop.gitbucket registry.service.lidop.local:5000/lidop/gitbucket:latest"
+    shell: "docker tag livingdevops/lidop.gitbucket:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/gitbucket:{{ docker_image_version }}"
     when: node == "master"
 
   - name: start gitbucket

@@ -40,7 +40,7 @@
 
 - name: Create sonarqube Builds
   uri:
-    url: 'http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/buildWithParameters?service=sonarqube'
+    url: 'http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/buildWithParameters?service=sonarqube&docker_image_version={{ docker_image_version }}'
     method: POST
     status_code: 201
     user: "{{ root_user }}"
@@ -51,7 +51,7 @@
 
 - name: Create selenium Builds
   uri:
-    url: 'http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/buildWithParameters?service=selenium'
+    url: 'http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/buildWithParameters?service=selenium&docker_image_version={{ docker_image_version }}'
     method: POST
     status_code: 201
     user: "{{ root_user }}"

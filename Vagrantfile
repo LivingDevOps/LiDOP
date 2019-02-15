@@ -59,7 +59,7 @@ Vagrant.configure("2") do |config|
         -e HOST=$IPADDRESS \
         -e HOSTNAME=$HOSTNAME \
         -e TEST_HOST=$TEST_HOST \
-        registry.service.lidop.local:5000/lidop/serverspec:latest test
+        registry.service.lidop.local:5000/lidop/serverspec:#{configuration["docker_image_version"]} test
     SCRIPT
 
     # no parallel start of the machines

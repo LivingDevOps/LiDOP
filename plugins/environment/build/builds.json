@@ -3,6 +3,12 @@
         "Script": "./build/service.create.Jenkinsfile",
         "Parameters": [
             {
+                "Name":"docker_image_version",
+                "Type":"String",
+                "Default": "latest",
+                "Description":"Which image version should be used."
+            },
+            {
                 "Name":"service",
                 "Type":"Choice",
                 "Choices":["cadvisor","nexus","sonarqube","tomcat","elk","selenium", "awx"]

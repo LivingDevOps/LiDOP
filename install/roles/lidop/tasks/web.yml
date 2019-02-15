@@ -18,21 +18,21 @@
     when: node == "master"
 
   - name: pull image
-    shell: "docker pull livingdevops/lidop.nginx"
+    shell: "docker pull livingdevops/lidop.nginx:{{ docker_image_version }}"
     when: 
       - install_mode == "online"
       - node == "master"
 
   - name: tag image
-    shell: "docker tag livingdevops/lidop.nginx registry.service.lidop.local:5000/lidop/nginx:latest"
+    shell: "docker tag livingdevops/lidop.nginx:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/nginx:{{ docker_image_version }}"
     when: node == "master"
 
   - name: push image
-    shell: "docker push registry.service.lidop.local:5000/lidop/nginx:latest"
+    shell: "docker push registry.service.lidop.local:5000/lidop/nginx:{{ docker_image_version }}"
     when: node == "master"
 
   - name: pull image
-    shell: "docker pull registry.service.lidop.local:5000/lidop/nginx:latest"
+    shell: "docker pull registry.service.lidop.local:5000/lidop/nginx:{{ docker_image_version }}"
     when: node == "worker"
 
   - name: create ssl certificate with letsencrypt

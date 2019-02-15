@@ -3,7 +3,7 @@ version: '3.2'
 services:
 
   jenkins:
-    image: registry.service.lidop.local:5000/lidop/jenkins:latest
+    image: registry.service.lidop.local:5000/lidop/jenkins:{{ docker_image_version }}
     ports:
       - target: 8080
         published: 8080
@@ -22,7 +22,6 @@ services:
       - /var/lidop/jenkins:/var/jenkins_home 
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     user: 1111:1111
     deploy:
       placement:

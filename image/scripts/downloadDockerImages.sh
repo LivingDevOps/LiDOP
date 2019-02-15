@@ -9,14 +9,14 @@ images=(ubuntu:latest \
     node:alpine \
     tomcat:alpine \
 
-    livingdevops/lidop.nginx \
-    livingdevops/lidop.jenkins \
-    livingdevops/lidop.backup \
-    livingdevops/lidop.gitbucket \
-    livingdevops/lidop.serverspec \
-    livingdevops/lidop.sonarqube \
-    livingdevops/lidop.sonarqube_scanner \
-    livingdevops/lidop.ssh-slave-docker \
+    livingdevops/lidop.nginx:latest \
+    livingdevops/lidop.jenkins:latest \
+    livingdevops/lidop.backup:latest \
+    livingdevops/lidop.gitbucket:latest \
+    livingdevops/lidop.serverspec:latest \
+    livingdevops/lidop.sonarqube:latest \
+    livingdevops/lidop.sonarqube_scanner:latest \
+    livingdevops/lidop.ssh-slave-docker:latest \
 
     tiredofit/self-service-password:latest\
 

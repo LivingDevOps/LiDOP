@@ -15,7 +15,6 @@ services:
       - /var/lidop/elk/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       restart_policy:
         condition: on-failure
@@ -37,7 +36,6 @@ services:
       - /var/lidop/elk/elasticsearch:/usr/share/elasticsearch/data
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       restart_policy:
         condition: on-failure
@@ -48,7 +46,6 @@ services:
       - /var/lidop/elk/logstash/:/config-dir
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     command: logstash -f /config-dir/logstash.conf
     deploy:
       mode: global
@@ -68,7 +65,6 @@ services:
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       mode: global
       restart_policy:

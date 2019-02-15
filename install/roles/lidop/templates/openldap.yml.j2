@@ -21,7 +21,6 @@ services:
     command: --copy-service --loglevel debug
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       restart_policy:
         condition: any
@@ -37,7 +36,6 @@ services:
       - "8090:80"
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       restart_policy:
         condition: any
@@ -58,7 +56,6 @@ services:
       - "9002:80"
     dns:
       - {{ ipaddress }}
-      - 8.8.8.8
     deploy:
       restart_policy:
         condition: any
