@@ -43,6 +43,7 @@ Vagrant.configure("2") do |config|
         export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg
         export LIDOP_EXTEND=#{ENV['LIDOP_EXTEND_NEW']}
         export ANSIBLE_VAULT_PASSWORD=#{settings.password}
+        dos2unix /vagrant/install/vault-env
         chmod +x /vagrant/install/vault-env
         ansible-playbook -v /vagrant/install/install.yml --vault-password-file /vagrant/install/vault-env -e '
         root_password=#{settings.password} 

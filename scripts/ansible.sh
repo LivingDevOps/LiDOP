@@ -10,7 +10,8 @@ apt-get update
 sudo apt-get install -y \
     ansible  \
     python-pip \
-    python-pexpect
+    python-pexpect \
+    dos2unix
 
 echo "###########################################################"
 ansible --version
