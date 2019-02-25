@@ -1,5 +1,6 @@
 require 'yaml'
 require 'fileutils'
+require "open3"
 
 
 # load all needed vagrant helper files
@@ -26,6 +27,13 @@ configuration = settings.readConfig
 
 # ask for username and password
 if ARGV.include? "up" or ARGV.include? "provision"
+    if(File.exist?(".env")) 
+        File.open('.env').each do |line|
+            puts "Set #{line.split('=')[0]} to #{line.split('=')[1]}"
+            ENV[line.split('=')[0].strip] = line.split('=')[1].strip
+        end
+    end
+    
     settings.init()
 end
 
