@@ -1,0 +1,9 @@
+---
+
+- name: enable login with user and password (for jenkins slave)
+  shell: |
+    sudo sed -i -e '/^PasswordAuthentication / s/ .*/ yes/' /etc/ssh/sshd_config
+    sudo systemctl restart sshd
+
+
+

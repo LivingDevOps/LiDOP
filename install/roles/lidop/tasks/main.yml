@@ -6,6 +6,9 @@
 - name: init the System
   import_tasks: init.yml
 
+- name: ssh configuration
+  import_tasks: ssh.yml
+
 - name: create the user
   import_tasks: user.yml
 
