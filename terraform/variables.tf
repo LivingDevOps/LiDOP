@@ -1,15 +1,9 @@
-variable "name" {
+variable "user_name" {
   default = "lidop"
 }
 
-# SSH 
-variable "private_key_name" {}
-
-variable "private_key" {}
-
-# AWS
+variable "password" {}
 variable "access_key" {}
-
 variable "secret_key" {}
 
 variable "region" {
