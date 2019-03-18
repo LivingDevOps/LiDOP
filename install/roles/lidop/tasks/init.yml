@@ -2,8 +2,22 @@
 
 - name: Init
   block:
-  - set_fact: ipaddress="{{ lookup('env','IPADDRESS') }}"
-  - set_fact: public_ipaddress="{{ lookup('env','PUBLIC_IPADDRESS') }}"
+  - name: get public IP
+    ipify_facts:
+    register: public_ip
+
+  - name: Set IPs with a public ip
+    set_fact: 
+      ipaddress: "{{ ansible_eth0.ipv4.address }}"
+      public_ipaddress: "{{ ipify_public_ip }}"
+    when: not public_ip.failed
+
+  - name: Set IPs with non public ip
+    set_fact: 
+      ipaddress: "{{ ansible_eth0.ipv4.address }}"
+      public_ipaddress: "{{ ipaddress }}"
+    when: public_ip.failed
+
   - debug:
       msg: "Public IP: {{ public_ipaddress }}"  
   - debug:
