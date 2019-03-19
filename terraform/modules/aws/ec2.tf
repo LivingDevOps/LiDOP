@@ -25,7 +25,7 @@ resource "aws_instance" "master" {
   }
 
   provisioner "file" {
-    source      = "./../templates/lidop_config.online.yaml"
+    source      = "./../templates/lidop_config.yaml"
     destination = "/vagrant/.lidop_config.yaml"
   }
 
