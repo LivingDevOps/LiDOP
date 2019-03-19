@@ -25,7 +25,7 @@ resource "aws_instance" "master" {
   }
 
   provisioner "file" {
-    source      = "./../templates/lidop_config.yaml"
+    source      = "./../templates/lidop_config.online.yaml"
     destination = "/vagrant/.lidop_config.yaml"
   }
 
@@ -68,7 +68,8 @@ resource "aws_instance" "master" {
       "sudo ansible-playbook -v /vagrant/install/install.yml -e ' ",
       "root_password=${var.user_name}",
       "root_user=${var.password}",
-      "node=master '",
+      "node=master",
+      "install_mode=online'",
     ]
   }
 
