@@ -27,6 +27,7 @@ resource "aws_instance" "master" {
   provisioner "file" {
     source      = "./../.lidop_config.yaml"
     destination = "/vagrant/.lidop_config.yaml"
+    on_failure = "continue"
   }
 
   provisioner "file" {
