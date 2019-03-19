@@ -66,8 +66,8 @@ resource "aws_instance" "master" {
       "export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg",
       "echo start ansible",
       "sudo ansible-playbook -v /vagrant/install/install.yml -e ' ",
-      "root_password=${var.user_name}",
-      "root_user=${var.password}",
+      "root_password=${var.password}",
+      "root_user=${var.user_name}",
       "node=master",
       "install_mode=online'",
     ]
