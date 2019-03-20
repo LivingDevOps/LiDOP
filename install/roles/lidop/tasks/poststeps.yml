@@ -39,7 +39,7 @@
 
   - name: Create Environment Builds
     uri:
-      url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load%20Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Environment&PluginUrl=http://{{ ipaddress }}:8081/gitbucket/git/LiDOP/Environment.git&Branch=*/master'
+      url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load_Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Environment&PluginUrl=http://{{ ipaddress }}:8081/gitbucket/git/LiDOP/Environment.git&Branch=*/master'
       status_code: 201
       user: "{{ root_user }}"
       password: "{{ root_password }}"

@@ -33,7 +33,7 @@
 
   - name: Load Plugin
     uri:
-      url: 'http://{{ ipaddress }}:8080/job/LiDOP/job/Load%20Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Hello%20World%20NodeJs&PluginUrl=http://{{ ipaddress }}:8081/gitbucket/LiDOP/Environment&Branch=*/master&Credential={{ custom_user }}'
+      url: 'http://{{ ipaddress }}:8080/job/LiDOP/job/Load_Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Hello%20World%20NodeJs&PluginUrl=http://{{ ipaddress }}:8081/gitbucket/LiDOP/Environment&Branch=*/master&Credential={{ custom_user }}'
       status_code: 201
       user: "{{ root_user }}"
       password: "{{ root_password }}"

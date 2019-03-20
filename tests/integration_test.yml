@@ -19,7 +19,7 @@
 
 - name: Create Demo Builds
   uri:
-    url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load%20Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Demo&CopyRepository=true&PluginUrl=https://github.com/LivingDevOps/LiDOP.helloworld_nodejs.git&Branch=*/master'
+    url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load_Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Demo&CopyRepository=true&PluginUrl=https://github.com/LivingDevOps/LiDOP.helloworld_nodejs.git&Branch=*/master'
     status_code: 201
     user: "{{ root_user }}"
     password: "{{ root_password }}"
