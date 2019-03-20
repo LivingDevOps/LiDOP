@@ -35,10 +35,10 @@ class Virtualbox
 
             # adapt script for master installation
             script = <<-SCRIPT
-                export IPADDRESS=#{ipaddress}
-                export PUBLIC_IPADDRESS=#{ipaddress}
                 #{ansible_script}
                 node=master 
+                ipaddress=#{ipaddress}
+                public_ipaddress=#{ipaddress}
                 #{ENV['LIDOP_ENV']}'
             SCRIPT
             override.vm.provision "shell", inline: script
@@ -57,6 +57,8 @@ class Virtualbox
             export IPADDRESS=#{ipaddress}
             export PUBLIC_IPADDRESS=#{ipaddress}
                 #{ansible_script}
+                ipaddress=#{ipaddress}
+                public_ipaddress=#{ipaddress}
                 node=worker consul_ip=#{ipaddress_template}0
                 #{ENV['LIDOP_ENV']}'
             SCRIPT

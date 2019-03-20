@@ -5,18 +5,30 @@
   - name: get public IP
     ipify_facts:
     register: public_ip
+    when: public_ipaddress is undefined
 
   - name: Set IPs with a public ip
     set_fact: 
       ipaddress: "{{ ansible_eth0.ipv4.address }}"
       public_ipaddress: "{{ ipify_public_ip }}"
-    when: not public_ip.failed
+    when: 
+      - public_ipaddress is undefined
+      - not public_ip.failed
 
   - name: Set IPs with non public ip
     set_fact: 
       ipaddress: "{{ ansible_eth0.ipv4.address }}"
       public_ipaddress: "{{ ipaddress }}"
-    when: public_ip.failed
+    when: 
+      - public_ipaddress is undefined
+      - public_ip.failed
+
+  - name: Set Public IPs from arguments
+    set_fact: 
+      public_ipaddress: "{{ ipaddress }}"
+    when: 
+      - public_ipaddress is undefined
+      - ipaddress is defined
 
   - debug:
       msg: "Public IP: {{ public_ipaddress }}"  

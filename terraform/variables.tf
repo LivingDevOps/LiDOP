@@ -3,6 +3,10 @@ variable "user_name" {
 }
 
 variable "password" {}
+variable "workers" {
+  default = 0
+}
+
 variable "access_key" {}
 variable "secret_key" {}
 

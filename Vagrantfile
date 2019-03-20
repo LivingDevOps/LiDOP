@@ -42,8 +42,7 @@ Vagrant.configure("2") do |config|
 
     # if a extend script is defined, copy the file to remote machine
     if "#{ENV['LIDOP_EXTEND']}" != ""
-        config.vm.provision "file", source: ENV['LIDOP_EXTEND'], destination: "/tmp/extend.yml"
-        ENV['LIDOP_EXTEND_NEW'] = "/tmp/extend.yml"
+        config.vm.provision "file", source: ENV['LIDOP_EXTEND'], destination: "/vagrant/extensions/extend.yml"
     end
 
     # define default installation script
@@ -99,19 +98,6 @@ Vagrant.configure("2") do |config|
                     override.vm.provision "show_info", type: "show_info"
                 end
             end
-
-            # script for AWS
-            machine_config.vm.provider :aws do |aws, override|
-                AWS.init(aws, override, worker, settings, configuration, ansible_script, test_script)
-                if(worker == workers)
-                    override.vm.provision "show_info", type: "show_info"
-                end
-            end
-            
-            # script for AZURE (in prpogress)
-            # machine_config.vm.provider :azure do |azure, override|
-            #   Azure.init(azure, override, worker, settings, configuration, ansible_script, test_script)
-            # end
         end
     end
 end

@@ -42,4 +42,11 @@
     delay: 5
     when: node == "master"
 
+  - name: wait for registering registry in consul
+    shell: ping -c 1 registry.service.lidop.local
+    register: result
+    until: result.rc == 0
+    retries: 100
+    delay: 5
+
   tags: registry

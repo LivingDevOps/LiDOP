@@ -10,12 +10,12 @@ resource "null_resource" "create_temp_ssh_key" {
   }
 
   provisioner "local-exec" {
-    command    = "rm ${path.module}\\.temp_key"
+    command    = "rm ${path.module}/.temp_key"
     on_failure = "continue"
   }
 
   provisioner "local-exec" {
-    command    = "rm ${path.module}\\.temp_key.pub"
+    command    = "rm ${path.module}/.temp_key.pub"
     on_failure = "continue"
   }
 
@@ -38,6 +38,7 @@ module "aws_lidop" {
   source      = "./modules/aws"
   user_name   = "${var.user_name}"
   password    = "${var.password}"
+  workers     = "${var.workers}"
   access_key  = "${var.access_key}"
   secret_key  = "${var.secret_key}"
   public_key  = "${data.local_file.public_key.content}"

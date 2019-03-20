@@ -1,5 +1,6 @@
 variable "user_name" {}
 variable "password" {}
+variable "workers" { }
 variable "access_key" {}
 variable "secret_key" {}
 variable "region" {}

@@ -6,7 +6,10 @@
 
   pre_tasks:
     - include_vars: /vagrant/.lidop_config.yaml
+    - name: 'dos2unix vault'
+      raw: dos2unix /vagrant/install/vault-env 
+    - name: 'chmod vault'
+      raw: chmod +x /vagrant/install/vault-env 
 
   roles:
     - { role: lidop }
-    - { role: serverspec}

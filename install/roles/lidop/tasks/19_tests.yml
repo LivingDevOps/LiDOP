@@ -1,0 +1,15 @@
+---
+
+- name: pull image
+  shell: "docker pull livingdevops/lidop.serverspec:{{ docker_image_version }}"
+  when: 
+    - install_mode == "online"
+    - node == "master"
+
+- name: tag image
+  shell: "docker tag livingdevops/lidop.serverspec:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/serverspec:{{ docker_image_version }}"
+  when: node == "master"
+
+- name: push image
+  shell: "docker push registry.service.lidop.local:5000/lidop/serverspec:{{ docker_image_version }}"
+  when: node == "master"
