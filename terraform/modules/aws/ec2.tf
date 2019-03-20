@@ -64,6 +64,7 @@ resource "aws_instance" "master" {
   provisioner "remote-exec" {
     inline = [
       "export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg",
+      "export ANSIBLE_VAULT_PASSWORD=${var.password}",
       "echo start ansible",
       "sudo ansible-playbook -v /vagrant/install/install.yml -e ' ",
       "root_password=${var.password}",
