@@ -17,13 +17,10 @@ resource "aws_instance" "master" {
   source_dest_check      = false
   private_ip             = "172.10.10.10"
 
-  block_device_mappings {
+  ebs_block_device {
     device_name = "/dev/sda1"
-
-    ebs {
-      volume_size = 50
-      VolumeType  = "gp2"
-    }
+    volume_size = 50
+    volume_type = "gp2"
   }
 
   provisioner "remote-exec" {
