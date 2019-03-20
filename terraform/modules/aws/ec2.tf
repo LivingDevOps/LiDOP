@@ -17,6 +17,15 @@ resource "aws_instance" "master" {
   source_dest_check      = false
   private_ip             = "172.10.10.10"
 
+  block_device_mappings {
+    device_name = "/dev/sda1"
+
+    ebs {
+      volume_size = 50
+      VolumeType  = "gp2"
+    }
+  }
+
   provisioner "remote-exec" {
     inline = [
       "sudo mkdir /vagrant",
@@ -32,7 +41,7 @@ resource "aws_instance" "master" {
   provisioner "file" {
     source      = "./../lidop_config.yaml"
     destination = "/vagrant/.lidop_config.yaml"
-    on_failure = "continue"
+    on_failure  = "continue"
   }
 
   provisioner "file" {
