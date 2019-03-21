@@ -84,12 +84,9 @@ Vagrant.configure("2") do |config|
             machine_config.vm.hostname = "LiDOP#{worker}"  
             
             # common scripts
-            if configuration["install_mode"]== "local"
-            elsif configuration["install_mode"] == "online"
+            if configuration["install_mode"]== "online"
                 machine_config.vm.provision "shell", path: "./scripts/ansible.sh"
-            elsif configuration["install_mode"] == "offline"
             end
-            machine_config.vm.provision "shell", path: "./scripts/vagrant.sh"
     
             # script for virtualbox
             machine_config.vm.provider :virtualbox do |v, override|

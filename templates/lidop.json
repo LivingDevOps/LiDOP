@@ -161,7 +161,6 @@
 							[
 								"#!/bin/bash\n",
 								"git clone https://github.com/LivingDevOps/LiDOP.git /vagrant \n",
-								"bash /vagrant/scripts/vagrant.sh \n",
 								"bash /vagrant/scripts/ansible.sh  \n",
 								"echo prepare  \n",
 								"mkdir /home/vagrant \n",

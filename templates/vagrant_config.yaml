@@ -13,24 +13,3 @@ virtualbox:
   local_box_name: lidop.offline
   local_box_url: ./.box/lidop.offline.virtualbox.box
   local_box_version:
-  
-aws:
-  online_box_name: dummy
-  online_box_url: https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box
-  online_box_version:
-  offline_box_name: dummy
-  offline_box_url: https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box
-  offline_box_version:
-  ec3_access_key: ""
-  ec3_secret_access_key: ""
-  region: ""
-  private_key_path: ""
-  keypair_name: ""
-  ssh_user_name: ubuntu
-  private_ip: 
-  ami: ""
-  elastic_ip: 
-  instance_type: "t2.large"
-  subnet_id: ""
-  security_groups: 
-    - ""
