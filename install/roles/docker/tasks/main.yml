@@ -51,3 +51,14 @@
 - name: Add Vagrant user to docker group
   command: "usermod -aG docker {{ root_user }}"
   changed_when: false
+
+- name: read swarm worker token
+  shell: sudo docker swarm join-token -q worker
+  register: swarm_worker_token
+  when: node == "master"
+
+- name: read swarm manager token
+  shell: sudo docker swarm join-token -q manager
+  register: swarm_manager_token
+  when: node == "master"
+

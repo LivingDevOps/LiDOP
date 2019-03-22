@@ -1,70 +1,30 @@
 ---
 
-- name: install software
-  import_tasks: 01_software.yml
-
-- name: init the System
-  import_tasks: 02_set_variables.yml
-
-- name: ssh configuration
-  import_tasks: 03_configurations.yml
-
-- name: create the user
-  import_tasks: 04_create_user.yml
-
-- name: copy config files
-  import_tasks: 05_copy_configs.yml
-
-- name: enable mount
-  import_tasks: 06_mount.yml
-
-- name: Install Docker
-  include_role:
-    name: docker 
-
-- name: startup consul
-  import_tasks: 08_consul.yml
-
-- name: setup dns
-  import_tasks: 09_setup_dns.yml
-
-- name: startup registry
-  import_tasks: 09_registry.yml
-
-- name: startup openldap
-  import_tasks: 10_openldap.yml
+- name: read files for master
+  find:
+    paths:  "{{ playbook_dir }}/roles/lidop/tasks"
+    patterns: "^((?!main).)*$"
+    recurse: true
+    use_regex: true
+  register: includes_master
   when: node == "master"
 
-- name: startup portainer
-  import_tasks: 11_portainer.yml
+- name: read files for worker
+  find:
+    paths:  "{{ playbook_dir }}/roles/lidop/tasks"
+    patterns: "^((?!master|main).)*$"
+    recurse: true
+    use_regex: true
+  register: includes_worker
+  when: node == "worker"
+
+- name: show master
+  include_tasks: "{{ item.path }}"
+  with_items: "{{ includes_master.files | sort(attribute='path') }}" 
   when: node == "master"
 
-- name: startup postgres
-  import_tasks: 12_postgres.yml
-  when: node == "master"
+- name: show worker
+  include_tasks: "{{ item.path }}"
+  with_items: "{{ includes_worker.files | sort(attribute='path') }}"
+  when: node == "worker"
 
-- name: startup gitbucket
-  import_tasks: 13_gitbucket.yml
-  when: node == "master"
-
-- name: startup jenkins
-  import_tasks: 14_jenkins.yml
-  when: node == "master"
-
-- name: startup portal
-  import_tasks: 15_web.yml
-
-- name: configure
-  import_tasks: 16_poststeps.yml
-  when: node == "master"
-
-- name: backup
-  import_tasks: 17_backup.yml
-  when: node == "master"
-
-- name: execute extend yml
-  import_tasks: 18_extend.yml
-  when: node == "master"
-
-- name: execute tests
-  import_tasks: 19_tests.yml

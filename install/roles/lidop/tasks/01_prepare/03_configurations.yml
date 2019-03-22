@@ -13,3 +13,10 @@
 - name: configure git
   shell: |
     git config --system http.sslVerify false
+
+- name: Configure git
+  shell: "git config --global user.email {{ root_user }}@lidop.local " 
+
+- name: Configure git
+  shell: "git config --global user.name  {{ root_user }} " 
+

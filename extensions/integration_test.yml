@@ -1,0 +1,132 @@
+---
+
+# You can set needed variables over the environment variable LIDOP_ENV
+# For this example we need custom_user and custom_password
+# export LIDOP_EXTEND=tests/integration_test.yml
+# [Environment]::SetEnvironmentVariable("LIDOP_EXTEND", "tests/integration_test.yml", "Process")
+# export LIDOP_ENV="custom_user=myUserName custom_password=mySecretPassword"
+
+
+- name: Create Jenkins Crumb
+  uri:
+    url: 'http://{{ ipaddress }}:8080/jenkins/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)'
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    timeout: 120
+    force_basic_auth: yes
+    return_content: yes
+  register: crumb
+
+- name: Create Demo Builds
+  uri:
+    url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load_Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Demo&CopyRepository=true&PluginUrl=https://github.com/LivingDevOps/LiDOP.helloworld_nodejs.git&Branch=*/master'
+    status_code: 201
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    force_basic_auth: yes
+    headers:
+      Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+
+- name: "wait for Environment to come up"
+  uri:
+    url: "http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/"
+    status_code: 200
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+  register: result
+  until: result.status == 200
+  retries: 100
+  delay: 5
+
+- name: Create sonarqube Builds
+  uri:
+    url: 'http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/buildWithParameters?service=sonarqube&docker_image_version={{ docker_image_version }}'
+    method: POST
+    status_code: 201
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    force_basic_auth: yes
+    headers:
+      Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+
+- name: Create selenium Builds
+  uri:
+    url: 'http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/buildWithParameters?service=selenium&docker_image_version={{ docker_image_version }}'
+    method: POST
+    status_code: 201
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    force_basic_auth: yes
+    headers:
+      Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+
+- name: "Wait for build starts"
+  pause:
+    seconds: 60
+
+- name: "wait for Sonarqube to come up"
+  uri:
+    url: "http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/1/api/json"
+    status_code: 200
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    body_format: json
+  register: data
+  until: data.json.result == "SUCCESS"
+  retries: 100
+  delay: 5
+
+- name: "wait for Selenium to come up"
+  uri:
+    url: "http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/2/api/json"
+    status_code: 200
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    body_format: json
+  register: data
+  until: data.json.result == "SUCCESS"
+  retries: 100
+  delay: 5
+
+
+- name: Start Application Build
+  uri:
+    url: 'http://{{ ipaddress }}/jenkins/job/Demo/job/Build_Application//build'
+    method: POST
+    status_code: 201
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    force_basic_auth: yes
+    headers:
+      Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+
+- name: "Wait for build starts"
+  pause:
+    seconds: 60
+
+- name: "wait for nodejs build"
+  uri:
+    url: "http://{{ ipaddress }}/jenkins/job/Demo/job/Build_Application/1/api/json"
+    status_code: 200
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    body_format: json
+  register: data
+  until: data.json.result == "SUCCESS"
+  retries: 100
+  delay: 5
+
+- name: "wait for nodejs to come up"
+  uri:
+    url: "http://{{ ipaddress }}/port/9100/"
+    status_code: 200
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    force_basic_auth: yes
+  register: result
+  until: result.status == 200
+  retries: 100
+  delay: 5
+
+
+  tags: extend

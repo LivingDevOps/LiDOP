@@ -9,7 +9,7 @@ resource "aws_instance" "master" {
     private_key = "${var.private_key}"
   }
 
-  instance_type          = "t2.medium"
+  instance_type          = "t2.xlarge"
   ami                    = "${lookup(var.amis, var.region)}"
   key_name               = "lidop_key"
   vpc_security_group_ids = ["${aws_security_group.aws_lidop.id}"]
@@ -61,6 +61,11 @@ resource "aws_instance" "master" {
     destination = "/vagrant/tests/"
   }
 
+  provisioner "file" {
+    source      = "./../extensions"
+    destination = "/vagrant/extensions/"
+  }
+
   provisioner "remote-exec" {
     scripts = [
       "./../scripts/ansible.sh",
@@ -102,7 +107,7 @@ resource "aws_instance" "worker" {
     private_key = "${var.private_key}"
   }
 
-  instance_type          = "t2.medium"
+  instance_type          = "t2.xlarge"
   ami                    = "${lookup(var.amis, var.region)}"
   key_name               = "lidop_key"
   vpc_security_group_ids = ["${aws_security_group.aws_lidop.id}"]
@@ -151,6 +156,11 @@ resource "aws_instance" "worker" {
   provisioner "file" {
     source      = "./../tests"
     destination = "/vagrant/tests/"
+  }
+
+  provisioner "file" {
+    source      = "./../extensions"
+    destination = "/vagrant/extensions/"
   }
 
   provisioner "remote-exec" {

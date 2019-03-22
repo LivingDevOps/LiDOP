@@ -1,0 +1,10 @@
+---
+
+- name: Docker
+  block:
+
+  - name: Install Docker
+    include_role:
+      name: docker 
+
+  tags: docker
