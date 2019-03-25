@@ -84,17 +84,17 @@
         }
 
   - name: pull image
-    shell: "docker pull livingdevops/lidop.ssh-slave-docker:{{ docker_image_version }}"
+    shell: "docker pull livingdevops/lidop.jenkins-slave-docker:{{ docker_image_version }}"
     when: 
       - install_mode == "online"
       - node == "master"
 
   - name: tag image
-    shell: "docker tag livingdevops/lidop.ssh-slave-docker:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/ssh-slave-docker:{{ docker_image_version }}"
+    shell: "docker tag livingdevops/lidop.jenkins-slave-docker:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/jenkins-slave-docker:{{ docker_image_version }}"
     when: node == "master"
 
   - name: push image
-    shell: "docker push registry.service.lidop.local:5000/lidop/ssh-slave-docker:{{ docker_image_version }}"
+    shell: "docker push registry.service.lidop.local:5000/lidop/jenkins-slave-docker:{{ docker_image_version }}"
     when: node == "master"
 
   tags: jenkins

@@ -73,7 +73,7 @@ try{
 pipeline {
 
     agent {
-        label &apos;host&apos;
+        label &apos;docker&apos;
     }
 
     stages {

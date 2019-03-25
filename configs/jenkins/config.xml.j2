@@ -5,7 +5,7 @@
   <installState>
     <name>RUNNING</name>
   </installState>
-  <numExecutors>2</numExecutors>
+  <numExecutors>4</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
   <authorizationStrategy class="hudson.security.GlobalMatrixAuthorizationStrategy">
@@ -84,33 +84,35 @@
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
 <clouds>
     <com.nirima.jenkins.plugins.docker.DockerCloud plugin="docker-plugin@1.1.4">
-      <name>docker</name>
+      <name>did</name>
       <templates>
+
         <com.nirima.jenkins.plugins.docker.DockerTemplate>
           <configVersion>2</configVersion>
-          <labelString>docker</labelString>
-          <connector class="io.jenkins.docker.connector.DockerComputerSSHConnector">
-            <sshKeyStrategy class="io.jenkins.docker.connector.DockerComputerSSHConnector$InjectSSHKey">
-              <user>jenkins</user>
-            </sshKeyStrategy>
-            <port>22</port>
-            <jvmOptions></jvmOptions>
-            <javaPath></javaPath>
-            <prefixStartSlaveCmd></prefixStartSlaveCmd>
-            <suffixStartSlaveCmd></suffixStartSlaveCmd>
+          <labelString>did</labelString>
+          <connector class="io.jenkins.docker.connector.DockerComputerJNLPConnector">
+            <user></user>
+            <jnlpLauncher>
+              <workDirSettings>
+                <disabled>false</disabled>
+                <internalDir>remoting</internalDir>
+                <failIfWorkDirIsMissing>false</failIfWorkDirIsMissing>
+              </workDirSettings>
+            </jnlpLauncher>
+            <jenkinsUrl>http://{{ ipaddress }}:8080/jenkins</jenkinsUrl>
           </connector>
           <remoteFs>/home/jenkins</remoteFs>
           <instanceCap>2147483647</instanceCap>
-          <mode>NORMAL</mode>
+          <mode>EXCLUSIVE</mode>
           <retentionStrategy class="com.nirima.jenkins.plugins.docker.strategy.DockerOnceRetentionStrategy">
             <idleMinutes>10</idleMinutes>
           </retentionStrategy>
           <dockerTemplateBase>
-            <image>registry.service.lidop.local:5000/lidop/ssh-slave-docker:{{ docker_image_version }}</image>
+            <image>registry.service.lidop.local:5000/lidop/jenkins-slave-docker:{{ docker_image_version }}</image>
             <pullCredentialsId></pullCredentialsId>
             <dockerCommand></dockerCommand>
             <hostname></hostname>
-            <dnsHosts/>
+            <dnsHosts>{{ ipaddress }}</dnsHosts>
             <network></network>
             <volumes></volumes>
             <volumesFrom2/>
@@ -129,6 +131,54 @@
             <disabledByChoice>false</disabledByChoice>
           </disabled>
         </com.nirima.jenkins.plugins.docker.DockerTemplate>
+
+        <com.nirima.jenkins.plugins.docker.DockerTemplate>
+          <configVersion>2</configVersion>
+          <labelString>docker</labelString>
+           <connector class="io.jenkins.docker.connector.DockerComputerJNLPConnector">
+            <user></user>
+            <jnlpLauncher>
+              <workDirSettings>
+                <disabled>false</disabled>
+                <internalDir>remoting</internalDir>
+                <failIfWorkDirIsMissing>false</failIfWorkDirIsMissing>
+              </workDirSettings>
+            </jnlpLauncher>
+            <jenkinsUrl>http://{{ ipaddress }}:8080/jenkins</jenkinsUrl>
+          </connector>
+          <remoteFs>/home/jenkins</remoteFs>
+          <instanceCap>2147483647</instanceCap>
+          <mode>EXCLUSIVE</mode>
+          <retentionStrategy class="com.nirima.jenkins.plugins.docker.strategy.DockerOnceRetentionStrategy">
+            <idleMinutes>10</idleMinutes>
+          </retentionStrategy>
+          <dockerTemplateBase>
+            <image>registry.service.lidop.local:5000/lidop/jenkins-slave-docker:{{ docker_image_version }}</image>
+            <pullCredentialsId></pullCredentialsId>
+            <dockerCommand></dockerCommand>
+            <hostname></hostname>
+            <dnsHosts>{{ ipaddress }}</dnsHosts>
+            <network></network>
+            <volumes>
+              <string>/var/run/docker.sock:/var/run/docker.sock</string>
+            </volumes>
+            <volumesFrom2/>
+            <environment/>
+            <bindPorts></bindPorts>
+            <bindAllPorts>false</bindAllPorts>
+            <privileged>true</privileged>
+            <tty>false</tty>
+            <extraHosts class="empty-list"/>
+          </dockerTemplateBase>
+          <removeVolumes>false</removeVolumes>
+          <pullStrategy>PULL_LATEST</pullStrategy>
+          <pullTimeout>300</pullTimeout>
+          <nodeProperties class="empty-list"/>
+          <disabled>
+            <disabledByChoice>false</disabledByChoice>
+          </disabled>
+        </com.nirima.jenkins.plugins.docker.DockerTemplate>
+
       </templates>
       <dockerApi>
         <dockerHost plugin="docker-commons@1.13">
