@@ -12,7 +12,10 @@ variables:
 - group: 'Terraform'
 
 steps:
-- script: cp ./tests/integration_test.yml ./extensions/integration_test.
+- script: ls .
+  displayName: 'ls'
+
+- script: cp ./tests/integration_test.yml ./extensions/integration_test.yml
   displayName: 'Copy test script'
 
 - script: terraform init ./terraform
