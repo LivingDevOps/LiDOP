@@ -1,60 +1,30 @@
 ---
 
-- name: install software
-  import_tasks: software.yml
-
-- name: init the System
-  import_tasks: init.yml
-
-- name: create the user
-  import_tasks: user.yml
-
-- name: copy config files
-  import_tasks: config.yml
-
-- name: enable mount
-  import_tasks: mount.yml
-
-- name: install docker
-  import_tasks: docker.yml
-
-- name: startup consul
-  import_tasks: consul.yml
-
-- name: startup registry
-  import_tasks: registry.yml
-
-- name: startup openldap
-  import_tasks: openldap.yml
+- name: read files for master
+  find:
+    paths:  "{{ playbook_dir }}/roles/lidop/tasks"
+    patterns: "^((?!main).)*$"
+    recurse: true
+    use_regex: true
+  register: includes_master
   when: node == "master"
 
-- name: startup portainer
-  import_tasks: portainer.yml
+- name: read files for worker
+  find:
+    paths:  "{{ playbook_dir }}/roles/lidop/tasks"
+    patterns: "^((?!master|main).)*$"
+    recurse: true
+    use_regex: true
+  register: includes_worker
+  when: node == "worker"
+
+- name: show master
+  include_tasks: "{{ item.path }}"
+  with_items: "{{ includes_master.files | sort(attribute='path') }}" 
   when: node == "master"
 
-- name: startup postgres
-  import_tasks: postgres.yml
-  when: node == "master"
+- name: show worker
+  include_tasks: "{{ item.path }}"
+  with_items: "{{ includes_worker.files | sort(attribute='path') }}"
+  when: node == "worker"
 
-- name: startup gitbucket
-  import_tasks: gitbucket.yml
-  when: node == "master"
-
-- name: startup jenkins
-  import_tasks: jenkins.yml
-  when: node == "master"
-
-- name: startup portal
-  import_tasks: web.yml
-
-- name: configure
-  import_tasks: poststeps.yml
-  when: node == "master"
-
-- name: backup
-  import_tasks: backup.yml
-  when: node == "master"
-
-- name: execute extend yml
-  import_tasks: extend.yml
-  when: node == "master"

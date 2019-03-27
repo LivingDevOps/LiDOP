@@ -25,6 +25,7 @@
       template:
         src: docker-compose.yml.j2
         dest: ./docker-compose.yml
+      when: state == "present"
 
     - name: delete directory
       file:
@@ -77,6 +78,7 @@
       until: result.stdout.find("SonarQube is up") != -1
       retries: 100
       delay: 5
+      when: state == "present"
 
     - name: remove default users
       shell: docker exec -i $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d sonar -c "delete from users;"

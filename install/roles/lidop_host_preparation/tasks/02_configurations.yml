@@ -1,0 +1,22 @@
+---
+
+- name: enable login with user and password (for jenkins slave)
+  shell: |
+    sudo sed -i -e '/^PasswordAuthentication / s/ .*/ yes/' /etc/ssh/sshd_config
+    sudo systemctl restart sshd
+
+- name: install root certificate
+  shell: |
+    cp /vagrant/configs/certs/rootCA.pem /usr/local/share/ca-certificates/lidop.crt
+    update-ca-certificates
+
+- name: configure git
+  shell: |
+    git config --system http.sslVerify false
+
+- name: Configure git
+  shell: "git config --global user.email {{ root_user }}@lidop.local " 
+
+- name: Configure git
+  shell: "git config --global user.name  {{ root_user }} " 
+

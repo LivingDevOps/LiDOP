@@ -1,0 +1,15 @@
+---
+
+- name: read files
+  find:
+    paths:  "{{ playbook_dir }}/roles/lidop_host_preparation/tasks"
+    patterns: "^((?!main).)*$"
+    recurse: true
+    use_regex: true
+  register: includes_master
+  when: node == "master"
+
+- name: execute files
+  include_tasks: "{{ item.path }}"
+  with_items: "{{ includes_master.files | sort(attribute='path') }}" 
+  when: node == "master"

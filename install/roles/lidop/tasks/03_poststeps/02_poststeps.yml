@@ -1,0 +1,59 @@
+---
+
+- name: start builds
+  block:
+
+  - name: Create Repository in gitbucket
+    uri:
+      method: POST
+      status_code: 200
+      url: http://{{ ipaddress }}:8081/gitbucket/api/v3/orgs/LiDOP/repos
+      user: "{{ root_user }}"
+      password: "{{ root_password }}"
+      force_basic_auth: yes
+      body: '{ "name": "{{ item }}", "private": true }'
+      body_format: json
+    with_items: 
+      - Jenkins.Lib
+      - Environment
+
+  - name: Checkin files for Plugins
+    shell: |
+      rm -r -f /tmp/work
+      mkdir /tmp/work
+      cd /tmp/work
+      git clone "http://{{ root_user }}:{{ root_password }}@{{ ipaddress }}:8081/gitbucket/git/LiDOP/{{ item.name }}.git"
+      cd {{ item.name }}
+      cp -a {{ item.folder }}/** .
+      git add .
+      git commit -m "initial commit"
+      git push --set-upstream origin master
+    with_items: 
+      - { name: 'Environment', folder: '/vagrant/plugins/environment' }
+      - { name: 'Jenkins.Lib', folder: '/vagrant/configs/jenkins.sharedlib' }
+
+  - name: Create Environment Builds
+    uri:
+      url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load_Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Environment&PluginUrl=http://{{ ipaddress }}:8081/gitbucket/git/LiDOP/Environment.git&Branch=*/master'
+      status_code: 201
+      user: "{{ root_user }}"
+      password: "{{ root_password }}"
+      force_basic_auth: yes
+      headers:
+        Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+
+  # - name: Create first Backup
+  #   uri:
+  #     url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Maintenance/job/Backup/build'
+  #     status_code: 201
+  #     user: "{{ root_user }}"
+  #     password: "{{ root_password }}"
+  #     force_basic_auth: yes
+  #     headers:
+  #       Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+
+
+  - debug:
+      msg: "Secret Password: {{ secret_password }}"
+
+  tags: startup

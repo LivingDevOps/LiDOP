@@ -73,7 +73,7 @@ try{
 pipeline {
 
     agent {
-        label &apos;host&apos;
+        label &apos;docker&apos;
     }
 
     stages {
@@ -83,7 +83,7 @@ pipeline {
                 label &apos;master&apos;
             }
             steps{
-                dir(&quot;${JENKINS_HOME}/jobs/LiDOP/jobs/Load Plugin&quot;){
+                dir(&quot;${JENKINS_HOME}/jobs/LiDOP/jobs/Load_Plugin&quot;){
                     stash includes: &quot;load_plugin.yml,job_dsl&quot;, name: &apos;data&apos;
                 }
             }
@@ -91,7 +91,6 @@ pipeline {
         
         stage(&apos;Prepare Build Environment&apos;) {
             steps{
-                sh 'sudo rm -R -f $PWD'
                 script {
                     currentBuild.displayName = &quot;${params.ProjectName}.${BUILD_NUMBER}&quot;
                     currentBuild.description = &quot;The best description.&quot;

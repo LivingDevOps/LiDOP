@@ -16,7 +16,7 @@ images=(ubuntu:latest \
     livingdevops/lidop.serverspec:latest \
     livingdevops/lidop.sonarqube:latest \
     livingdevops/lidop.sonarqube_scanner:latest \
-    livingdevops/lidop.ssh-slave-docker:latest \
+    livingdevops/lidop.jenkins-slave-docker:latest \
 
     tiredofit/self-service-password:latest\
 
@@ -37,11 +37,8 @@ images=(ubuntu:latest \
     osixia/openldap \
     osixia/phpldapadmin \
 
-    jenkins/ssh-slave \
-
     portainer/portainer \
     portainer/agent \
-
 
     selenium/hub \
     selenium/node-chrome \

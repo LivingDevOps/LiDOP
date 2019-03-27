@@ -1,0 +1,61 @@
+---
+
+- name: store values
+  block:
+
+  - name: Store secret_password in Consul
+    consul_kv:
+        key: config/secret_password
+        host: "{{ ipaddress }}"
+        value: "{{ secret_password }}"
+    when: node == "master"
+
+  - name: Store base_url in Consul
+    consul_kv:
+        key: config/base_url
+        host: "{{ ipaddress }}"
+        value: "{{ base_url }}"
+    when: node == "master"
+
+  - name: Store root_user in Consul
+    consul_kv:
+        key: config/root_user
+        host: "{{ ipaddress }}"
+        value: "{{ root_user }}"
+    when: node == "master"
+
+  - name: read swarm worker token
+    shell: sudo docker swarm join-token -q worker
+    register: swarm_worker_token
+    when: node == "master"
+
+  - name: read swarm manager token
+    shell: sudo docker swarm join-token -q manager
+    register: swarm_manager_token
+    when: node == "master"
+
+  - name: Store swarm manager ip
+    consul_kv:
+        key: config/swarm_manager_ip
+        host: "{{ ipaddress }}"
+        value: "{{ ipaddress }}"
+    when: node == "master"
+
+  - name: Store swarm worker token
+    consul_kv:
+        key: config/swarm_worker_token
+        host: "{{ ipaddress }}"
+        value: "{{ swarm_worker_token.stdout }}"
+    when: node == "master"
+
+  - name: Store swarm manager token
+    consul_kv:
+        key: config/swarm_manager_token
+        host: "{{ ipaddress }}"
+        value: "{{ swarm_manager_token.stdout }}"
+    when: node == "master"
+    
+  - debug:
+      msg: "Secret Password: {{ secret_password }}"
+
+  tags: consul

@@ -42,20 +42,19 @@ Vagrant.configure("2") do |config|
 
     # if a extend script is defined, copy the file to remote machine
     if "#{ENV['LIDOP_EXTEND']}" != ""
-        config.vm.provision "file", source: ENV['LIDOP_EXTEND'], destination: "/tmp/extend.yml"
-        ENV['LIDOP_EXTEND_NEW'] = "/tmp/extend.yml"
+        config.vm.provision "file", source: ENV['LIDOP_EXTEND'], destination: "/vagrant/extensions/extend.yml"
     end
 
     # define default installation script
     ansible_script = <<-SCRIPT 
         export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg
         export LIDOP_EXTEND=#{ENV['LIDOP_EXTEND_NEW']}
-        export ANSIBLE_VAULT_PASSWORD=#{settings.password}
+        export ANSIBLE_VAULT_PASSWORD=lidop
         dos2unix /vagrant/install/vault-env
         chmod +x /vagrant/install/vault-env
-        ansible-playbook -v /vagrant/install/install.yml --vault-password-file /vagrant/install/vault-env -e '
-        root_password=#{settings.password} 
-        root_user=#{settings.user_name} 
+        ansible-playbook /vagrant/install/install.yml --vault-password-file /vagrant/install/vault-env -e '
+        root_password=#{settings.password}
+        root_user=#{settings.user_name}
     SCRIPT
     
     # define default test script
@@ -85,12 +84,9 @@ Vagrant.configure("2") do |config|
             machine_config.vm.hostname = "LiDOP#{worker}"  
             
             # common scripts
-            if configuration["install_mode"]== "local"
-            elsif configuration["install_mode"] == "online"
+            if configuration["install_mode"]== "online"
                 machine_config.vm.provision "shell", path: "./scripts/ansible.sh"
-            elsif configuration["install_mode"] == "offline"
             end
-            machine_config.vm.provision "shell", path: "./scripts/vagrant.sh"
     
             # script for virtualbox
             machine_config.vm.provider :virtualbox do |v, override|
@@ -99,19 +95,6 @@ Vagrant.configure("2") do |config|
                     override.vm.provision "show_info", type: "show_info"
                 end
             end
-
-            # script for AWS
-            machine_config.vm.provider :aws do |aws, override|
-                AWS.init(aws, override, worker, settings, configuration, ansible_script, test_script)
-                if(worker == workers)
-                    override.vm.provision "show_info", type: "show_info"
-                end
-            end
-            
-            # script for AZURE (in prpogress)
-            # machine_config.vm.provider :azure do |azure, override|
-            #   Azure.init(azure, override, worker, settings, configuration, ansible_script, test_script)
-            # end
         end
     end
 end

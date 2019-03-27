@@ -1,0 +1,26 @@
+---
+
+  - name: find all extension files
+    find:
+      paths: "/vagrant/extensions"
+      patterns: "*.yml"
+      recurse: true
+    register: extension_files
+    when: node == "master"
+
+  - name: print files
+    debug:
+      msg: "{{ extension_files.files }}"
+    when: node == "master"
+
+  - name: include extension_files files
+    include_tasks: "{{ item.path }}"
+    static: no
+    with_items: "{{ extension_files.files }}"
+
+  - name: include extension_files files
+    template:
+      src: "{{ item.path }}"
+      dest: "{{ item.path | replace('.j2','') }}"
+    with_items: "{{ extension_files.files }}"
+    when: node == "master"

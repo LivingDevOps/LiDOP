@@ -1,0 +1,33 @@
+---
+
+########################################################################
+- name: Setup DNS
+########################################################################
+  block:
+
+  - name: Change from resolconf to resolved
+    shell: systemctl disable resolvconf      
+    ignore_errors: yes
+  - name: Change from resolconf to resolved
+    shell: systemctl stop resolvconf      
+    ignore_errors: yes
+
+  - name: Change from resolconf to resolved
+    shell: systemctl enable systemd-resolved.service      
+    ignore_errors: yes
+  - name: Change from resolconf to resolved
+    shell: systemctl start systemd-resolved.service      
+    ignore_errors: yes
+
+  - name: "add {{ ipaddress }} as dns to host"
+    lineinfile:
+      path: /etc/systemd/resolved.conf
+      line: "DNS={{ ipaddress }}" 
+      
+  - name: "add ln"
+    command: ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+  - name: "restart"
+    command: systemctl restart systemd-resolved.service 
+
+  tags: dns

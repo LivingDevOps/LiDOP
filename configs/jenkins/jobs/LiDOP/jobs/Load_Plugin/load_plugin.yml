@@ -2,7 +2,7 @@
 
   - name: Load Plugin
     hosts: localhost
-    become: yes
+    gather_facts: no
 
     vars:
       body:

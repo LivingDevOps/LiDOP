@@ -1,10 +1,29 @@
+---
+
+trigger:
+  branches:
+    include:
+    - '*' 
 
 pool:
   vmImage: 'Ubuntu-16.04'
 
+variables:
+- group: 'Terraform'
+
 steps:
-- script: terraform init ./terraform
+- script: cp ./tests/integration_test.yml ./extensions/integration_test.yml
+  displayName: 'Copy test script'
+
+- script: terraform init -backend-config="key=state/ci" -backend-config="access_key=$(access_key)" -backend-config="secret_key=$(secret_key)" -reconfigure ./terraform
   displayName: 'Terraform init'
 
-- script: terraform plan ./terraform
+- script: terraform plan -var access_key=$(access_key) -var secret_key=$(secret_key)  -var password=$(password)  ./terraform
   displayName: 'Terraform plan'
+
+- script: terraform apply -auto-approve -var access_key=$(access_key) -var secret_key=$(secret_key)  -var password=$(password)  ./terraform
+  displayName: 'Terraform apply'
+
+- script: terraform destroy -auto-approve -var access_key=$(access_key) -var secret_key=$(secret_key)  -var password=$(password) ./terraform
+  displayName: 'Terraform destroy'
+  condition: always()
