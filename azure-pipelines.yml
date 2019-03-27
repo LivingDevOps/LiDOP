@@ -11,6 +11,7 @@ pool:
 variables:
 - group: 'Terraform'
 
+steps:
 - script: cp ./tests/integration_test.yml ./extensions/integration_test.yml
   displayName: 'Copy test script'
 
