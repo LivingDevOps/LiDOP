@@ -1,3 +1,11 @@
+terraform {
+  backend "s3" {
+    bucket = "lidopterraform"
+    key    = "commonstate"
+    region = "eu-central-1"
+  }
+}
+
 resource "null_resource" "create_temp_ssh_key" {
   provisioner "local-exec" {
     command    = "del ${path.module}\\.temp_key"
@@ -35,7 +43,7 @@ data "local_file" "public_key" {
 }
 
 module "aws_lidop" {
-  source      = "./modules/aws"
+  source      = "./modules/lidop"
   lidop_name  = "${var.lidop_name}"
   user_name   = "${var.user_name}"
   password    = "${var.password}"
