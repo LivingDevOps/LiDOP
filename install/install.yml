@@ -12,4 +12,6 @@
       raw: chmod +x /vagrant/install/vault-env 
 
   roles:
+    - { role: lidop_host_preparation }
+    - { role: docker }
     - { role: lidop }

@@ -49,4 +49,23 @@
     retries: 100
     delay: 5
 
+  - name: pull default images
+    shell: |
+      docker pull {{ item }}
+    with_items:
+      - alpine:latest
+      - node:alpine
+    when: 
+      - install_mode == "online"
+      - node == "master"
+
+  - name: push default images
+    shell: |
+      docker tag {{ item }} registry.service.lidop.local:5000/{{ item }}
+      docker push registry.service.lidop.local:5000/{{ item }}
+    with_items:
+      - alpine:latest
+      - node:alpine
+    when: node == "master"
+
   tags: registry

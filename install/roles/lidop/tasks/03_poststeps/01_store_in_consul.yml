@@ -24,6 +24,16 @@
         value: "{{ root_user }}"
     when: node == "master"
 
+  - name: read swarm worker token
+    shell: sudo docker swarm join-token -q worker
+    register: swarm_worker_token
+    when: node == "master"
+
+  - name: read swarm manager token
+    shell: sudo docker swarm join-token -q manager
+    register: swarm_manager_token
+    when: node == "master"
+
   - name: Store swarm manager ip
     consul_kv:
         key: config/swarm_manager_ip

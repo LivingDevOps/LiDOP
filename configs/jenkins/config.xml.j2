@@ -84,12 +84,12 @@
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
 <clouds>
     <com.nirima.jenkins.plugins.docker.DockerCloud plugin="docker-plugin@1.1.4">
-      <name>did</name>
+      <name>Docker</name>
       <templates>
 
         <com.nirima.jenkins.plugins.docker.DockerTemplate>
           <configVersion>2</configVersion>
-          <labelString>did</labelString>
+          <labelString>did dind</labelString>
           <connector class="io.jenkins.docker.connector.DockerComputerJNLPConnector">
             <user></user>
             <jnlpLauncher>
@@ -99,7 +99,7 @@
                 <failIfWorkDirIsMissing>false</failIfWorkDirIsMissing>
               </workDirSettings>
             </jnlpLauncher>
-            <jenkinsUrl>http://{{ ipaddress }}:8080/jenkins</jenkinsUrl>
+            <jenkinsUrl>http://jenkins.service.lidop.local:8080/jenkins</jenkinsUrl>
           </connector>
           <remoteFs>/home/jenkins</remoteFs>
           <instanceCap>2147483647</instanceCap>
@@ -130,6 +130,7 @@
           <disabled>
             <disabledByChoice>false</disabledByChoice>
           </disabled>
+        <name>docker in docker</name>
         </com.nirima.jenkins.plugins.docker.DockerTemplate>
 
         <com.nirima.jenkins.plugins.docker.DockerTemplate>
@@ -144,7 +145,7 @@
                 <failIfWorkDirIsMissing>false</failIfWorkDirIsMissing>
               </workDirSettings>
             </jnlpLauncher>
-            <jenkinsUrl>http://{{ ipaddress }}:8080/jenkins</jenkinsUrl>
+            <jenkinsUrl>http://jenkins.service.lidop.local:8080/jenkins</jenkinsUrl>
           </connector>
           <remoteFs>/home/jenkins</remoteFs>
           <instanceCap>2147483647</instanceCap>
@@ -161,6 +162,7 @@
             <network></network>
             <volumes>
               <string>/var/run/docker.sock:/var/run/docker.sock</string>
+              <string>/var/lidop:/var/lidop</string>
             </volumes>
             <volumesFrom2/>
             <environment/>
@@ -177,6 +179,7 @@
           <disabled>
             <disabledByChoice>false</disabledByChoice>
           </disabled>
+        <name>docker</name>
         </com.nirima.jenkins.plugins.docker.DockerTemplate>
 
       </templates>

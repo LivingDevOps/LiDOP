@@ -3,16 +3,6 @@
 - name: Init
   block:
 
-  - name: Create folder /var/lidop
-    file:
-      state: "{{ item }}"
-      path: "/var/lidop/"
-      owner: "{{ root_user }}"
-      group: "{{ root_user }}"
-      mode: '0775'
-    with_items:
-      - directory
-
   - name: save secret_password to local file
     local_action: copy content={{ secret_password }} dest=/var/lidop/.secret
 

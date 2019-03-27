@@ -39,14 +39,6 @@
     ignore_errors: yes
     when: node == "master"
 
-  - name: wait for starting Consul up
-    shell: docker logs $(docker ps -f "name=consul_master" -q)
-    register: result
-    until: result.stdout.find("Started DNS server") != -1
-    retries: 100
-    delay: 5
-    when: node == "master"
-
   - name: remove consul node
     shell: docker rm -f consul_node
     ignore_errors: yes
@@ -78,5 +70,12 @@
       --name consul_registrator \
       --restart always \
       gliderlabs/registrator:latest -ip={{ ipaddress }} -cleanup=true -deregister="always" -resync=60 consul://{{ ipaddress }}:8500
+
+  - name: wait for consul starting up
+    shell: docker run --rm --dns {{ ipaddress }} alpine:latest ping -c 1 consul.service.lidop.local
+    register: result
+    until: result.rc == 0
+    retries: 100
+    delay: 5
 
   tags: consul

@@ -1,5 +1,32 @@
 ---
 
+
+- name: Install required packages
+  apt: 
+    name: "{{ packages }}"
+    update_cache: yes 
+    state: present
+  vars:
+    packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - gnupg-agent
+  when: install_mode == "online"
+
+- name: install docker-py
+  shell: pip install docker
+  when: install_mode == "online"
+  
+- name: install docker-py
+  shell: pip install docker-compose
+  when: install_mode == "online"
+
+- name: install python-consul
+  shell: pip install python-consul
+  when: install_mode == "online"
+
 - name: ensure repository key is installed
   apt_key:
     url: https://download.docker.com/linux/raspbian/gpg
@@ -37,28 +64,6 @@
 
 - meta: flush_handlers
 
-- name: initialize swarm cluster
-  shell: >
-    docker swarm init --advertise-addr={{ ipaddress }}:2377
-  when: node == "master"
-  ignore_errors: true
-
-- name: add swarm worker
-  shell: >
-    docker swarm join --token {{ swarm_worker_token }} {{ swarm_manager_ip }}:2377
-  when: node == "worker"
-
-- name: Add Vagrant user to docker group
+- name: Add LiDOP user to docker group
   command: "usermod -aG docker {{ root_user }}"
   changed_when: false
-
-- name: read swarm worker token
-  shell: sudo docker swarm join-token -q worker
-  register: swarm_worker_token
-  when: node == "master"
-
-- name: read swarm manager token
-  shell: sudo docker swarm join-token -q manager
-  register: swarm_manager_token
-  when: node == "master"
-
