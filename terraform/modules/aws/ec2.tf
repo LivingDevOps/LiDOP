@@ -31,44 +31,44 @@ resource "aws_instance" "master" {
   }
 
   provisioner "file" {
-    source      = "./../templates/lidop_config.yaml"
+    source      = "./templates/lidop_config.yaml"
     destination = "/vagrant/.lidop_config.yaml"
   }
 
   provisioner "file" {
-    source      = "./../lidop_config.yaml"
+    source      = "./lidop_config.yaml"
     destination = "/vagrant/.lidop_config.yaml"
     on_failure  = "continue"
   }
 
   provisioner "file" {
-    source      = "./../install"
+    source      = "./install"
     destination = "/vagrant/install/"
   }
 
   provisioner "file" {
-    source      = "./../configs"
+    source      = "./configs"
     destination = "/vagrant/configs/"
   }
 
   provisioner "file" {
-    source      = "./../plugins"
+    source      = "./plugins"
     destination = "/vagrant/plugins/"
   }
 
   provisioner "file" {
-    source      = "./../tests"
+    source      = "./tests"
     destination = "/vagrant/tests/"
   }
 
   provisioner "file" {
-    source      = "./../extensions"
+    source      = "./extensions"
     destination = "/vagrant/extensions/"
   }
 
   provisioner "remote-exec" {
     scripts = [
-      "./../scripts/ansible.sh",
+      "./scripts/ansible.sh",
     ]
   }
 
@@ -128,44 +128,44 @@ resource "aws_instance" "worker" {
   }
 
   provisioner "file" {
-    source      = "./../templates/lidop_config.yaml"
+    source      = "./templates/lidop_config.yaml"
     destination = "/vagrant/.lidop_config.yaml"
   }
 
   provisioner "file" {
-    source      = "./../lidop_config.yaml"
+    source      = "./lidop_config.yaml"
     destination = "/vagrant/.lidop_config.yaml"
     on_failure  = "continue"
   }
 
   provisioner "file" {
-    source      = "./../install"
+    source      = "./install"
     destination = "/vagrant/install/"
   }
 
   provisioner "file" {
-    source      = "./../configs"
+    source      = "./configs"
     destination = "/vagrant/configs/"
   }
 
   provisioner "file" {
-    source      = "./../plugins"
+    source      = "./plugins"
     destination = "/vagrant/plugins/"
   }
 
   provisioner "file" {
-    source      = "./../tests"
+    source      = "./tests"
     destination = "/vagrant/tests/"
   }
 
   provisioner "file" {
-    source      = "./../extensions"
+    source      = "./extensions"
     destination = "/vagrant/extensions/"
   }
 
   provisioner "remote-exec" {
     scripts = [
-      "./../scripts/ansible.sh",
+      "./scripts/ansible.sh",
     ]
   }
 

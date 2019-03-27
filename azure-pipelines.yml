@@ -22,3 +22,7 @@ variables:
 
 - script: terraform apply -auto-approve -var access_key=$(access_key) -var secret_key=$(secret_key)  -var password=$(password)  ./terraform
   displayName: 'Terraform plan'
+
+- script: terraform destroy -auto-approve  ./terraform
+  displayName: 'Terraform destroy'
+  condition: always()
