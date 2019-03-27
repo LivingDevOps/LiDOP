@@ -1,5 +1,5 @@
 resource "aws_key_pair" "lidop_key" {
-  key_name   = "lidop_key"
+  key_name   = "${var.lidop_name}_lidop_key"
   public_key = "${var.public_key}"
 }
 
@@ -11,7 +11,7 @@ resource "aws_instance" "master" {
 
   instance_type          = "t2.xlarge"
   ami                    = "${lookup(var.amis, var.region)}"
-  key_name               = "lidop_key"
+  key_name               = "${var.lidop_name}_lidop_key"
   vpc_security_group_ids = ["${aws_security_group.aws_lidop.id}"]
   subnet_id              = "${aws_subnet.default1.id}"
   source_dest_check      = false
@@ -92,7 +92,7 @@ resource "aws_instance" "master" {
   }
 
   tags = {
-    Name = "lidop-master"
+    Name = "${var.lidop_name}_lidop-master"
   }
 }
 

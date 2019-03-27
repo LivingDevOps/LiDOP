@@ -1,3 +1,4 @@
+variable "lidop_name" {}
 variable "user_name" {}
 variable "password" {}
 variable "workers" { }

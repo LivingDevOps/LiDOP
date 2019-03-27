@@ -36,6 +36,7 @@ data "local_file" "public_key" {
 
 module "aws_lidop" {
   source      = "./modules/aws"
+  lidop_name  = "${var.lidop_name}"
   user_name   = "${var.user_name}"
   password    = "${var.password}"
   workers     = "${var.workers}"

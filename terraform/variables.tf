@@ -1,3 +1,7 @@
+variable "lidop_name" {
+  default = "lidop_demo"
+}
+
 variable "user_name" {
   default = "lidop"
 }
