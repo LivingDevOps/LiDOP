@@ -27,9 +27,4 @@
       systemctl restart nfs-kernel-server
     when: node == "master"
 
-  - name: "mount /var/lidop from {{ swarm_manager_ip }}"
-    shell: >
-      mount {{ swarm_manager_ip }}:/var/lidop /var/lidop
-    when: node == "worker"
-
   tags: mount

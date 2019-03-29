@@ -14,3 +14,4 @@ backup.tgz
 *.tfstate
 *.tfstate.*
 *.tfvars
+**/*temp_key

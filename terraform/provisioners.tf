@@ -1,26 +1,18 @@
-resource "aws_key_pair" "lidop_key" {
-  key_name   = "${var.lidop_name}_lidop_key"
-  public_key = "${var.public_key}"
-}
+resource "null_resource" "master-bootstrap" {
 
-resource "aws_instance" "master" {
+  count = "1"
   connection {
+    host = "${element(concat(module.aws.master_public_ip, module.azure.master_public_ip), count.index)}"
     user        = "ubuntu"
-    private_key = "${var.private_key}"
+    private_key = "${module.private_key.private_key}"
   }
 
-  instance_type          = "t2.xlarge"
-  ami                    = "${lookup(var.amis, var.region)}"
-  key_name               = "${var.lidop_name}_lidop_key"
-  vpc_security_group_ids = ["${aws_security_group.aws_lidop.id}"]
-  subnet_id              = "${aws_subnet.default1.id}"
-  source_dest_check      = false
-  private_ip             = "172.10.10.10"
-
-  ebs_block_device {
-    device_name = "/dev/sda1"
-    volume_size = 50
-    volume_type = "gp2"
+  provisioner "remote-exec" {
+    inline = [
+      "echo #############################################################################",
+      "echo from master null ${element(concat(module.aws.master_public_ip, module.azure.master_public_ip), count.index)}",
+      "echo #############################################################################"
+    ]
   }
 
   provisioner "remote-exec" {
@@ -87,37 +79,29 @@ resource "aws_instance" "master" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo docker run --rm -v /vagrant/tests/:/serverspec -v /var/lidop/www/tests/:/var/lidop/www/tests/ -e USERNAME=${var.user_name} -e PASSWORD=${var.password} -e HOST=${aws_instance.master.private_ip} -e HOSTNAME=${aws_instance.master.private_ip} -e TEST_HOST=master registry.service.lidop.local:5000/lidop/serverspec:latest test",
+      "sudo docker run --rm -v /vagrant/tests/:/serverspec -v /var/lidop/www/tests/:/var/lidop/www/tests/ -e USERNAME=${var.user_name} -e PASSWORD=${var.password} -e HOST=${element(concat(module.aws.master_private_ip, module.azure.master_private_ip), count.index)} -e HOSTNAME=${element(concat(module.aws.master_private_ip, module.azure.master_private_ip), count.index)} -e TEST_HOST=master registry.service.lidop.local:5000/lidop/serverspec:latest test",
     ]
   }
 
-  tags = {
-    Name = "${var.lidop_name}_lidop-master"
-  }
 }
 
 
-resource "aws_instance" "worker" {
-  depends_on = ["aws_instance.master"]
+resource "null_resource" "worker-bootstrap" {
 
   count = "${var.workers}"
-
+  depends_on = ["null_resource.master-bootstrap"]
   connection {
+    host = "${element(concat(module.aws.worker_public_ips, module.azure.worker_public_ips), count.index)}"
     user        = "ubuntu"
-    private_key = "${var.private_key}"
+    private_key = "${module.private_key.private_key}"
   }
 
-  instance_type          = "t2.xlarge"
-  ami                    = "${lookup(var.amis, var.region)}"
-  key_name               = "lidop_key"
-  vpc_security_group_ids = ["${aws_security_group.aws_lidop.id}"]
-  subnet_id              = "${aws_subnet.default1.id}"
-  source_dest_check      = false
-
-  ebs_block_device {
-    device_name = "/dev/sda1"
-    volume_size = 50
-    volume_type = "gp2"
+  provisioner "remote-exec" {
+    inline = [
+      "echo #############################################################################",
+      "echo from worker null ${element(concat(module.aws.worker_public_ips, module.azure.worker_public_ips), count.index)}",
+      "echo #############################################################################"
+    ]
   }
 
   provisioner "remote-exec" {
@@ -178,18 +162,15 @@ resource "aws_instance" "worker" {
       "root_password=${var.password}",
       "root_user=${var.user_name}",
       "node=worker",
-      "consul_ip=${aws_instance.master.private_ip}",
+      "consul_ip=${element(concat(module.aws.master_private_ip, module.azure.master_private_ip), count.index)}",
       "install_mode=online'",
     ]
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo docker run --rm -v /vagrant/tests/:/serverspec -v /var/lidop/www/tests/:/var/lidop/www/tests/ -e USERNAME=${var.user_name} -e PASSWORD=${var.password} -e HOST=${aws_instance.master.private_ip} -e HOSTNAME=${aws_instance.master.private_ip} -e TEST_HOST=master registry.service.lidop.local:5000/lidop/serverspec:latest test",
+      "sudo docker run --rm -v /vagrant/tests/:/serverspec -v /var/lidop/www/tests/:/var/lidop/www/tests/ -e USERNAME=${var.user_name} -e PASSWORD=${var.password} -e HOST=${element(concat(module.aws.worker_private_ips, module.azure.worker_private_ips), count.index)} -e HOSTNAME=${element(concat(module.aws.worker_private_ips, module.azure.worker_private_ips), count.index)} -e TEST_HOST=worker registry.service.lidop.local:5000/lidop/serverspec:latest test",
     ]
   }
 
-  tags = {
-    Name = "lidop-worker"
-  }
 }

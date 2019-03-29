@@ -62,6 +62,16 @@
   - debug:
       msg: "gitbucket_base_url: {{ gitbucket_base_url }}"  
 
+  - debug:
+      msg: "consul_ip: {{ consul_ip }}"  
+    when: node == "worker"
+
+  - name: install python-consul
+    shell: pip install python-consul
+    when: 
+      - install_mode == "online"
+      - node == "worker"
+
   - name: Read swarm_manager_ip
     consul_kv:
         key: "config/swarm_manager_ip"

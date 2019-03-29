@@ -1,3 +1,7 @@
+########################################################
+# ONLY COPY PASTE FROM AWS. AZURE IS NOT IMPLEMENTET
+########################################################
+
 variable "lidop_name" {}
 variable "user_name" {}
 variable "password" {}
@@ -15,5 +19,9 @@ variable "amis" {
   }
 }
 
-variable public_key {}
+// variable "public_key" {}
 variable "private_key" {}
+
+variable "enabled" {
+  default = 0
+}

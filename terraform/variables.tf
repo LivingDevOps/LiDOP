@@ -7,6 +7,15 @@ variable "user_name" {
 }
 
 variable "password" {}
+
+variable "aws" {
+  default = 0
+}
+
+variable "azure" {
+  default = 0
+}
+
 variable "workers" {
   default = 0
 }

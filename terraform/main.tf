@@ -1,60 +1,47 @@
-terraform {
-  backend "s3" {
-    bucket = "lidopterraform"
-    key    = "commonstate"
-    region = "eu-central-1"
-  }
+// terraform {
+//   backend "s3" {
+//     bucket = "lidopterraform"
+//     key    = "commonstate"
+//     region = "eu-central-1"
+//   }
+// }
+
+module "private_key" {
+  source = "./modules/private_key"
 }
 
-resource "null_resource" "create_temp_ssh_key" {
-  provisioner "local-exec" {
-    command    = "del ${path.module}\\.temp_key"
-    on_failure = "continue"
-  }
-
-  provisioner "local-exec" {
-    command    = "del ${path.module}\\.temp_key.pub"
-    on_failure = "continue"
-  }
-
-  provisioner "local-exec" {
-    command    = "rm ${path.module}/.temp_key"
-    on_failure = "continue"
-  }
-
-  provisioner "local-exec" {
-    command    = "rm ${path.module}/.temp_key.pub"
-    on_failure = "continue"
-  }
-
-  provisioner "local-exec" {
-    command = "ssh-keygen -f ${path.module}/.temp_key -t rsa -N ''"
-  }
-}
-
-data "local_file" "private_key" {
-  filename   = "${path.module}/.temp_key"
-  depends_on = ["null_resource.create_temp_ssh_key"]
-}
-
-data "local_file" "public_key" {
-  filename   = "${path.module}/.temp_key.pub"
-  depends_on = ["null_resource.create_temp_ssh_key"]
-}
-
-module "aws_lidop" {
-  source      = "./modules/lidop"
+module "aws" {
+  source      = "./modules/aws"
+  enabled = "${var.aws}"
   lidop_name  = "${var.lidop_name}"
   user_name   = "${var.user_name}"
   password    = "${var.password}"
   workers     = "${var.workers}"
   access_key  = "${var.access_key}"
   secret_key  = "${var.secret_key}"
-  public_key  = "${data.local_file.public_key.content}"
-  private_key = "${data.local_file.private_key.content}"
+  // public_key  = "${module.private_key.public_key}"
+  private_key = "${module.private_key.private_key}"
   region      = "${var.region}"
 }
 
-output "public_ip" {
-  value = "${module.aws_lidop.public_ip}"
+module "azure" {
+  source      = "./modules/azure"
+  enabled = "${var.azure}"
+  lidop_name  = "${var.lidop_name}"
+  user_name   = "${var.user_name}"
+  password    = "${var.password}"
+  workers     = "${var.workers}"
+  access_key  = "${var.access_key}"
+  secret_key  = "${var.secret_key}"
+  // public_key  = "${module.private_key.public_key}"
+  private_key = "${module.private_key.private_key}"
+  region      = "${var.region}"
+}
+
+output "worker_public_ips" {
+  value = "${concat(module.aws.worker_public_ips, module.azure.worker_public_ips)}"
+}
+
+output "master_public_ip" {
+  value = "${concat(module.aws.master_public_ip, module.azure.master_public_ip)}"
 }
