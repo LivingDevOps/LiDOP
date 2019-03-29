@@ -34,7 +34,7 @@ resource "aws_instance" "master" {
 
 
   tags = {
-    Name = "idop-master"
+    Name = "${var.name}-lidop-master"
   }
 }
 
@@ -70,6 +70,6 @@ resource "aws_instance" "worker" {
 
 
   tags = {
-    Name = "idop-worker-${count.index}"
+    Name = "${var.name}-lidop-worker-${count.index}"
   }
 }
