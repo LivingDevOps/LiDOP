@@ -1,6 +1,15 @@
 # LiDOP
 A easy to use DevOps playground. Can be started local or in AWS.
 
+## Build Status
+
+| Build                                     | Status               
+| ----------------------------------------- | -------------------
+| LiDOP                                     | [![Build Status](https://dev.azure.com/llaaccssaapp/LiDOP/_apis/build/status/LivingDevOps.LiDOP?branchName=master)](https://dev.azure.com/llaaccssaapp/LiDOP/_build/latest?definitionId=1&branchName=master)               
+| LiDOP Jenkins Docker Image                | [![Build Status](https://dev.azure.com/llaaccssaapp/LiDOP/_apis/build/status/LivingDevOps.LiDOP.jenkins-slave-docker?branchName=master)](https://dev.azure.com/llaaccssaapp/LiDOP/_build/latest?definitionId=5&branchName=master)
+| LiDOP Jenkins Slave Docker Image          | [![Build Status](https://dev.azure.com/llaaccssaapp/LiDOP/_apis/build/status/LivingDevOps.LiDOP.jenkins?branchName=master)](https://dev.azure.com/llaaccssaapp/LiDOP/_build/latest?definitionId=4&branchName=master)
+
+
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes
 [Installation](./install/Readme.md)
