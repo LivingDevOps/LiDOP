@@ -1,85 +1,109 @@
-########################################################
-# ONLY COPY PASTE FROM AWS. AZURE IS NOT IMPLEMENTET
-########################################################
-
-# Create a VPC to launch our instances into
-resource "aws_vpc" "aws_lidop" {
-  count      = "${var.enabled}"
-  cidr_block = "172.10.0.0/16"
+resource "azurerm_virtual_network" "main" {
+  count               = "${var.enabled}"
+  name                = "${var.lidop_name}-network"
+  address_space       = ["172.10.0.0/16"]
+  location            = "${azurerm_resource_group.main.location}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
 }
 
-# Create an internet gateway to give our subnet access to the outside world
-resource "aws_internet_gateway" "default" {
-  count  = "${var.enabled}"
-  vpc_id = "${aws_vpc.aws_lidop.id}"
+resource "azurerm_subnet" "internal" {
+  count                = "${var.enabled}"
+  name                 = "${var.lidop_name}-internal"
+  resource_group_name  = "${azurerm_resource_group.main.name}"
+  virtual_network_name = "${azurerm_virtual_network.main.name}"
+  address_prefix       = "172.10.10.0/24"
 }
 
-# Grant the VPC internet access on its main route table
-resource "aws_route" "internet_access" {
-  count                  = "${var.enabled}"
-  route_table_id         = "${aws_vpc.aws_lidop.main_route_table_id}"
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.default.id}"
-}
+resource "azurerm_network_interface" "master" {
+  count               = "${var.enabled}"
+  name                = "${var.lidop_name}-master-nic"
+  location            = "${azurerm_resource_group.main.location}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  network_security_group_id = "${azurerm_network_security_group.nsg.id}"  
 
-# Create a subnet to launch our instances into
-resource "aws_subnet" "default1" {
-  count                   = "${var.enabled}"
-  vpc_id                  = "${aws_vpc.aws_lidop.id}"
-  cidr_block              = "172.10.10.0/24"
-  map_public_ip_on_launch = true
-}
-
-// # Create a subnet to launch our instances into
-// resource "aws_subnet" "default2" {
-//   vpc_id                  = "${aws_vpc.aws_lidop.id}"
-//   cidr_block              = "172.10.21.0/24"
-//   map_public_ip_on_launch = true
-// }
-
-# Our default security group to access
-# the instances over SSH and HTTP
-resource "aws_security_group" "aws_lidop" {
-  count       = "${var.enabled}"
-  name        = "AWS-Demo"
-  description = "AWS-Demo"
-  vpc_id      = "${aws_vpc.aws_lidop.id}"
-
-  # SSH access from anywhere
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # HTTPS access from the VPC
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port = 0
-    to_port   = 65535
-    protocol  = "tcp"
-    self      = true
-  }
-
-  ingress {
-    from_port = 8
-    to_port   = 0
-    protocol  = "icmp"
-    self      = true
-  }
-
-  # outbound internet access
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  ip_configuration {
+    name                          = "testconfiguration1"
+    subnet_id                     = "${azurerm_subnet.internal.id}"
+    private_ip_address_allocation = "Static"
+    private_ip_address            = "172.10.10.10"
+    public_ip_address_id          = "${azurerm_public_ip.master.id}"
   }
 }
+
+resource "azurerm_public_ip" "master" {
+  count               = "${var.enabled}"
+  name                    = "${var.lidop_name}-master-pip"
+  location                = "${azurerm_resource_group.main.location}"
+  resource_group_name     = "${azurerm_resource_group.main.name}"
+  allocation_method       = "Static"
+  idle_timeout_in_minutes = 30
+
+  tags = {
+    environment = "test"
+  }
+}
+
+resource "azurerm_network_interface" "worker" {
+  count               = "${var.enabled * var.workers}"
+  name                = "${var.lidop_name}-worker-nic-${count.index}"
+  location            = "${azurerm_resource_group.main.location}"
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  network_security_group_id = "${azurerm_network_security_group.nsg.id}"  
+  
+  ip_configuration {
+    name                          = "testconfiguration1"
+    subnet_id                     = "${azurerm_subnet.internal.id}"
+    private_ip_address_allocation = "Static"
+    private_ip_address            = "172.10.10.1${count.index}"
+    public_ip_address_id          = "${azurerm_public_ip.worker.id}"
+  }
+}
+
+resource "azurerm_public_ip" "worker" {
+  // count                 = "${var.enabled * var.workers}"
+  count                 = "${var.workers == "0" ? 1 : var.enabled * var.workers}" // hack must be minimum one for outputs
+  name                    = "${var.lidop_name}-pip-worker"
+  location                = "${azurerm_resource_group.main.location}"
+  resource_group_name     = "${azurerm_resource_group.main.name}"
+  allocation_method       = "Static"
+  idle_timeout_in_minutes = 30
+
+  tags = {
+    environment = "test"
+  }
+}
+
+resource "azurerm_network_security_group" "nsg" {
+  count               = "${var.enabled}"
+  name                = "${var.lidop_name}-security-group"  
+  location            = "${var.azure_region}"
+  resource_group_name = "${azurerm_resource_group.main.name}"  
+  
+  security_rule {
+    name                       = "HTTPS"  
+    priority                   = 1001
+    direction                  = "Inbound"  
+    access                     = "Allow"  
+    protocol                   = "Tcp"  
+    source_port_range          = "*"  
+    destination_port_range     = "443"  
+    source_address_prefix      = "*"  
+    destination_address_prefix = "*"  
+  }  
+
+  security_rule {
+    name                       = "ssh"  
+    priority                   = 1000  
+    direction                  = "Inbound"  
+    access                     = "Allow"  
+    protocol                   = "Tcp"  
+    source_port_range          = "*"  
+    destination_port_range     = "22"  
+    source_address_prefix      = "*"  
+    destination_address_prefix = "*"  
+  }  
+
+  tags {  
+    environment = "${var.lidop_name}"  
+  }  
+}  

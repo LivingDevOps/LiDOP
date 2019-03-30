@@ -1,27 +1,14 @@
-########################################################
-# ONLY COPY PASTE FROM AWS. AZURE IS NOT IMPLEMENTET
-########################################################
-
 variable "lidop_name" {}
-variable "user_name" {}
-variable "password" {}
-variable "workers" {}
-variable "access_key" {}
-variable "secret_key" {}
-variable "region" {}
-
-variable "amis" {
-  type = "map"
-
-  default = {
-    "eu-central-1" = "ami-0c6e204396d55eeec"
-    "us-west-2"    = "ami-0000000"
-  }
-}
-
-// variable "public_key" {}
-variable "private_key" {}
+variable "subscription_id" {}
+variable "client_id" {}
+variable "client_secret" {}
+variable "tenant_id" {}
+variable "azure_region" {}
 
 variable "enabled" {
+  default = 0
+}
+
+variable "workers" {
   default = 0
 }

@@ -6,13 +6,13 @@ resource "aws_key_pair" "lidop_key" {
 
 resource "aws_instance" "master" {
   connection {
-    user        = "${lookup(var.ssh_users, var.region)}"
+    user        = "${lookup(var.ssh_users, var.aws_region)}"
     private_key = "${var.private_key}"
   }
 
   count                  = "${var.enabled}"
   instance_type          = "${var.instance_type_master}"
-  ami                    = "${lookup(var.amis, var.region)}"
+  ami                    = "${lookup(var.amis, var.aws_region)}"
   key_name               = "${aws_key_pair.lidop_key.key_name}"
   vpc_security_group_ids = ["${aws_security_group.aws_lidop.id}"]
   subnet_id              = "${aws_subnet.default1.id}"
@@ -30,7 +30,7 @@ resource "aws_instance" "master" {
 
 resource "aws_instance" "worker" {
   connection {
-    user        = "${lookup(var.ssh_users, var.region)}"
+    user        = "${lookup(var.ssh_users, var.aws_region)}"
     private_key = "${var.private_key}"
   }
 
@@ -38,7 +38,7 @@ resource "aws_instance" "worker" {
 
   count                  = "${var.enabled * var.workers}"
   instance_type          = "${var.instance_type_worker}"
-  ami                    = "${lookup(var.amis, var.region)}"
+  ami                    = "${lookup(var.amis, var.aws_region)}"
   key_name               = "${aws_key_pair.lidop_key.key_name}"
   vpc_security_group_ids = ["${aws_security_group.aws_lidop.id}"]
   subnet_id              = "${aws_subnet.default1.id}"
