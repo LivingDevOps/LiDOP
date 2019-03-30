@@ -1,10 +1,10 @@
-// terraform {
-//   backend "s3" {
-//     bucket = "lidopterraform"
-//     key    = "commonstate"
-//     aws_region = "eu-central-1"
-//   }
-// }
+terraform {
+  backend "s3" {
+    bucket = "lidopterraform"
+    key    = "commonstate"
+    aws_region = "eu-central-1"
+  }
+}
 
 module "private_key" {
   source = "./modules/private_key"
