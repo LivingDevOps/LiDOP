@@ -6,7 +6,6 @@ These instructions will get you a copy of the project up and running on your loc
 [Installation](./install/Readme.md)
 
 ## High Level Architecture
-
 | Layer                     | Tools               | Description
 | ------------------------- | ------------------- | ----------------------
 | `Plugins`                 | Code                | Example code and pipelines
@@ -32,7 +31,6 @@ vagrant up
 ```
 
 # Infrastructure general
-
 The default and testet infrastrucutre OS, is a Ubuntu 16.10.
 The following changes will be executed during the ansible execution (be care full, if you run the ansible-playbook on a existing machine)
 
@@ -50,7 +48,6 @@ The following software will be installed during the ansible execution:
 
 ## Network
 The DNS settings will be changed. There is a Consul service running which will be the default DNS resolver for the host.
-
 
 # Provisioning
 The installation is done with Ansible (99% of it). There is one script, which will install ansible on the host machine (yes we execute ansible direct on the host).
