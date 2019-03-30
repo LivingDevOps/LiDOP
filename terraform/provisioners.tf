@@ -1,18 +1,10 @@
 resource "null_resource" "master-bootstrap" {
-
   count = "1"
+
   connection {
-    host = "${element(concat(module.aws.master_public_ip, module.azure.master_public_ip), count.index)}"
+    host        = "${element(concat(module.aws.master_public_ip, module.azure.master_public_ip), count.index)}"
     user        = "ubuntu"
     private_key = "${module.private_key.private_key}"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "echo #############################################################################",
-      "echo from master null ${element(concat(module.aws.master_public_ip, module.azure.master_public_ip), count.index)}",
-      "echo #############################################################################"
-    ]
   }
 
   provisioner "remote-exec" {
@@ -82,26 +74,16 @@ resource "null_resource" "master-bootstrap" {
       "sudo docker run --rm -v /vagrant/tests/:/serverspec -v /var/lidop/www/tests/:/var/lidop/www/tests/ -e USERNAME=${var.user_name} -e PASSWORD=${var.password} -e HOST=${element(concat(module.aws.master_private_ip, module.azure.master_private_ip), count.index)} -e HOSTNAME=${element(concat(module.aws.master_private_ip, module.azure.master_private_ip), count.index)} -e TEST_HOST=master registry.service.lidop.local:5000/lidop/serverspec:latest test",
     ]
   }
-
 }
 
-
 resource "null_resource" "worker-bootstrap" {
-
-  count = "${var.workers}"
+  count      = "${var.workers}"
   depends_on = ["null_resource.master-bootstrap"]
+
   connection {
-    host = "${element(concat(module.aws.worker_public_ips, module.azure.worker_public_ips), count.index)}"
+    host        = "${element(concat(module.aws.worker_public_ips, module.azure.worker_public_ips), count.index)}"
     user        = "ubuntu"
     private_key = "${module.private_key.private_key}"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "echo #############################################################################",
-      "echo from worker null ${element(concat(module.aws.worker_public_ips, module.azure.worker_public_ips), count.index)}",
-      "echo #############################################################################"
-    ]
   }
 
   provisioner "remote-exec" {
@@ -172,5 +154,4 @@ resource "null_resource" "worker-bootstrap" {
       "sudo docker run --rm -v /vagrant/tests/:/serverspec -v /var/lidop/www/tests/:/var/lidop/www/tests/ -e USERNAME=${var.user_name} -e PASSWORD=${var.password} -e HOST=${element(concat(module.aws.worker_private_ips, module.azure.worker_private_ips), count.index)} -e HOSTNAME=${element(concat(module.aws.worker_private_ips, module.azure.worker_private_ips), count.index)} -e TEST_HOST=worker registry.service.lidop.local:5000/lidop/serverspec:latest test",
     ]
   }
-
 }

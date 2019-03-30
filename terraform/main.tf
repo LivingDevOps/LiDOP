@@ -11,29 +11,29 @@ module "private_key" {
 }
 
 module "aws" {
-  source      = "./modules/aws"
-  enabled = "${var.aws}"
-  lidop_name  = "${var.lidop_name}"
-  user_name   = "${var.user_name}"
-  password    = "${var.password}"
-  workers     = "${var.workers}"
-  access_key  = "${var.access_key}"
-  secret_key  = "${var.secret_key}"
-  // public_key  = "${module.private_key.public_key}"
+  source     = "./modules/aws"
+  enabled    = "${var.cloud == "aws" ? 1 : 0}"
+  lidop_name = "${var.lidop_name}"
+  user_name  = "${var.user_name}"
+  password   = "${var.password}"
+  workers    = "${var.workers}"
+  access_key = "${var.access_key}"
+  secret_key = "${var.secret_key}"
+
   private_key = "${module.private_key.private_key}"
   region      = "${var.region}"
 }
 
 module "azure" {
-  source      = "./modules/azure"
-  enabled = "${var.azure}"
-  lidop_name  = "${var.lidop_name}"
-  user_name   = "${var.user_name}"
-  password    = "${var.password}"
-  workers     = "${var.workers}"
-  access_key  = "${var.access_key}"
-  secret_key  = "${var.secret_key}"
-  // public_key  = "${module.private_key.public_key}"
+  source     = "./modules/azure"
+  enabled    = "${var.cloud == "azure" ? 1 : 0}"
+  lidop_name = "${var.lidop_name}"
+  user_name  = "${var.user_name}"
+  password   = "${var.password}"
+  workers    = "${var.workers}"
+  access_key = "${var.access_key}"
+  secret_key = "${var.secret_key}"
+
   private_key = "${module.private_key.private_key}"
   region      = "${var.region}"
 }

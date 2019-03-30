@@ -1,22 +1,44 @@
 variable "lidop_name" {}
+
 variable "user_name" {}
+
 variable "password" {}
-variable "workers" { }
+
+variable "workers" {}
+
 variable "access_key" {}
+
 variable "secret_key" {}
+
 variable "region" {}
+
+variable "private_key" {}
+
+variable "instance_type_master" {
+  default = "t2.xlarge"
+}
+
+variable "instance_type_worker" {
+  default = "t2.large"
+}
 
 variable "amis" {
   type = "map"
 
   default = {
     "eu-central-1" = "ami-0c6e204396d55eeec"
-    "us-west-2"    = "ami-0000000"
+    "eu-other-1"   = "ami-00000"
   }
 }
 
-// variable "public_key" {}
-variable "private_key" {}
+variable "ssh_users" {
+  type = "map"
+
+  default = {
+    "eu-central-1" = "ubuntu"
+    "eu-other-1"   = "ubuntu"
+  }
+}
 
 variable "enabled" {
   default = 0

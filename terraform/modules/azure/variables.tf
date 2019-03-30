@@ -5,7 +5,7 @@
 variable "lidop_name" {}
 variable "user_name" {}
 variable "password" {}
-variable "workers" { }
+variable "workers" {}
 variable "access_key" {}
 variable "secret_key" {}
 variable "region" {}
