@@ -10,7 +10,7 @@ resource "null_resource" "create_temp_ssh_key" {
   }
 
   provisioner "local-exec" {
-    command = "ssh-keygen -f ${path.root}/temp_key -t rsa -N ''"
+    command = "ssh-keygen -f ${path.root}/../temp_key -t rsa -N ''"
   }
 }
 

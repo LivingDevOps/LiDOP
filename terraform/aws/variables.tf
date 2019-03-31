@@ -1,3 +1,10 @@
+variable "user_name" {
+  default = "lidop"
+}
+
+variable "password" {}
+
+
 variable "lidop_name" {}
 
 variable "workers" {}
@@ -6,9 +13,9 @@ variable "access_key" {}
 
 variable "secret_key" {}
 
-variable "aws_region" {}
-
-variable "private_key" {}
+variable "aws_region" {
+  default = "eu-central-1"
+}
 
 variable "instance_type_master" {
   default = "t2.xlarge"
@@ -37,5 +44,5 @@ variable "ssh_users" {
 }
 
 variable "enabled" {
-  default = 0
+  default = 1
 }

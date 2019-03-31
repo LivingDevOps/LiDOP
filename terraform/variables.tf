@@ -1,50 +1,50 @@
-variable "lidop_name" {
-  default = "lidop_demo"
-}
+// variable "lidop_name" {
+//   default = "lidop_demo"
+// }
 
-variable "user_name" {
-  default = "lidop"
-}
+// variable "user_name" {
+//   default = "lidop"
+// }
 
-variable "password" {}
+// variable "password" {}
 
-variable "cloud" {}
+// variable "cloud" {}
 
-variable "workers" {
-  default = 0
-}
+// variable "workers" {
+//   default = 0
+// }
 
-# AWS
-variable "aws_region" {
-  default = "eu-central-1"
-}
+// # AWS
+// variable "aws_region" {
+//   default = "eu-central-1"
+// }
 
-variable "access_key" {
-  default = ""
-}
+// variable "access_key" {
+//   default = ""
+// }
 
-variable "secret_key" {
-    default = ""
-}
+// variable "secret_key" {
+//     default = ""
+// }
 
 
-# Azure
-variable "azure_region" {
-  default = "West Europe"
-}
+// # Azure
+// variable "azure_region" {
+//   default = "West Europe"
+// }
 
-variable "subscription_id" {
-    default = ""
-}
+// variable "subscription_id" {
+//     default = ""
+// }
 
-variable "client_id" {
-    default = ""
-}
+// variable "client_id" {
+//     default = ""
+// }
 
-variable "client_secret" {
-  default = ""
-}
+// variable "client_secret" {
+//   default = ""
+// }
 
-variable "tenant_id" {
-    default = ""
-}
+// variable "tenant_id" {
+//     default = ""
+// }
