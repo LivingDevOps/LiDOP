@@ -7,7 +7,9 @@ variable "password" {}
 
 variable "lidop_name" {}
 
-variable "workers" {}
+variable "workers" {
+  default = 0
+}
 
 variable "access_key" {}
 
