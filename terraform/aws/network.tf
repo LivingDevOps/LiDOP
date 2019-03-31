@@ -24,8 +24,8 @@ resource "aws_subnet" "default1" {
 
 resource "aws_security_group" "aws_lidop" {
   count       = "${var.enabled}"
-  name        = "AWS-Demo"
-  description = "AWS-Demo"
+  name        = "${var.lidop_name}-LiDOP"
+  description = "${var.lidop_name}-LiDOP"
   vpc_id      = "${aws_vpc.aws_lidop.id}"
 
   ingress {
