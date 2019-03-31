@@ -31,7 +31,7 @@ resource "azurerm_virtual_machine" "master" {
     disable_password_authentication = true
      ssh_keys = [{
         path     = "/home/ubuntu/.ssh/authorized_keys"
-        key_data = "${file("${path.root}/../../temp_key.pub")}"
+        key_data = "${file("${path.root}/../temp_key.pub")}"
       }]
   }
 
@@ -74,7 +74,7 @@ resource "azurerm_virtual_machine" "worker" {
     disable_password_authentication = true
      ssh_keys = [{
         path     = "/home/ubuntu/.ssh/authorized_keys"
-        key_data = "${file("${path.root}/../../temp_key.pub")}"
+        key_data = "${file("${path.root}/../temp_key.pub")}"
       }]
   }
 

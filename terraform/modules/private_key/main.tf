@@ -5,7 +5,7 @@ resource "null_resource" "create_temp_ssh_key" {
   }
 
   provisioner "local-exec" {
-    command    = "rm ${path.root}/temp_key"
+    command    = "rm ${path.root}/../temp_key"
     on_failure = "continue"
   }
 
@@ -15,6 +15,6 @@ resource "null_resource" "create_temp_ssh_key" {
 }
 
 data "local_file" "private_key" {
-  filename   = "${path.root}/temp_key"
+  filename   = "${path.root}/../temp_key"
   depends_on = ["null_resource.create_temp_ssh_key"]
 }
