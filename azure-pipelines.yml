@@ -24,6 +24,6 @@ steps:
 - script: terraform apply -auto-approve -var lidop_name=ci-$(Build.BuildNumber) -var cloud=aws -var workers=1 -var access_key=$(access_key) -var secret_key=$(secret_key) -var password=$(password) ./terraform/aws
   displayName: 'Terraform apply'
 
-- script: terraform destroy -auto-approve -var access_key=$(access_key) -var secret_key=$(secret_key)  -var password=$(password) ./terraform/aws
+- script: terraform destroy -auto-approve -var lidop_name=ci-$(Build.BuildNumber) -var access_key=$(access_key) -var secret_key=$(secret_key)  -var password=$(password) ./terraform/aws
   displayName: 'Terraform destroy'
   condition: always()
