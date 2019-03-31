@@ -17,13 +17,13 @@ module "private_key" {
 }
 
 module "provisioner" {
-  source = "./../modules/provisioner"
-  user_name    = "${var.user_name}"
-  password = "${var.password}"
-  workers = "${var.workers}"
-  private_key = "${module.private_key.private_key}"
-  worker_public_ips = "${aws_instance.worker.*.public_ip}"
-  master_public_ip = "${aws_instance.master.*.public_ip}"
+  source             = "./../modules/provisioner"
+  user_name          = "${var.user_name}"
+  password           = "${var.password}"
+  workers            = "${var.workers}"
+  private_key        = "${module.private_key.private_key}"
+  worker_public_ips  = "${aws_instance.worker.*.public_ip}"
+  master_public_ip   = "${aws_instance.master.*.public_ip}"
   worker_private_ips = "${aws_instance.worker.*.private_ip}"
-  master_private_ip = "${aws_instance.master.*.private_ip}"
+  master_private_ip  = "${aws_instance.master.*.private_ip}"
 }

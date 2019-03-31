@@ -15,11 +15,11 @@ resource "azurerm_subnet" "internal" {
 }
 
 resource "azurerm_network_interface" "master" {
-  count               = "${var.enabled}"
-  name                = "${var.lidop_name}-master-nic"
-  location            = "${azurerm_resource_group.main.location}"
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  network_security_group_id = "${azurerm_network_security_group.nsg.id}"  
+  count                     = "${var.enabled}"
+  name                      = "${var.lidop_name}-master-nic"
+  location                  = "${azurerm_resource_group.main.location}"
+  resource_group_name       = "${azurerm_resource_group.main.name}"
+  network_security_group_id = "${azurerm_network_security_group.nsg.id}"
 
   ip_configuration {
     name                          = "master_ip_config"
@@ -31,7 +31,7 @@ resource "azurerm_network_interface" "master" {
 }
 
 resource "azurerm_public_ip" "master" {
-  count               = "${var.enabled}"
+  count                   = "${var.enabled}"
   name                    = "${var.lidop_name}-master-pip"
   location                = "${azurerm_resource_group.main.location}"
   resource_group_name     = "${azurerm_resource_group.main.name}"
@@ -44,12 +44,12 @@ resource "azurerm_public_ip" "master" {
 }
 
 resource "azurerm_network_interface" "worker" {
-  count               = "${var.enabled * var.workers}"
-  name                = "${var.lidop_name}-worker-nic-${count.index}"
-  location            = "${azurerm_resource_group.main.location}"
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  network_security_group_id = "${azurerm_network_security_group.nsg.id}"  
-  
+  count                     = "${var.enabled * var.workers}"
+  name                      = "${var.lidop_name}-worker-nic-${count.index}"
+  location                  = "${azurerm_resource_group.main.location}"
+  resource_group_name       = "${azurerm_resource_group.main.name}"
+  network_security_group_id = "${azurerm_network_security_group.nsg.id}"
+
   ip_configuration {
     name                          = "worker_ip_config-${count.index}"
     subnet_id                     = "${azurerm_subnet.internal.id}"
@@ -74,35 +74,35 @@ resource "azurerm_public_ip" "worker" {
 
 resource "azurerm_network_security_group" "nsg" {
   count               = "${var.enabled}"
-  name                = "${var.lidop_name}-security-group"  
+  name                = "${var.lidop_name}-security-group"
   location            = "${var.azure_region}"
-  resource_group_name = "${azurerm_resource_group.main.name}"  
-  
+  resource_group_name = "${azurerm_resource_group.main.name}"
+
   security_rule {
-    name                       = "HTTPS"  
+    name                       = "HTTPS"
     priority                   = 1001
-    direction                  = "Inbound"  
-    access                     = "Allow"  
-    protocol                   = "Tcp"  
-    source_port_range          = "*"  
-    destination_port_range     = "443"  
-    source_address_prefix      = "*"  
-    destination_address_prefix = "*"  
-  }  
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 
   security_rule {
-    name                       = "ssh"  
-    priority                   = 1000  
-    direction                  = "Inbound"  
-    access                     = "Allow"  
-    protocol                   = "Tcp"  
-    source_port_range          = "*"  
-    destination_port_range     = "22"  
-    source_address_prefix      = "*"  
-    destination_address_prefix = "*"  
-  }  
+    name                       = "ssh"
+    priority                   = 1000
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 
-  tags {  
-    environment = "${var.lidop_name}"  
-  }  
-}  
+  tags {
+    environment = "${var.lidop_name}"
+  }
+}

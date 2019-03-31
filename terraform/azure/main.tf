@@ -14,19 +14,18 @@ resource "azurerm_resource_group" "main" {
   location = "${var.azure_region}"
 }
 
-
 module "private_key" {
   source = "./../modules/private_key"
 }
 
 module "provisioner" {
-  source = "./../modules/provisioner"
-  user_name    = "${var.user_name}"
-  password = "${var.password}"
-  workers = "${var.workers}"
-  private_key = "${module.private_key.private_key}"
-  worker_public_ips = "${azurerm_public_ip.worker.*.ip_address}"
-  master_public_ip = "${azurerm_public_ip.master.*.ip_address}"
+  source             = "./../modules/provisioner"
+  user_name          = "${var.user_name}"
+  password           = "${var.password}"
+  workers            = "${var.workers}"
+  private_key        = "${module.private_key.private_key}"
+  worker_public_ips  = "${azurerm_public_ip.worker.*.ip_address}"
+  master_public_ip   = "${azurerm_public_ip.master.*.ip_address}"
   worker_private_ips = "${azurerm_network_interface.worker.*.private_ip_address}"
-  master_private_ip = "${azurerm_network_interface.master.*.private_ip_address}"
+  master_private_ip  = "${azurerm_network_interface.master.*.private_ip_address}"
 }

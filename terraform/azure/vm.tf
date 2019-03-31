@@ -29,10 +29,11 @@ resource "azurerm_virtual_machine" "master" {
 
   os_profile_linux_config {
     disable_password_authentication = true
-     ssh_keys = [{
-        path     = "/home/ubuntu/.ssh/authorized_keys"
-        key_data = "${file("${path.root}/../temp_key.pub")}"
-      }]
+
+    ssh_keys = [{
+      path     = "/home/ubuntu/.ssh/authorized_keys"
+      key_data = "${file("${path.root}/../temp_key.pub")}"
+    }]
   }
 
   tags = {
@@ -41,14 +42,14 @@ resource "azurerm_virtual_machine" "master" {
 }
 
 resource "azurerm_virtual_machine" "worker" {
-  count                 = "${var.enabled * var.workers}"
-  name                  = "${var.lidop_name}-lidop-worker-${count.index}"
-  depends_on            = ["azurerm_virtual_machine.master"]
-  location              = "${azurerm_resource_group.main.location}"
-  resource_group_name   = "${azurerm_resource_group.main.name}"
-  network_interface_ids = ["${element(azurerm_network_interface.worker.*.id, count.index)}"]
-  vm_size               = "Standard_B2ms"
-  delete_os_disk_on_termination = true
+  count                            = "${var.enabled * var.workers}"
+  name                             = "${var.lidop_name}-lidop-worker-${count.index}"
+  depends_on                       = ["azurerm_virtual_machine.master"]
+  location                         = "${azurerm_resource_group.main.location}"
+  resource_group_name              = "${azurerm_resource_group.main.name}"
+  network_interface_ids            = ["${element(azurerm_network_interface.worker.*.id, count.index)}"]
+  vm_size                          = "Standard_B2ms"
+  delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
 
   storage_image_reference {
@@ -72,10 +73,11 @@ resource "azurerm_virtual_machine" "worker" {
 
   os_profile_linux_config {
     disable_password_authentication = true
-     ssh_keys = [{
-        path     = "/home/ubuntu/.ssh/authorized_keys"
-        key_data = "${file("${path.root}/../temp_key.pub")}"
-      }]
+
+    ssh_keys = [{
+      path     = "/home/ubuntu/.ssh/authorized_keys"
+      key_data = "${file("${path.root}/../temp_key.pub")}"
+    }]
   }
 
   tags = {

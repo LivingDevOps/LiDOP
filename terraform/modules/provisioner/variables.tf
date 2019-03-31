@@ -3,6 +3,7 @@ variable "user_name" {}
 variable "password" {}
 
 variable "private_key" {}
+
 variable "workers" {
   default = 0
 }
@@ -12,13 +13,13 @@ variable "worker_public_ips" {
 }
 
 variable "master_public_ip" {
-    default = []
+  default = []
 }
 
 variable "worker_private_ips" {
-    default = []
+  default = []
 }
 
 variable "master_private_ip" {
-    default = []
+  default = []
 }
