@@ -22,7 +22,7 @@ resource "azurerm_network_interface" "master" {
   network_security_group_id = "${azurerm_network_security_group.nsg.id}"  
 
   ip_configuration {
-    name                          = "testconfiguration1"
+    name                          = "master_ip_config"
     subnet_id                     = "${azurerm_subnet.internal.id}"
     private_ip_address_allocation = "Static"
     private_ip_address            = "172.10.10.10"
@@ -51,18 +51,17 @@ resource "azurerm_network_interface" "worker" {
   network_security_group_id = "${azurerm_network_security_group.nsg.id}"  
   
   ip_configuration {
-    name                          = "testconfiguration1"
+    name                          = "worker_ip_config-${count.index}"
     subnet_id                     = "${azurerm_subnet.internal.id}"
     private_ip_address_allocation = "Static"
-    private_ip_address            = "172.10.10.1${count.index}"
-    public_ip_address_id          = "${azurerm_public_ip.worker.id}"
+    private_ip_address            = "172.10.10.1${count.index + 1}"
+    public_ip_address_id          = "${element(azurerm_public_ip.worker.*.id, count.index)}"
   }
 }
 
 resource "azurerm_public_ip" "worker" {
-  // count                 = "${var.enabled * var.workers}"
-  count                 = "${var.workers == "0" ? 1 : var.enabled * var.workers}" // hack must be minimum one for outputs
-  name                    = "${var.lidop_name}-pip-worker"
+  count                   = "${var.enabled * var.workers}"
+  name                    = "${var.lidop_name}-pip-worker-${count.index}"
   location                = "${azurerm_resource_group.main.location}"
   resource_group_name     = "${azurerm_resource_group.main.name}"
   allocation_method       = "Static"

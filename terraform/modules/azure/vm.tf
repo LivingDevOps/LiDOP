@@ -43,9 +43,10 @@ resource "azurerm_virtual_machine" "master" {
 resource "azurerm_virtual_machine" "worker" {
   count                 = "${var.enabled * var.workers}"
   name                  = "${var.lidop_name}-lidop-worker-${count.index}"
+  depends_on            = ["azurerm_virtual_machine.master"]
   location              = "${azurerm_resource_group.main.location}"
   resource_group_name   = "${azurerm_resource_group.main.name}"
-  network_interface_ids = ["${azurerm_network_interface.worker.id}"]
+  network_interface_ids = ["${element(azurerm_network_interface.worker.*.id, count.index)}"]
   vm_size               = "Standard_B2ms"
   delete_os_disk_on_termination = true
   delete_data_disks_on_termination = true

@@ -9,6 +9,16 @@ resource "null_resource" "master-bootstrap" {
 
   provisioner "remote-exec" {
     inline = [
+      "echo *******************************************************************",
+      "echo *******************************************************************",
+      "echo master ${element(concat(module.aws.master_public_ip, module.azure.master_public_ip), count.index)}",
+      "echo *******************************************************************",
+      "echo *******************************************************************"
+    ]
+  }
+
+  provisioner "remote-exec" {
+    inline = [
       "sudo mkdir /vagrant",
       "sudo chmod -R 777 /vagrant",
     ]
@@ -84,6 +94,16 @@ resource "null_resource" "worker-bootstrap" {
     host        = "${element(concat(module.aws.worker_public_ips, module.azure.worker_public_ips), count.index)}"
     user        = "ubuntu"
     private_key = "${module.private_key.private_key}"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "echo *******************************************************************",
+      "echo *******************************************************************",
+      "echo worker ${element(concat(module.aws.master_public_ip, module.azure.master_public_ip), count.index)}",
+      "echo *******************************************************************",
+      "echo *******************************************************************"
+    ]
   }
 
   provisioner "remote-exec" {

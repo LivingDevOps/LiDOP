@@ -11,5 +11,5 @@ output "worker_private_ips" {
 }
 
 output "master_private_ip" {
-  value = "${azurerm_network_interface.master.0.private_ip_address}"
+  value = "${azurerm_network_interface.master.*.private_ip_address}"
 }

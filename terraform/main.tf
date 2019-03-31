@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket = "lidopterraform"
     key    = "commonstate"
-    aws_region = "eu-central-1"
+    region = "eu-central-1"
   }
 }
 

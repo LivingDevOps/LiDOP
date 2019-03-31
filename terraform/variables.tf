@@ -8,26 +8,43 @@ variable "user_name" {
 
 variable "password" {}
 
-variable "cloud" {
-  default = "aws"
-}
+variable "cloud" {}
 
 variable "workers" {
   default = 0
 }
 
-variable "access_key" {}
-variable "secret_key" {}
-
+# AWS
 variable "aws_region" {
   default = "eu-central-1"
 }
 
+variable "access_key" {
+  default = ""
+}
+
+variable "secret_key" {
+    default = ""
+}
+
+
+# Azure
 variable "azure_region" {
   default = "West Europe"
 }
 
-variable "subscription_id" {}
-variable "client_id" {}
-variable "client_secret" {}
-variable "tenant_id" {}
+variable "subscription_id" {
+    default = ""
+}
+
+variable "client_id" {
+    default = ""
+}
+
+variable "client_secret" {
+  default = ""
+}
+
+variable "tenant_id" {
+    default = ""
+}
