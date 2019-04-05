@@ -23,3 +23,7 @@ variable "worker_private_ips" {
 variable "master_private_ip" {
   default = []
 }
+
+variable "dns_recursor" {
+ default = "8.8.8.8"
+}

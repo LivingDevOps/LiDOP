@@ -75,7 +75,10 @@ resource "null_resource" "master-bootstrap" {
       "root_password=${var.password}",
       "root_user=${var.user_name}",
       "node=master",
-      "install_mode=online'",
+      "public_ipaddress=${element(var.master_public_ip, count.index)}",
+      "ipaddress=${element(var.master_private_ip, count.index)}",
+      "install_mode=online",
+      "dns_recursor=${var.dns_recursor}'"
     ]
   }
 
@@ -164,8 +167,11 @@ resource "null_resource" "worker-bootstrap" {
       "root_password=${var.password}",
       "root_user=${var.user_name}",
       "node=worker",
+      "public_ipaddress=${element(var.master_public_ip, count.index)}",
+      "ipaddress=${element(var.master_private_ip, count.index)}",
       "consul_ip=${element(var.master_private_ip, count.index)}",
-      "install_mode=online'",
+      "install_mode=online",
+      "dns_recursor=${var.dns_recursor}'"
     ]
   }
 
