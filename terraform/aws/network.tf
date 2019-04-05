@@ -24,8 +24,8 @@ resource "aws_subnet" "default1" {
 
 resource "aws_security_group" "aws_lidop" {
   count       = "${var.enabled}"
-  name        = "${var.lidop_name}-LiDOP"
-  description = "${var.lidop_name}-LiDOP"
+  name        = "${var.lidop_name}-${terraform.workspace}-LiDOP"
+  description = "${var.lidop_name}-${terraform.workspace}-LiDOP"
   vpc_id      = "${aws_vpc.aws_lidop.id}"
 
   ingress {

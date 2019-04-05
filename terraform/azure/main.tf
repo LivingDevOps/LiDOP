@@ -10,7 +10,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "main" {
   count    = "${var.enabled}"
-  name     = "${var.lidop_name}-lidop-resources"
+  name     = "${var.lidop_name}-${terraform.workspace}-lidop-resources"
   location = "${var.azure_region}"
 }
 

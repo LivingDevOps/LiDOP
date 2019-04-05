@@ -1,6 +1,6 @@
 resource "azurerm_virtual_machine" "master" {
   count                            = "${var.enabled}"
-  name                             = "${var.lidop_name}-lidop-master"
+  name                             = "${var.lidop_name}-${terraform.workspace}-lidop-master"
   location                         = "${azurerm_resource_group.main.location}"
   resource_group_name              = "${azurerm_resource_group.main.name}"
   network_interface_ids            = ["${azurerm_network_interface.master.id}"]
@@ -16,7 +16,7 @@ resource "azurerm_virtual_machine" "master" {
   }
 
   storage_os_disk {
-    name              = "${var.lidop_name}-lidop-master-disk"
+    name              = "${var.lidop_name}-${terraform.workspace}-lidop-master-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -43,7 +43,7 @@ resource "azurerm_virtual_machine" "master" {
 
 resource "azurerm_virtual_machine" "worker" {
   count                            = "${var.enabled * var.workers}"
-  name                             = "${var.lidop_name}-lidop-worker-${count.index}"
+  name                             = "${var.lidop_name}-${terraform.workspace}-lidop-worker-${count.index}"
   depends_on                       = ["azurerm_virtual_machine.master"]
   location                         = "${azurerm_resource_group.main.location}"
   resource_group_name              = "${azurerm_resource_group.main.name}"
@@ -60,7 +60,7 @@ resource "azurerm_virtual_machine" "worker" {
   }
 
   storage_os_disk {
-    name              = "${var.lidop_name}-lidop-worker-${count.index}-disk"
+    name              = "${var.lidop_name}-${terraform.workspace}-lidop-worker-${count.index}-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"

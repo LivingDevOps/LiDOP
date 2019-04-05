@@ -1,6 +1,6 @@
 resource "aws_key_pair" "lidop_key" {
   count           = "${var.enabled}"
-  key_name_prefix = "lidop_key_${var.lidop_name}_"
+  key_name_prefix = "lidop_key_${var.lidop_name}-${terraform.workspace}_"
   public_key      = "${file("${path.root}/../temp_key.pub")}"
 }
 
@@ -24,7 +24,7 @@ resource "aws_instance" "master" {
   }
 
   tags = {
-    Name = "${var.lidop_name}-lidop-master"
+    Name = "${var.lidop_name}-${terraform.workspace}-lidop-master"
   }
 }
 
@@ -50,6 +50,6 @@ resource "aws_instance" "worker" {
   }
 
   tags = {
-    Name = "${var.lidop_name}-lidop-worker-${count.index}"
+    Name = "${var.lidop_name}-${terraform.workspace}-lidop-worker-${count.index}"
   }
 }

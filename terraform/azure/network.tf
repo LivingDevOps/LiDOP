@@ -1,6 +1,6 @@
 resource "azurerm_virtual_network" "main" {
   count               = "${var.enabled}"
-  name                = "${var.lidop_name}-network"
+  name                = "${var.lidop_name}-${terraform.workspace}-network"
   address_space       = ["172.10.0.0/16"]
   location            = "${azurerm_resource_group.main.location}"
   resource_group_name = "${azurerm_resource_group.main.name}"
@@ -8,7 +8,7 @@ resource "azurerm_virtual_network" "main" {
 
 resource "azurerm_subnet" "internal" {
   count                = "${var.enabled}"
-  name                 = "${var.lidop_name}-internal"
+  name                 = "${var.lidop_name}-${terraform.workspace}-internal"
   resource_group_name  = "${azurerm_resource_group.main.name}"
   virtual_network_name = "${azurerm_virtual_network.main.name}"
   address_prefix       = "172.10.10.0/24"
@@ -16,7 +16,7 @@ resource "azurerm_subnet" "internal" {
 
 resource "azurerm_network_interface" "master" {
   count                     = "${var.enabled}"
-  name                      = "${var.lidop_name}-master-nic"
+  name                      = "${var.lidop_name}-${terraform.workspace}-master-nic"
   location                  = "${azurerm_resource_group.main.location}"
   resource_group_name       = "${azurerm_resource_group.main.name}"
   network_security_group_id = "${azurerm_network_security_group.nsg.id}"
@@ -32,7 +32,7 @@ resource "azurerm_network_interface" "master" {
 
 resource "azurerm_public_ip" "master" {
   count                   = "${var.enabled}"
-  name                    = "${var.lidop_name}-master-pip"
+  name                    = "${var.lidop_name}-${terraform.workspace}-master-pip"
   location                = "${azurerm_resource_group.main.location}"
   resource_group_name     = "${azurerm_resource_group.main.name}"
   allocation_method       = "Static"
@@ -45,7 +45,7 @@ resource "azurerm_public_ip" "master" {
 
 resource "azurerm_network_interface" "worker" {
   count                     = "${var.enabled * var.workers}"
-  name                      = "${var.lidop_name}-worker-nic-${count.index}"
+  name                      = "${var.lidop_name}-${terraform.workspace}-worker-nic-${count.index}"
   location                  = "${azurerm_resource_group.main.location}"
   resource_group_name       = "${azurerm_resource_group.main.name}"
   network_security_group_id = "${azurerm_network_security_group.nsg.id}"
@@ -61,7 +61,7 @@ resource "azurerm_network_interface" "worker" {
 
 resource "azurerm_public_ip" "worker" {
   count                   = "${var.enabled * var.workers}"
-  name                    = "${var.lidop_name}-pip-worker-${count.index}"
+  name                    = "${var.lidop_name}-${terraform.workspace}-pip-worker-${count.index}"
   location                = "${azurerm_resource_group.main.location}"
   resource_group_name     = "${azurerm_resource_group.main.name}"
   allocation_method       = "Static"
@@ -74,7 +74,7 @@ resource "azurerm_public_ip" "worker" {
 
 resource "azurerm_network_security_group" "nsg" {
   count               = "${var.enabled}"
-  name                = "${var.lidop_name}-security-group"
+  name                = "${var.lidop_name}-${terraform.workspace}-security-group"
   location            = "${var.azure_region}"
   resource_group_name = "${azurerm_resource_group.main.name}"
 
@@ -103,6 +103,6 @@ resource "azurerm_network_security_group" "nsg" {
   }
 
   tags {
-    environment = "${var.lidop_name}"
+    environment = "${var.lidop_name}-${terraform.workspace}"
   }
 }
