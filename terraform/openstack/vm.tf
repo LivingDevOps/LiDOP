@@ -11,7 +11,7 @@ resource "openstack_compute_instance_v2" "master" {
   availability_zone = "${var.availability_zone}"
   flavor_name       = "${var.instance_type_master}"
   key_pair          = "${openstack_compute_keypair_v2.lidop_key.name}"
-  security_groups   = ["${openstack_compute_secgroup_v2.rmd_security.name}"]
+  security_groups   = ["${openstack_compute_secgroup_v2.security.name}"]
   user_data         = "package_update: false; package_upgrade: false"
 
   network {
@@ -32,7 +32,7 @@ resource "openstack_compute_instance_v2" "worker" {
   availability_zone = "${var.availability_zone}"
   flavor_name       = "${var.instance_type_master}"
   key_pair          = "${openstack_compute_keypair_v2.lidop_key.name}"
-  security_groups   = ["${openstack_compute_secgroup_v2.rmd_security.name}"]
+  security_groups   = ["${openstack_compute_secgroup_v2.security.name}"]
 
   network {
     uuid = "${openstack_networking_network_v2.network.id}"

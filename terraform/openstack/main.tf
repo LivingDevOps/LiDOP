@@ -8,6 +8,7 @@ provider "openstack" {
 
 module "private_key" {
   source = "./../modules/private_key"
+  name   = "${var.lidop_name}"
 }
 
 module "provisioner" {
@@ -20,5 +21,5 @@ module "provisioner" {
   master_public_ip   = "${openstack_networking_floatingip_v2.floating_ip_master.*.address}"
   worker_private_ips = "${openstack_compute_instance_v2.worker.*.network.0.fixed_ip_v4}"
   master_private_ip  = "${openstack_compute_instance_v2.master.*.network.0.fixed_ip_v4}"
-  dns_recursor    = "${var.dns_nameservers[0]}"
+  dns_recursor       = "${var.dns_nameservers[0]}"
 }

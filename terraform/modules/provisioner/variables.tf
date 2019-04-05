@@ -25,5 +25,5 @@ variable "master_private_ip" {
 }
 
 variable "dns_recursor" {
- default = "8.8.8.8"
+  default = "8.8.8.8"
 }

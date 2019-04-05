@@ -13,6 +13,7 @@ variable "user_name" {
 }
 
 variable "password" {}
+
 variable "lidop_name" {}
 
 variable "workers" {
