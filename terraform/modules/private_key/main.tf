@@ -3,6 +3,7 @@ resource "null_resource" "create_temp_ssh_key" {
     command    = "del ${path.root}\\.${var.name}"
     on_failure = "continue"
   }
+
   provisioner "local-exec" {
     command    = "del ${path.root}\\.${var.name}.pub"
     on_failure = "continue"
