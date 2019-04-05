@@ -6,6 +6,7 @@ provider "aws" {
 
 module "private_key" {
   source = "./../modules/private_key"
+  name   = "${var.lidop_name}"
 }
 
 // module "provisioner" {

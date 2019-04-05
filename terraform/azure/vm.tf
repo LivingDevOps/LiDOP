@@ -32,7 +32,7 @@ resource "azurerm_virtual_machine" "master" {
 
     ssh_keys = [{
       path     = "/home/ubuntu/.ssh/authorized_keys"
-      key_data = "${file("${path.root}/../temp_key.pub")}"
+      key_data = "${module.private_key.public_key}"
     }]
   }
 
@@ -76,7 +76,7 @@ resource "azurerm_virtual_machine" "worker" {
 
     ssh_keys = [{
       path     = "/home/ubuntu/.ssh/authorized_keys"
-      key_data = "${file("${path.root}/../temp_key.pub")}"
+      key_data = "${module.private_key.public_key}"
     }]
   }
 

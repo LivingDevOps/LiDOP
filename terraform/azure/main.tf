@@ -16,6 +16,7 @@ resource "azurerm_resource_group" "main" {
 
 module "private_key" {
   source = "./../modules/private_key"
+  name   = "${var.lidop_name}"
 }
 
 module "provisioner" {

@@ -7,7 +7,7 @@
   "bind_addr" : "{{ ipaddress }}",
   "advertise_addr" : "{{ ipaddress }}",
   "client_addr" : "{{ ipaddress }}",
-  "recursors" : [ "8.8.8.8" ],
+  "recursors" : [ "{{ dns_recursor }}" ],
   "ports" : {
     "dns" : 53
   },
