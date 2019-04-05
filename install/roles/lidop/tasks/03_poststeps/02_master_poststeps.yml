@@ -16,6 +16,7 @@
     with_items: 
       - Jenkins.Lib
       - Environment
+      - LiDOPCloud
 
   - name: Checkin files for Plugins
     shell: |
@@ -31,16 +32,20 @@
     with_items: 
       - { name: 'Environment', folder: '/vagrant/plugins/environment' }
       - { name: 'Jenkins.Lib', folder: '/vagrant/configs/jenkins.sharedlib' }
+      - { name: 'LiDOPCloud', folder: '/vagrant/terraform' }
 
-  - name: Create Environment Builds
+  - name: Load Plugins
     uri:
-      url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load_Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Environment&PluginUrl=http://{{ ipaddress }}:8081/gitbucket/git/LiDOP/Environment.git&Branch=*/master'
+      url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load_Plugin/buildWithParameters?token=CreateBuilds&ProjectName={{ item }}&PluginUrl=http://{{ ipaddress }}:8081/gitbucket/git/LiDOP/{{ item }}.git&Branch=*/master'
       status_code: 201
       user: "{{ root_user }}"
       password: "{{ root_password }}"
       force_basic_auth: yes
       headers:
         Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+    with_items:
+      - "Environment" 
+      - "LiDOPCloud" 
 
   # - name: Create first Backup
   #   uri:

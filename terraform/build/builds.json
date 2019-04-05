@@ -1,0 +1,125 @@
+{ 
+    "Create_Stack":
+    {
+        "Script": "./build/Create.Jenkinsfile",
+        "Parameters": [
+            {
+                "Name":"Name",
+                "Type":"String",
+                "Default": "Name"
+            },
+            {
+                "Name":"User",
+                "Type":"String",
+                "Default": "lidop"
+            },
+            {
+                "Name":"Password",
+                "Type":"String",
+                "Default": "Password"
+            },
+            {
+                "Name":"AWS_Key",
+                "Type":"Credential",
+                "CredentialTypeType":"org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl",
+                "Description":"AWS Key"
+            },
+            {
+                "Name":"AWS_Secret",
+                "Type":"Credential",
+                "CredentialTypeType":"org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl",
+                "Description":"AWS Secret"
+            }
+        ]
+    },
+    
+    "Destroy_Stack":
+    {
+        "Script": "./build/Destroy.Jenkinsfile",
+        "Parameters": [
+            {
+                "Name":"Name",
+                "Type":"String",
+                "Default": "Name"
+            },
+            {
+                "Name":"User",
+                "Type":"String",
+                "Default": "lidop"
+            },
+            {
+                "Name":"Password",
+                "Type":"String",
+                "Default": "Password"
+            },
+            {
+                "Name":"AWS_Key",
+                "Type":"Credential",
+                "CredentialTypeType":"org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl",
+                "Description":"AWS Key"
+            },
+            {
+                "Name":"AWS_Secret",
+                "Type":"Credential",
+                "CredentialTypeType":"org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl",
+                "Description":"AWS Secret"
+            }
+        ]    
+    },
+    "Destroy_all_Stacks":
+    {
+        "Script": "./build/DestroyAll.Jenkinsfile",
+        "Parameters": [
+            {
+                "Name":"AWS_Key",
+                "Type":"Credential",
+                "CredentialTypeType":"org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl",
+                "Description":"AWS Key"
+            },
+            {
+                "Name":"AWS_Secret",
+                "Type":"Credential",
+                "CredentialTypeType":"org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl",
+                "Description":"AWS Secret"
+            }
+        ]    
+    }
+    ,
+    "Create_multi_Stacks":
+    {
+        "Script": "./build/CreateMulti.Jenkinsfile",
+        "Parameters": [
+            {
+                "Name":"Name",
+                "Type":"String",
+                "Default": "Name"
+            },
+            {
+                "Name":"User",
+                "Type":"String",
+                "Default": "lidop"
+            },
+            {
+                "Name":"Prefix",
+                "Type":"String",
+                "Default": "LiDOP-"
+            },            
+            {
+                "Name":"Amount",
+                "Type":"String",
+                "Default": "1"
+            },            
+            {
+                "Name":"AWS_Key",
+                "Type":"Credential",
+                "CredentialTypeType":"org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl",
+                "Description":"AWS Key"
+            },
+            {
+                "Name":"AWS_Secret",
+                "Type":"Credential",
+                "CredentialTypeType":"org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl",
+                "Description":"AWS Secret"
+            }
+        ]    
+    }}
