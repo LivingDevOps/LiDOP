@@ -15,7 +15,9 @@ steps:
 - script: cp ./tests/integration_test.yml ./extensions/integration_test.yml
   displayName: 'Copy test script'
 
-- script: terraform init -backend-config="key=state/ci-$(Build.BuildNumber)" -backend-config="access_key=$(access_key)" -backend-config="secret_key=$(secret_key)" -reconfigure ./terraform/aws
+- script: |
+    ln -sf ./../terraform.backend.consul.tf ./aws/terraform.tf
+    terraform init -backend-config="key=state/ci-$(Build.BuildNumber)" -backend-config="access_key=$(access_key)" -backend-config="secret_key=$(secret_key)" -reconfigure ./terraform/aws
   displayName: 'Terraform init'
 
 - script: terraform plan -var lidop_name=ci-$(Build.BuildNumber)  -var cloud=aws -var workers=1 -var access_key=$(access_key) -var secret_key=$(secret_key) -var password=$(password)  ./terraform/aws
