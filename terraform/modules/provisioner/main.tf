@@ -51,6 +51,11 @@ resource "null_resource" "master-bootstrap" {
   }
 
   provisioner "file" {
+    source      = "./terraform"
+    destination = "/vagrant/terraform/"
+  }
+
+  provisioner "file" {
     source      = "./tests"
     destination = "/vagrant/tests/"
   }
@@ -140,6 +145,11 @@ resource "null_resource" "worker-bootstrap" {
   provisioner "file" {
     source      = "./plugins"
     destination = "/vagrant/plugins/"
+  }
+
+  provisioner "file" {
+    source      = "./terraform"
+    destination = "/vagrant/terraform/"
   }
 
   provisioner "file" {
