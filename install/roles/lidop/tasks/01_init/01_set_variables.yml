@@ -9,7 +9,7 @@
 
   - name: Set IPs with a public ip
     set_fact: 
-      ipaddress: "{{ ansible_eth0.ipv4.address }}"
+      ipaddress: "{{ ansible_default_ipv4.address }}"
       public_ipaddress: "{{ ipify_public_ip }}"
     when: 
       - public_ipaddress is undefined
@@ -17,7 +17,7 @@
 
   - name: Set IPs with non public ip
     set_fact: 
-      ipaddress: "{{ ansible_eth0.ipv4.address }}"
+      ipaddress: "{{ ansible_default_ipv4.address }}"
       public_ipaddress: "{{ ipaddress }}"
     when: 
       - public_ipaddress is undefined
@@ -30,10 +30,17 @@
       - public_ipaddress is undefined
       - ipaddress is defined
 
+  - name: Set dns_recursor
+    set_fact: 
+      dns_nameservers: "8.8.8.8"
+    when: dns_recursor is undefined
+
   - debug:
       msg: "Public IP: {{ public_ipaddress }}"  
   - debug:
       msg: "Private IP: {{ ipaddress }}"  
+  - debug:
+      msg: "dns_recursor: {{ dns_recursor }}"  
  
   - debug:
       msg: "Install Mode: {{ install_mode }}"  
