@@ -1,7 +1,7 @@
 resource "aws_key_pair" "lidop_key" {
   count           = "${var.enabled}"
   key_name_prefix = "lidop_key_${var.lidop_name}-${terraform.workspace}_"
-  public_key      = "${file("${path.root}/../temp_key.pub")}"
+  public_key      = "${module.private_key.public_key}"
 }
 
 resource "aws_instance" "master" {
