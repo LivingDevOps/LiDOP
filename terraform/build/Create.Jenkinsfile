@@ -46,7 +46,7 @@ pipeline {
     stage("Terraform plan") {
       steps {
 	      withCredentials([string(credentialsId: "${params.AWS_Secret}", variable: 'AWS_SECRET'), string(credentialsId: "${params.AWS_Key}", variable: 'AWS_KEY')]) {
-	        sh "terraform plan -var access_key=${AWS_Key} -var enabled=0 -var secret_key=${AWS_Secret} -var user_name=${params.Name} -var password=${params.Password} ./aws"
+	        sh "terraform plan -var access_key=${AWS_Key} -var enabled=0 -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./aws"
         }      
       }
     }
@@ -54,7 +54,7 @@ pipeline {
     stage("Terraform apply") {
       steps {
 	      withCredentials([string(credentialsId: "${params.AWS_Secret}", variable: 'AWS_SECRET'), string(credentialsId: "${params.AWS_Key}", variable: 'AWS_KEY')]) {
-	        sh "terraform apply -auto-approve -var access_key=${AWS_Key} -var enabled=0 -var secret_key=${AWS_Secret} -var user_name=${params.Name} -var password=${params.Password} ./aws"
+	        sh "terraform apply -auto-approve -var access_key=${AWS_Key} -var enabled=0 -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./aws"
         }      
       }
     }

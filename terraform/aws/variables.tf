@@ -4,9 +4,7 @@ variable "user_name" {
 
 variable "password" {}
 
-variable "lidop_name" {
-  default = ""
-}
+variable "lidop_name" {}
 
 variable "workers" {
   default = 0

@@ -2,7 +2,7 @@
 
 pipeline {
   agent {
-    label 'did'
+    label 'default'
   }
   
   options {
@@ -33,20 +33,20 @@ pipeline {
     stage("Terraform init") {
       steps {
         sh 'ln -sf ./../terraform.backend.consul.tf ./aws/terraform.tf'
-        sh "docker run --rm -w /work -v ${WORKSPACE}/:/work hashicorp/terraform init -backend-config=address=${env.IPADDRESS}:8500 /work/aws"
+        sh "terraform init -backend-config=address=${env.IPADDRESS}:8500 ./aws"
       }
     }
 
     stage("Terraform select workspace") {
       steps {
-       sh "docker run --rm -w /work -v ${WORKSPACE}/:/work hashicorp/terraform workspace select ${params.Name} /work/aws"
+       sh "terraform workspace select ${params.Name} ./aws"
       }
     }
 
     stage("Terraform plan") {
       steps {
 	      withCredentials([string(credentialsId: "${params.AWS_Secret}", variable: 'AWS_SECRET'), string(credentialsId: "${params.AWS_Key}", variable: 'AWS_KEY')]) {
-	        sh "docker run --rm -w /work -v ${WORKSPACE}/:/work hashicorp/terraform plan -var access_key=${AWS_Key} -var enabled=0 -var secret_key=${AWS_Secret} -var user_name=${params.Name} -var password=${params.Password} /work/aws"
+	        sh "terraform plan -var access_key=${AWS_Key} -var enabled=0 -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./aws"
         }      
       }
     }
@@ -54,15 +54,15 @@ pipeline {
     stage("Terraform destroy") {
       steps {
     	  withCredentials([string(credentialsId: "${params.AWS_Secret}", variable: 'AWS_SECRET'), string(credentialsId: "${params.AWS_Key}", variable: 'AWS_KEY')]) {
-	        sh "docker run --rm -w /work -v ${WORKSPACE}/:/work hashicorp/terraform destroy -auto-approve -var access_key=${AWS_Key} -var enabled=0 -var secret_key=${AWS_Secret} -var user_name=${params.Name} -var password=${params.Password} /work/aws"
+	        sh "terraform destroy -auto-approve -var access_key=${AWS_Key} -var enabled=0 -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./aws"
         }      
       }
     }
 
     stage("Terraform delete workspace") {
       steps {
-       sh "docker run --rm -w /work -v ${WORKSPACE}/:/work hashicorp/terraform workspace select default /work/aws"
-       sh "docker run --rm -w /work -v ${WORKSPACE}/:/work hashicorp/terraform workspace delete ${params.Name} /work/aws"
+       sh "terraform workspace select default ./aws"
+       sh "terraform workspace delete ${params.Name} ./aws"
       }
     }
 
