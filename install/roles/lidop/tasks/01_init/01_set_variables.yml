@@ -32,7 +32,7 @@
 
   - name: Set dns_recursor
     set_fact: 
-      dns_nameservers: "8.8.8.8"
+      dns_recursor: "8.8.8.8"
     when: dns_recursor is undefined
 
   - debug:
