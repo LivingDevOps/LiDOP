@@ -83,167 +83,91 @@
   <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
 <clouds>
-    <com.nirima.jenkins.plugins.docker.DockerCloud plugin="docker-plugin@1.1.4">
-      <name>Docker</name>
-      <templates>
+      
+ <org.jenkinsci.plugins.docker.swarm.DockerSwarmCloud plugin="docker-swarm@1.6">
+      <name>Docker Swarm</name>
+      <jenkinsUrl>http://jenkins.service.lidop.local:8080/jenkins</jenkinsUrl>
+      <swarmNetwork></swarmNetwork>
+      <cacheDriverName></cacheDriverName>
+      <tunnel></tunnel>
+      <agentTemplates>
 
-        <com.nirima.jenkins.plugins.docker.DockerTemplate>
-          <configVersion>2</configVersion>
-          <labelString>did dind</labelString>
-          <connector class="io.jenkins.docker.connector.DockerComputerJNLPConnector">
-            <user></user>
-            <jnlpLauncher>
-              <workDirSettings>
-                <disabled>false</disabled>
-                <internalDir>remoting</internalDir>
-                <failIfWorkDirIsMissing>false</failIfWorkDirIsMissing>
-              </workDirSettings>
-            </jnlpLauncher>
-            <jenkinsUrl>http://jenkins.service.lidop.local:8080/jenkins</jenkinsUrl>
-          </connector>
-          <remoteFs>/home/jenkins</remoteFs>
-          <instanceCap>2147483647</instanceCap>
-          <mode>EXCLUSIVE</mode>
-          <retentionStrategy class="com.nirima.jenkins.plugins.docker.strategy.DockerOnceRetentionStrategy">
-            <idleMinutes>10</idleMinutes>
-          </retentionStrategy>
-          <dockerTemplateBase>
-            <image>registry.service.lidop.local:5000/lidop/jenkins-slave-docker:{{ docker_image_version }}</image>
-            <pullCredentialsId></pullCredentialsId>
-            <dockerCommand></dockerCommand>
-            <hostname></hostname>
-            <dnsHosts>{{ ipaddress }}</dnsHosts>
-            <network></network>
-            <volumes></volumes>
-            <volumesFrom2/>
-            <environment/>
-            <bindPorts></bindPorts>
-            <bindAllPorts>false</bindAllPorts>
-            <privileged>true</privileged>
-            <tty>false</tty>
-            <extraHosts class="empty-list"/>
-          </dockerTemplateBase>
-          <removeVolumes>false</removeVolumes>
-          <pullStrategy>PULL_LATEST</pullStrategy>
-          <pullTimeout>300</pullTimeout>
-          <nodeProperties class="empty-list"/>
-          <disabled>
-            <disabledByChoice>false</disabledByChoice>
-          </disabled>
-        <name>docker in docker</name>
-        </com.nirima.jenkins.plugins.docker.DockerTemplate>
+        <org.jenkinsci.plugins.docker.swarm.DockerSwarmAgentTemplate>
+          <tmpfsDir></tmpfsDir>
+          <limitsNanoCPUs>0</limitsNanoCPUs>
+          <limitsMemoryBytes>0</limitsMemoryBytes>
+          <reservationsNanoCPUs>0</reservationsNanoCPUs>
+          <reservationsMemoryBytes>0</reservationsMemoryBytes>
+          <image>registry.service.lidop.local:5000/lidop/jenkins-slave:{{ docker_image_version }}</image>
+          <hostBinds></hostBinds>
+          <secrets></secrets>
+          <configs></configs>
+          <label>default</label>
+          <osWindows>false</osWindows>
+          <command>sh
+-cx
+curl --connect-timeout 20 --max-time 60 -o slave.jar $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JAR_URL &amp;&amp; java -jar slave.jar -jnlpUrl $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JNLP_URL -secret $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_SECRET -noReconnect -workDir /tmp</command>
+          <user>root</user>
+          <workingDir>/tmp</workingDir>
+          <cacheDir></cacheDir>
+          <envVars></envVars>
+          <baseWorkspaceLocation></baseWorkspaceLocation>
+          <placementConstraints></placementConstraints>
+        </org.jenkinsci.plugins.docker.swarm.DockerSwarmAgentTemplate>
 
-        <com.nirima.jenkins.plugins.docker.DockerTemplate>
-          <configVersion>2</configVersion>
-          <labelString>docker</labelString>
-           <connector class="io.jenkins.docker.connector.DockerComputerJNLPConnector">
-            <user></user>
-            <jnlpLauncher>
-              <workDirSettings>
-                <disabled>false</disabled>
-                <internalDir>remoting</internalDir>
-                <failIfWorkDirIsMissing>false</failIfWorkDirIsMissing>
-              </workDirSettings>
-            </jnlpLauncher>
-            <jenkinsUrl>http://jenkins.service.lidop.local:8080/jenkins</jenkinsUrl>
-          </connector>
-          <remoteFs>/home/jenkins</remoteFs>
-          <instanceCap>2147483647</instanceCap>
-          <mode>EXCLUSIVE</mode>
-          <retentionStrategy class="com.nirima.jenkins.plugins.docker.strategy.DockerOnceRetentionStrategy">
-            <idleMinutes>10</idleMinutes>
-          </retentionStrategy>
-          <dockerTemplateBase>
-            <image>registry.service.lidop.local:5000/lidop/jenkins-slave-docker:{{ docker_image_version }}</image>
-            <pullCredentialsId></pullCredentialsId>
-            <dockerCommand></dockerCommand>
-            <hostname></hostname>
-            <dnsHosts>{{ ipaddress }}</dnsHosts>
-            <network></network>
-            <volumes>
-              <string>/var/run/docker.sock:/var/run/docker.sock</string>
-              <string>/var/lidop:/var/lidop</string>
-            </volumes>
-            <volumesFrom2/>
-            <environment/>
-            <bindPorts></bindPorts>
-            <bindAllPorts>false</bindAllPorts>
-            <privileged>true</privileged>
-            <tty>false</tty>
-            <extraHosts class="empty-list"/>
-          </dockerTemplateBase>
-          <removeVolumes>false</removeVolumes>
-          <pullStrategy>PULL_LATEST</pullStrategy>
-          <pullTimeout>300</pullTimeout>
-          <nodeProperties class="empty-list"/>
-          <disabled>
-            <disabledByChoice>false</disabledByChoice>
-          </disabled>
-        <name>docker</name>
-        </com.nirima.jenkins.plugins.docker.DockerTemplate>
+        <org.jenkinsci.plugins.docker.swarm.DockerSwarmAgentTemplate>
+          <tmpfsDir></tmpfsDir>
+          <limitsNanoCPUs>0</limitsNanoCPUs>
+          <limitsMemoryBytes>0</limitsMemoryBytes>
+          <reservationsNanoCPUs>0</reservationsNanoCPUs>
+          <reservationsMemoryBytes>0</reservationsMemoryBytes>
+          <image>registry.service.lidop.local:5000/lidop/jenkins-slave-docker:{{ docker_image_version }}</image>
+          <hostBinds>/var/run/docker.sock:/var/run/docker.sock
+/var/lidop:/var/lidop</hostBinds>
+          <secrets></secrets>
+          <configs></configs>
+          <label>docker</label>
+          <osWindows>false</osWindows>
+          <command>sh
+-cx
+curl --connect-timeout 20 --max-time 60 -o slave.jar $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JAR_URL &amp;&amp; java -jar slave.jar -jnlpUrl $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JNLP_URL -secret $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_SECRET -noReconnect -workDir /tmp</command>
+          <user>root</user>
+          <workingDir>/tmp</workingDir>
+          <cacheDir></cacheDir>
+          <envVars></envVars>
+          <baseWorkspaceLocation></baseWorkspaceLocation>
+          <placementConstraints></placementConstraints>
+        </org.jenkinsci.plugins.docker.swarm.DockerSwarmAgentTemplate>
 
-        <com.nirima.jenkins.plugins.docker.DockerTemplate>
-          <configVersion>2</configVersion>
-          <labelString>default</labelString>
-           <connector class="io.jenkins.docker.connector.DockerComputerJNLPConnector">
-            <user></user>
-            <jnlpLauncher>
-              <workDirSettings>
-                <disabled>false</disabled>
-                <internalDir>remoting</internalDir>
-                <failIfWorkDirIsMissing>false</failIfWorkDirIsMissing>
-              </workDirSettings>
-            </jnlpLauncher>
-            <jenkinsUrl>http://jenkins.service.lidop.local:8080/jenkins</jenkinsUrl>
-          </connector>
-          <remoteFs>/home/jenkins</remoteFs>
-          <instanceCap>2147483647</instanceCap>
-          <mode>EXCLUSIVE</mode>
-          <retentionStrategy class="com.nirima.jenkins.plugins.docker.strategy.DockerOnceRetentionStrategy">
-            <idleMinutes>10</idleMinutes>
-          </retentionStrategy>
-          <dockerTemplateBase>
-            <image>registry.service.lidop.local:5000/lidop/jenkins-slave:{{ docker_image_version }}</image>
-            <pullCredentialsId></pullCredentialsId>
-            <dockerCommand></dockerCommand>
-            <hostname></hostname>
-            <dnsHosts>{{ ipaddress }}</dnsHosts>
-            <network></network>
-            <volumes>
-              <string>/var/lidop:/var/lidop</string>
-            </volumes>
-            <volumesFrom2/>
-            <environment/>
-            <bindPorts></bindPorts>
-            <bindAllPorts>false</bindAllPorts>
-            <privileged>true</privileged>
-            <tty>false</tty>
-            <extraHosts class="empty-list"/>
-          </dockerTemplateBase>
-          <removeVolumes>false</removeVolumes>
-          <pullStrategy>PULL_LATEST</pullStrategy>
-          <pullTimeout>300</pullTimeout>
-          <nodeProperties class="empty-list"/>
-          <disabled>
-            <disabledByChoice>false</disabledByChoice>
-          </disabled>
-        <name>default</name>
-        </com.nirima.jenkins.plugins.docker.DockerTemplate>
+        <org.jenkinsci.plugins.docker.swarm.DockerSwarmAgentTemplate>
+          <tmpfsDir></tmpfsDir>
+          <limitsNanoCPUs>0</limitsNanoCPUs>
+          <limitsMemoryBytes>0</limitsMemoryBytes>
+          <reservationsNanoCPUs>0</reservationsNanoCPUs>
+          <reservationsMemoryBytes>0</reservationsMemoryBytes>
+          <image>registry.service.lidop.local:5000/lidop/jenkins-slave-docker:{{ docker_image_version }}</image>
+          <hostBinds>/var/lidop:/var/lidop</hostBinds> 
+          <secrets></secrets>
+          <configs></configs>
+          <label>did</label>
+          <osWindows>false</osWindows>
+          <command>sh
+-cx
+curl --connect-timeout 20 --max-time 60 -o slave.jar $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JAR_URL &amp;&amp; java -jar slave.jar -jnlpUrl $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JNLP_URL -secret $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_SECRET -noReconnect -workDir /tmp</command>
+          <user>root</user>
+          <workingDir>/tmp</workingDir>
+          <cacheDir></cacheDir>
+          <envVars></envVars>
+          <baseWorkspaceLocation></baseWorkspaceLocation>
+          <placementConstraints></placementConstraints>
+        </org.jenkinsci.plugins.docker.swarm.DockerSwarmAgentTemplate>
 
-      </templates>
-      <dockerApi>
-        <dockerHost plugin="docker-commons@1.13">
-          <uri>tcp://{{ ipaddress }}:2375</uri>
-        </dockerHost>
-        <connectTimeout>60</connectTimeout>
-        <readTimeout>60</readTimeout>
-      </dockerApi>
-      <containerCap>20</containerCap>
-      <exposeDockerHost>false</exposeDockerHost>
-      <disabled>
-        <disabledByChoice>false</disabledByChoice>
-      </disabled>
-    </com.nirima.jenkins.plugins.docker.DockerCloud>
+      </agentTemplates>
+      <dockerHost plugin="docker-commons@1.13">
+        <uri>http://{{ ipaddress }}:2375</uri>
+      </dockerHost>
+    </org.jenkinsci.plugins.docker.swarm.DockerSwarmCloud>
+ 
   </clouds>
   <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
   <views>
