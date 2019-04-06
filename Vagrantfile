@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
 
     # if a extend script is defined, copy the file to remote machine
     if "#{ENV['LIDOP_EXTEND']}" != ""
-        config.vm.provision "file", source: ENV['LIDOP_EXTEND'], destination: "/vagrant/extensions/extend.yml"
+        config.vm.provision "file", source: ENV['LIDOP_EXTEND'], destination: "/tmp/lidop/extensions/extend.yml"
     end
 
     # define default installation script
@@ -50,9 +50,9 @@ Vagrant.configure("2") do |config|
         export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg
         export LIDOP_EXTEND=#{ENV['LIDOP_EXTEND_NEW']}
         export ANSIBLE_VAULT_PASSWORD=lidop
-        dos2unix /vagrant/install/vault-env
-        chmod +x /vagrant/install/vault-env
-        ansible-playbook /vagrant/install/install.yml --vault-password-file /vagrant/install/vault-env -e '
+        dos2unix /tmp/lidop/install/vault-env
+        chmod +x /tmp/lidop/install/vault-env
+        ansible-playbook /tmp/lidop/install/install.yml --vault-password-file /tmp/lidop/install/vault-env -e '
         root_password=#{settings.password}
         root_user=#{settings.user_name}
     SCRIPT
@@ -60,7 +60,7 @@ Vagrant.configure("2") do |config|
     # define default test script
     test_script = <<-SCRIPT
         docker run --rm  \
-        -v /vagrant/tests/:/serverspec \
+        -v /tmp/lidop/tests/:/serverspec \
         -v /var/lidop/www/tests/:/var/lidop/www/tests/ \
         -e USERNAME=#{settings.user_name} \
         -e PASSWORD=#{settings.password}  \

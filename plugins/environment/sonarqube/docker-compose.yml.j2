@@ -19,8 +19,8 @@ services:
       - /var/lidop/sonarqube/conf:/opt/sonarqube/conf
 #      - /var/lidop/sonarqube/data:/opt/sonarqube/data
 #     - /var/lidop/sonarqube/extensions/plugins:/opt/sonarqube/extensions/plugins
-#      - /vagrant/.temp/sonarqube/extensions:/opt/sonarqube/extensions
-#      - /vagrant/.temp/sonarqube/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+#      - /tmp/lidop/.temp/sonarqube/extensions:/opt/sonarqube/extensions
+#      - /tmp/lidop/.temp/sonarqube/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
     dns:
       - {{ ipaddress }}
     deploy:

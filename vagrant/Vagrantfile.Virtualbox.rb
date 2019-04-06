@@ -2,6 +2,10 @@
 class Virtualbox
 
     def self.init(virtualbox, override, worker, settings, configuration, ansible_script, test_script)
+
+        override.vm.synced_folder ".", "/vagrant", disabled: true
+        override.vm.synced_folder "./", "/tmp/lidop"
+
         override.vm.box = configuration["virtualbox"]["#{configuration["box_config"]}_box_name"]
         override.vm.box_url = configuration["virtualbox"]["#{configuration["box_config"]}_box_url"]
         override.vm.box_version = configuration["virtualbox"]["#{configuration["box_config"]}_box_version"]
@@ -17,7 +21,7 @@ class Virtualbox
         override.vm.network :private_network, ip: "#{ipaddress}"
 
         # copy extra variables file
-        override.vm.provision "file", source: "./.lidop_config.yaml", destination: "/vagrant/.lidop_config.yaml"
+        override.vm.provision "file", source: "./.lidop_config.yaml", destination: "/tmp/lidop/.lidop_config.yaml"
 
         # worker 0 is the master
         if worker == 0

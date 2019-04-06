@@ -19,50 +19,50 @@ resource "null_resource" "master-bootstrap" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo mkdir /vagrant",
-      "sudo chmod -R 777 /vagrant",
+      "sudo mkdir /tmp/lidop",
+      "sudo chmod -R 777 /tmp/lidop",
     ]
   }
 
   provisioner "file" {
     source      = "./templates/lidop_config.yaml"
-    destination = "/vagrant/.lidop_config.yaml"
+    destination = "/tmp/lidop/.lidop_config.yaml"
   }
 
   provisioner "file" {
     source      = "./lidop_config.yaml"
-    destination = "/vagrant/.lidop_config.yaml"
+    destination = "/tmp/lidop/.lidop_config.yaml"
     on_failure  = "continue"
   }
 
   provisioner "file" {
     source      = "./install"
-    destination = "/vagrant/install/"
+    destination = "/tmp/lidop/install/"
   }
 
   provisioner "file" {
     source      = "./configs"
-    destination = "/vagrant/configs/"
+    destination = "/tmp/lidop/configs/"
   }
 
   provisioner "file" {
     source      = "./plugins"
-    destination = "/vagrant/plugins/"
+    destination = "/tmp/lidop/plugins/"
   }
 
   provisioner "file" {
     source      = "./terraform"
-    destination = "/vagrant/terraform/"
+    destination = "/tmp/lidop/terraform/"
   }
 
   provisioner "file" {
     source      = "./tests"
-    destination = "/vagrant/tests/"
+    destination = "/tmp/lidop/tests/"
   }
 
   provisioner "file" {
     source      = "./extensions"
-    destination = "/vagrant/extensions/"
+    destination = "/tmp/lidop/extensions/"
   }
 
   provisioner "remote-exec" {
@@ -73,10 +73,10 @@ resource "null_resource" "master-bootstrap" {
 
   provisioner "remote-exec" {
     inline = [
-      "export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg",
+      "export ANSIBLE_CONFIG=/tmp/lidop/install/ansible.cfg",
       "export ANSIBLE_VAULT_PASSWORD=${var.password}",
       "echo start ansible",
-      "sudo ansible-playbook -v /vagrant/install/install.yml -e ' ",
+      "sudo ansible-playbook -v /tmp/lidop/install/install.yml -e ' ",
       "root_password=${var.password}",
       "root_user=${var.user_name}",
       "node=master",
@@ -89,7 +89,7 @@ resource "null_resource" "master-bootstrap" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo docker run --rm -v /vagrant/tests/:/serverspec -v /var/lidop/www/tests/:/var/lidop/www/tests/ -e USERNAME=${var.user_name} -e PASSWORD=${var.password} -e HOST=${element(var.master_private_ip, count.index)} -e HOSTNAME=${element(var.master_private_ip, count.index)} -e TEST_HOST=master registry.service.lidop.local:5000/lidop/serverspec:latest test",
+      "sudo docker run --rm -v /tmp/lidop/tests/:/serverspec -v /var/lidop/www/tests/:/var/lidop/www/tests/ -e USERNAME=${var.user_name} -e PASSWORD=${var.password} -e HOST=${element(var.master_private_ip, count.index)} -e HOSTNAME=${element(var.master_private_ip, count.index)} -e TEST_HOST=master registry.service.lidop.local:5000/lidop/serverspec:latest test",
     ]
   }
 }
@@ -116,50 +116,50 @@ resource "null_resource" "worker-bootstrap" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo mkdir /vagrant",
-      "sudo chmod -R 777 /vagrant",
+      "sudo mkdir /tmp/lidop",
+      "sudo chmod -R 777 /tmp/lidop",
     ]
   }
 
   provisioner "file" {
     source      = "./templates/lidop_config.yaml"
-    destination = "/vagrant/.lidop_config.yaml"
+    destination = "/tmp/lidop/.lidop_config.yaml"
   }
 
   provisioner "file" {
     source      = "./lidop_config.yaml"
-    destination = "/vagrant/.lidop_config.yaml"
+    destination = "/tmp/lidop/.lidop_config.yaml"
     on_failure  = "continue"
   }
 
   provisioner "file" {
     source      = "./install"
-    destination = "/vagrant/install/"
+    destination = "/tmp/lidop/install/"
   }
 
   provisioner "file" {
     source      = "./configs"
-    destination = "/vagrant/configs/"
+    destination = "/tmp/lidop/configs/"
   }
 
   provisioner "file" {
     source      = "./plugins"
-    destination = "/vagrant/plugins/"
+    destination = "/tmp/lidop/plugins/"
   }
 
   provisioner "file" {
     source      = "./terraform"
-    destination = "/vagrant/terraform/"
+    destination = "/tmp/lidop/terraform/"
   }
 
   provisioner "file" {
     source      = "./tests"
-    destination = "/vagrant/tests/"
+    destination = "/tmp/lidop/tests/"
   }
 
   provisioner "file" {
     source      = "./extensions"
-    destination = "/vagrant/extensions/"
+    destination = "/tmp/lidop/extensions/"
   }
 
   provisioner "remote-exec" {
@@ -170,10 +170,10 @@ resource "null_resource" "worker-bootstrap" {
 
   provisioner "remote-exec" {
     inline = [
-      "export ANSIBLE_CONFIG=/vagrant/install/ansible.cfg",
+      "export ANSIBLE_CONFIG=/tmp/lidop/install/ansible.cfg",
       "export ANSIBLE_VAULT_PASSWORD=${var.password}",
       "echo start ansible",
-      "sudo ansible-playbook -v /vagrant/install/install.yml -e ' ",
+      "sudo ansible-playbook -v /tmp/lidop/install/install.yml -e ' ",
       "root_password=${var.password}",
       "root_user=${var.user_name}",
       "node=worker",
@@ -187,7 +187,7 @@ resource "null_resource" "worker-bootstrap" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo docker run --rm -v /vagrant/tests/:/serverspec -v /var/lidop/www/tests/:/var/lidop/www/tests/ -e USERNAME=${var.user_name} -e PASSWORD=${var.password} -e HOST=${element(var.worker_private_ips, count.index)} -e HOSTNAME=${element(var.worker_private_ips, count.index)} -e TEST_HOST=worker registry.service.lidop.local:5000/lidop/serverspec:latest test",
+      "sudo docker run --rm -v /tmp/lidop/tests/:/serverspec -v /var/lidop/www/tests/:/var/lidop/www/tests/ -e USERNAME=${var.user_name} -e PASSWORD=${var.password} -e HOST=${element(var.worker_private_ips, count.index)} -e HOSTNAME=${element(var.worker_private_ips, count.index)} -e TEST_HOST=worker registry.service.lidop.local:5000/lidop/serverspec:latest test",
     ]
   }
 }

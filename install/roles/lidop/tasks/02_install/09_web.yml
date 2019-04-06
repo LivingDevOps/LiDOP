@@ -50,7 +50,7 @@
       mkdir /var/lidop/certs/live/{{ item }}{{ domain_name }}
       openssl genrsa -out /var/lidop/certs/live/{{ item }}{{ domain_name }}/privkey.pem 2048
       openssl req -new -key /var/lidop/certs/live/{{ item }}{{ domain_name }}/privkey.pem -out /var/lidop/certs/live/{{ item }}{{ domain_name }}.csr -subj "/C=CH/ST=Zurich/L=Zurich/O=Global Security/OU=IT Department/CN={{ item }}{{ domain_name }}"
-      openssl x509 -req -in /var/lidop/certs/live/{{ item }}{{ domain_name }}.csr -CA /vagrant/configs/certs/rootCA.pem -CAkey /vagrant/configs/certs/rootCA.key -CAcreateserial -out /var/lidop/certs/live/{{ item }}{{ domain_name }}/fullchain.pem -days 1825 -sha256 -extfile /var/lidop/certs/v3.ext -passin pass:lidop
+      openssl x509 -req -in /var/lidop/certs/live/{{ item }}{{ domain_name }}.csr -CA /tmp/lidop/configs/certs/rootCA.pem -CAkey /tmp/lidop/configs/certs/rootCA.key -CAcreateserial -out /var/lidop/certs/live/{{ item }}{{ domain_name }}/fullchain.pem -days 1825 -sha256 -extfile /var/lidop/certs/v3.ext -passin pass:lidop
     when: 
       - certificate_creation == "self"
       - node == "master"

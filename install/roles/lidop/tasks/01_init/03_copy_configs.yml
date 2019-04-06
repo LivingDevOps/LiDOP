@@ -7,7 +7,7 @@
     local_action: copy content={{ secret_password }} dest=/var/lidop/.secret
 
   - name: copy config files
-    command: "cp -rf /vagrant/configs/{{ item }} /var/lidop"
+    command: "cp -rf /tmp/lidop/configs/{{ item }} /var/lidop"
     with_items:
       - "consul"
       - "gitbucket"
@@ -22,10 +22,10 @@
     when: node == "master"
 
   - name: copy test files
-    command: "cp -rf /vagrant/tests /var/lidop"
+    command: "cp -rf /tmp/lidop/tests /var/lidop"
 
   - name: copy template files
-    command: "cp -rf /vagrant/install/roles/{{ item }}/templates/ /var/lidop/"
+    command: "cp -rf /tmp/lidop/install/roles/{{ item }}/templates/ /var/lidop/"
     with_items:
       - "lidop"
     when: node == "master"
@@ -87,7 +87,7 @@
 
   - name: install root certificate
     shell: |
-      cp /vagrant/configs/certs/rootCA.pem /usr/local/share/ca-certificates/lidop.crt
+      cp /tmp/lidop/configs/certs/rootCA.pem /usr/local/share/ca-certificates/lidop.crt
       update-ca-certificates
 
   - name: configure git

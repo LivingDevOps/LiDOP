@@ -30,9 +30,9 @@
       git commit -m "initial commit"
       git push --set-upstream origin master
     with_items: 
-      - { name: 'Environment', folder: '/vagrant/plugins/environment' }
-      - { name: 'Jenkins.Lib', folder: '/vagrant/configs/jenkins.sharedlib' }
-      - { name: 'LiDOPCloud', folder: '/vagrant/terraform' }
+      - { name: 'Environment', folder: '/tmp/lidop/plugins/environment' }
+      - { name: 'Jenkins.Lib', folder: '/tmp/lidop/configs/jenkins.sharedlib' }
+      - { name: 'LiDOPCloud', folder: '/tmp/lidop/terraform' }
 
   - name: Load Plugins
     uri:

@@ -7,7 +7,7 @@
 
 - name: install root certificate
   shell: |
-    cp /vagrant/configs/certs/rootCA.pem /usr/local/share/ca-certificates/lidop.crt
+    cp /tmp/lidop/configs/certs/rootCA.pem /usr/local/share/ca-certificates/lidop.crt
     update-ca-certificates
 
 - name: configure git

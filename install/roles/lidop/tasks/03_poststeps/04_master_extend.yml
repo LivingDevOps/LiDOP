@@ -2,7 +2,7 @@
 
   - name: find all extension files
     find:
-      paths: "/vagrant/extensions"
+      paths: "/tmp/lidop/extensions"
       patterns: "*.yml"
       recurse: true
     register: extension_files
