@@ -1,4 +1,5 @@
 ---
+box_config: offline
 virtualbox:
   cpus: 4
   memory: 4096

@@ -1,5 +1,5 @@
 ---
-# online, offline, local
+# online, offline
 install_mode: offline
 nodes: 0
 # self, letsencrypt

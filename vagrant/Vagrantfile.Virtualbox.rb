@@ -2,10 +2,9 @@
 class Virtualbox
 
     def self.init(virtualbox, override, worker, settings, configuration, ansible_script, test_script)
-
-        override.vm.box = configuration["virtualbox"]["#{configuration["install_mode"]}_box_name"]
-        override.vm.box_url = configuration["virtualbox"]["#{configuration["install_mode"]}_box_url"]
-        override.vm.box_version = configuration["virtualbox"]["#{configuration["install_mode"]}_box_version"]
+        override.vm.box = configuration["virtualbox"]["#{configuration["box_config"]}_box_name"]
+        override.vm.box_url = configuration["virtualbox"]["#{configuration["box_config"]}_box_url"]
+        override.vm.box_version = configuration["virtualbox"]["#{configuration["box_config"]}_box_version"]
         
         # Set Virtualbox configuration
         virtualbox.memory = configuration["virtualbox"]["memory"]
