@@ -16,8 +16,6 @@ services:
       POSTGRES_USER: {{ root_user }}
       POSTGRES_PASSWORD: {{ secret_password }}
       SERVICE_NAME: db
-    dns:
-      - {{ ipaddress }}
     deploy:
       placement:
         constraints: [node.role == manager]
@@ -30,8 +28,6 @@ services:
       - SERVICE_NAME=db-admin
     ports:
       - 8082:8080
-    dns:
-      - {{ ipaddress }}
     user: 1111:1111
     deploy:
       restart_policy:

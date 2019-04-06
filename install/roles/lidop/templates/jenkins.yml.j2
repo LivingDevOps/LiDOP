@@ -20,8 +20,6 @@ services:
     volumes: 
       - /var/lidop/certs:/certs 
       - /var/lidop/jenkins:/var/jenkins_home 
-    dns:
-      - {{ ipaddress }}
     user: 1111:1111
     deploy:
       placement:

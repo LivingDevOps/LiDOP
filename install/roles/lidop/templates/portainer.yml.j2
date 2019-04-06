@@ -11,8 +11,6 @@ services:
       # LOG_LEVEL: debug
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    dns:
-      - {{ ipaddress }}
     deploy:
       mode: global
       restart_policy:
@@ -30,8 +28,6 @@ services:
       - SERVICE_9000_NAME=portainer
     volumes:
       - portainer_data:/data
-    dns:
-      - {{ ipaddress }}
     deploy:
       mode: replicated
       replicas: 1

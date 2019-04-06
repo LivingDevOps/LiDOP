@@ -23,8 +23,6 @@ services:
         published: 8092
         protocol: tcp
         mode: host
-    dns:
-      - {{ ipaddress }}
     volumes:
       - "/var/lidop/registry/config.yml:/opt/config.yml:ro"
     deploy:

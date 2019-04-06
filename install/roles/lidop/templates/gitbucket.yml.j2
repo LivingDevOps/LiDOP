@@ -20,8 +20,6 @@ services:
       - GITBUCKET_OPTS=--prefix=/gitbucket
     volumes: 
       - /var/lidop/gitbucket:/gitbucket
-    dns:
-      - {{ ipaddress }}
     deploy:
       restart_policy:
         condition: any

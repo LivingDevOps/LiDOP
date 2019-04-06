@@ -19,8 +19,6 @@ services:
       -  /var/lidop/openldap/ldap/:/var/lib/ldap
       -  /var/lidop/openldap/slapd.d/:/etc/ldap/slapd.d
     command: --copy-service --loglevel debug
-    dns:
-      - {{ ipaddress }}
     deploy:
       restart_policy:
         condition: any
@@ -34,8 +32,6 @@ services:
       - PHPLDAPADMIN_TRUST_PROXY_SSL=true
     ports:
       - "8090:80"
-    dns:
-      - {{ ipaddress }}
     deploy:
       restart_policy:
         condition: any
@@ -54,8 +50,6 @@ services:
       - IS_BEHIND_PROXY=TRUE
     ports:
       - "9002:80"
-    dns:
-      - {{ ipaddress }}
     deploy:
       restart_policy:
         condition: any

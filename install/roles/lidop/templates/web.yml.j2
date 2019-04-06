@@ -20,8 +20,6 @@ services:
       - /var/lidop/nginx/conf.d:/etc/nginx/conf.d/
       - /var/lidop/www/certbot:/usr/share/nginx/letsencrypt
       - /var/lidop/certs:/certs
-    dns:
-      - {{ ipaddress }}
     deploy:
       mode: global
       restart_policy:

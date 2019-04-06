@@ -64,7 +64,6 @@
     shell: >
       docker run -d \
       --net=host \
-      --dns {{ ipaddress }}
       -v /var/run/docker.sock:/tmp/docker.sock \
       -v /etc/hosts:/etc/hosts \
       --name consul_registrator \
