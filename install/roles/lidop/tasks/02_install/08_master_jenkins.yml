@@ -83,6 +83,59 @@
           }
         }
 
+  - name: Create Secrets in Jenkins
+    uri:
+      method: POST
+      status_code: 302
+      url: 'http://{{ ipaddress }}:8080/jenkins/credentials/store/system/domain/_/createCredentials'
+      user: "{{ root_user }}"
+      password: "{{ root_password }}"
+      force_basic_auth: yes
+      headers:
+        Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+      body: |
+        json={
+          "": "0",
+          "credentials": {
+            "scope": "GLOBAL",
+            "id": "{{ item }}",
+            "secret": "{{ secrets[item]|urlencode() }}",
+            "description": "{{ item }}",
+            "$class": "org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl"
+          }
+        }
+    with_items: "{{ secrets }}"
+    when: secrets is defined
+
+  - name: Create SSHCertificate Credential in Jenkins
+    uri:
+      method: POST
+      status_code: 302
+      url: 'http://{{ ipaddress }}:8080/jenkins/credentials/store/system/domain/_/createCredentials'
+      user: "{{ root_user }}"
+      password: "{{ root_password }}"
+      force_basic_auth: yes
+      headers:
+        Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
+      body: |
+        json={
+        "": "0",
+        "credentials": {
+          "scope": "GLOBAL",
+          "id": "{{ item }}",
+          "username": "{{ item }}",
+          "password": "",
+          "privateKeySource": {
+            "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$DirectEntryPrivateKeySource",
+            "privateKey": "{{ certificates[item] | regex_replace('\n','\\n') | replace('+','%2B')  }}"
+          },
+          "description": "Pascal.Lauener",
+          "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey"
+          }
+        }
+    with_items: "{{ certificates }}"
+    when: certificates is defined
+
   - name: pull image
     shell: "docker pull livingdevops/lidop.{{ item }}:{{ docker_image_version }}"
     when: 

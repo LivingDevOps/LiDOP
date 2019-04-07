@@ -14,7 +14,14 @@ docker_image_version: latest
 # some user values. you can also use vault encrypted variables (use the same password as you use for lidop)
 dummy: value
 
-# encrypted
-#aws_access_key: !vault |
-#  $ANSIBLE_VAULT;1.1;AES256
-#  7598472547598247589475829437589475893724895734985729834798753
+# all itmes under secrets will be imported in kenkins as secure string
+#secrets: 
+  #aws_access_key: !vault |
+  #  $ANSIBLE_VAULT;1.1;AES256
+  #  7598472547598247589475829437589475893724895734985729834798753
+
+# all itmes under secrets will be imported in kenkins as ssh keys
+# certificates:
+#   username: !vault |
+#     $ANSIBLE_VAULT;1.1;AES256
+#     64643130646264343436386364643466613965356230353131633738643732323538356361623835

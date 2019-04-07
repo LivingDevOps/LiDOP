@@ -31,13 +31,13 @@ pipelineJob("{{ project_name | replace(' ', '_')}}/{{ pipeline }}") {
 {% if pipelines[pipeline].Parameters is defined %}
     parameters {
     {% for param in pipelines[pipeline].Parameters%}
+
         {%if param.Type == "String"%}
             {% if param.Description is defined %}
                 stringParam("{{ param.Name }}", "{{ param.Default }}", "{{ param.Description }}")
             {% else %}
                 stringParam("{{ param.Name }}", "{{ param.Default }}", "")
             {% endif %}
-
         {%endif%}
 
         {%if param.Type == "Credential"%}
@@ -60,9 +60,11 @@ pipelineJob("{{ project_name | replace(' ', '_')}}/{{ pipeline }}") {
         {%if param.Type == "Boolean"%}
             booleanParam("{{ param.Name }}", "{{ param.Default }}", "")
         {%endif%}
+
         {%if param.Type == "Choice"%}
             choiceParam("{{ param.Name }}", {{ param.Choices | to_json }}, "")
         {%endif%}
+
     {% endfor %}
     }
 {% endif %}
