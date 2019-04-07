@@ -90,14 +90,14 @@
         "Script": "./build/CreateMulti.Jenkinsfile",
         "Parameters": [
             {
-                "Name":"Name",
-                "Type":"String",
-                "Default": "Name"
-            },
-            {
                 "Name":"User",
                 "Type":"String",
                 "Default": "lidop"
+            },
+            {
+                "Name":"Password",
+                "Type":"String",
+                "Default": "Password"
             },
             {
                 "Name":"Prefix",

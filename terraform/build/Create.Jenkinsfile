@@ -12,7 +12,7 @@ pipeline {
   parameters {
     string(name: 'Name', defaultValue: 'Name', description: 'Name of LiDOP')
     string(name: 'User', defaultValue: 'lidop', description: 'Username')
-    string(name: 'Password', defaultValue: 'lidop', description: 'Password')
+    password(name: 'Password', defaultValue: 'lidop', description: 'Password')
     credentials(name: 'AWS_Key', description: 'AWS_Key', defaultValue: '', credentialType: "org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl", required: true )
     credentials(name: 'AWS_Secret', description: 'AWS_Secret', defaultValue: '', credentialType: "org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl", required: true )  
   }
