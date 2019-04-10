@@ -9,8 +9,6 @@ services:
     ports:
       - 8091:4444 # needed for registrator
     network_mode: host
-    dns:
-      - {{ ipaddress }}
     deploy:
       mode: replicated
       replicas: 1
@@ -25,8 +23,6 @@ services:
     volumes:
     - /dev/shm:/dev/shm # Mitigates the Chromium issue described at https://code.google.com/p/chromium/issues/detail?id=519952
     network_mode: host
-    dns:
-      - {{ ipaddress }}
     deploy:
       mode: replicated
       replicas: 1

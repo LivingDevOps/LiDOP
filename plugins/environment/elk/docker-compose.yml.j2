@@ -13,8 +13,6 @@ services:
       - SERVICE_NAME=kibana
     volumes:
       - /var/lidop/elk/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-    dns:
-      - {{ ipaddress }}
     deploy:
       restart_policy:
         condition: on-failure
@@ -34,8 +32,6 @@ services:
         mode: host
     volumes:
       - /var/lidop/elk/elasticsearch:/usr/share/elasticsearch/data
-    dns:
-      - {{ ipaddress }}
     deploy:
       restart_policy:
         condition: on-failure
@@ -63,8 +59,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc:/hostfs/proc:ro
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
-    dns:
-      - {{ ipaddress }}
     deploy:
       mode: global
       restart_policy:

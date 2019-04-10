@@ -7,8 +7,6 @@ services:
       RABBITMQ_DEFAULT_USER: {{ root_user }}
       RABBITMQ_DEFAULT_PASS: {{ secret_password }}
       RABBITMQ_ERLANG_COOKIE: cookiemonster
-    dns:
-      - {{ ipaddress }}
     deploy:
       mode: replicated
       replicas: 1
@@ -17,8 +15,6 @@ services:
 
   memcached:
     image: "memcached:alpine"
-    dns:
-      - {{ ipaddress }}
     deploy:
       mode: replicated
       replicas: 1
@@ -56,8 +52,6 @@ services:
       MEMCACHED_PORT: 11211
       AWX_ADMIN_USER: {{ root_user }}
       AWX_ADMIN_PASSWORD: {{ secret_password }}
-    dns:
-      - {{ ipaddress }}
     deploy:
       mode: replicated
       replicas: 1
@@ -90,8 +84,6 @@ services:
       MEMCACHED_PORT: 11211
       AWX_ADMIN_USER: {{ root_user }}
       AWX_ADMIN_PASSWORD: {{ secret_password }}
-    dns:
-      - {{ ipaddress }}
     deploy:
       mode: replicated
       replicas: 1

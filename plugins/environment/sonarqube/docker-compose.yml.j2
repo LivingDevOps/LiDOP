@@ -21,8 +21,7 @@ services:
 #     - /var/lidop/sonarqube/extensions/plugins:/opt/sonarqube/extensions/plugins
 #      - /tmp/lidop/.temp/sonarqube/extensions:/opt/sonarqube/extensions
 #      - /tmp/lidop/.temp/sonarqube/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
-    dns:
-      - {{ ipaddress }}
+  
     deploy:
       mode: replicated
       replicas: 1
