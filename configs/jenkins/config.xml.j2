@@ -139,6 +139,30 @@ curl --connect-timeout 20 --max-time 60 -o slave.jar $DOCKER_SWARM_PLUGIN_JENKIN
           <placementConstraints></placementConstraints>
         </org.jenkinsci.plugins.docker.swarm.DockerSwarmAgentTemplate>
 
+ <org.jenkinsci.plugins.docker.swarm.DockerSwarmAgentTemplate>
+          <tmpfsDir></tmpfsDir>
+          <limitsNanoCPUs>0</limitsNanoCPUs>
+          <limitsMemoryBytes>0</limitsMemoryBytes>
+          <reservationsNanoCPUs>0</reservationsNanoCPUs>
+          <reservationsMemoryBytes>0</reservationsMemoryBytes>
+          <image>registry.service.lidop.local:5000/lidop/jenkins-slave-docker:{{ docker_image_version }}</image>
+          <hostBinds>/var/run/docker.sock:/var/run/docker.sock
+/var/lidop:/var/lidop</hostBinds>
+          <secrets></secrets>
+          <configs></configs>
+          <label>dockerMaster</label>
+          <osWindows>false</osWindows>
+          <command>sh
+-cx
+curl --connect-timeout 20 --max-time 60 -o slave.jar $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JAR_URL &amp;&amp; java -jar slave.jar -jnlpUrl $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JNLP_URL -secret $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_SECRET -noReconnect -workDir /tmp</command>
+          <user>root</user>
+          <workingDir>/tmp</workingDir>
+          <cacheDir></cacheDir>
+          <envVars></envVars>
+          <baseWorkspaceLocation></baseWorkspaceLocation>
+          <placementConstraints>node.role == manager</placementConstraints>
+        </org.jenkinsci.plugins.docker.swarm.DockerSwarmAgentTemplate>
+
         <org.jenkinsci.plugins.docker.swarm.DockerSwarmAgentTemplate>
           <tmpfsDir></tmpfsDir>
           <limitsNanoCPUs>0</limitsNanoCPUs>
