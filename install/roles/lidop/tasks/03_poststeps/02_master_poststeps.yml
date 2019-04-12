@@ -32,7 +32,7 @@
     with_items: 
       - { name: 'Environment', folder: '/tmp/lidop/plugins/environment' }
       - { name: 'Jenkins.Lib', folder: '/tmp/lidop/configs/jenkins.sharedlib' }
-      - { name: 'LiDOPCloud', folder: '/tmp/lidop/terraform' }
+      - { name: 'LiDOPCloud', folder: '/tmp/lidop' }
 
   - name: Load Plugins
     uri:

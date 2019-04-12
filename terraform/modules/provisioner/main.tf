@@ -30,14 +30,24 @@ resource "null_resource" "master-bootstrap" {
   }
 
   provisioner "file" {
-    source      = "./lidop_config.yaml"
+    source      = "./.lidop_config.yaml"
     destination = "/tmp/lidop/.lidop_config.yaml"
     on_failure  = "continue"
   }
 
   provisioner "file" {
+    source      = "./build"
+    destination = "/tmp/lidop/build/"
+  }
+
+  provisioner "file" {
     source      = "./install"
     destination = "/tmp/lidop/install/"
+  }
+
+  provisioner "file" {
+    source      = "./templates"
+    destination = "/tmp/lidop/templates/"
   }
 
   provisioner "file" {
@@ -48,6 +58,11 @@ resource "null_resource" "master-bootstrap" {
   provisioner "file" {
     source      = "./plugins"
     destination = "/tmp/lidop/plugins/"
+  }
+
+  provisioner "file" {
+    source      = "./scripts"
+    destination = "/tmp/lidop/scripts/"
   }
 
   provisioner "file" {
@@ -73,17 +88,18 @@ resource "null_resource" "master-bootstrap" {
 
   provisioner "remote-exec" {
     inline = [
+      "sudo chmod +x /tmp/lidop/install/vault-env",
       "export ANSIBLE_CONFIG=/tmp/lidop/install/ansible.cfg",
       "export ANSIBLE_VAULT_PASSWORD=${var.password}",
       "echo start ansible",
-      "sudo ansible-playbook -v /tmp/lidop/install/install.yml -e ' ",
-      "root_password=${var.password}",
-      "root_user=${var.user_name}",
-      "node=master",
-      "public_ipaddress=${element(var.master_public_ip, count.index)}",
-      "ipaddress=${element(var.master_private_ip, count.index)}",
-      "install_mode=online",
-      "dns_recursor=${var.dns_recursor}'",
+      "ansible-playbook -v /tmp/lidop/install/install.yml --vault-password-file /tmp/lidop/install/vault-env -e ' ",
+        "root_password=${var.password}",
+        "root_user=${var.user_name}",
+        "node=master",
+        "public_ipaddress=${element(var.master_public_ip, count.index)}",
+        "ipaddress=${element(var.master_private_ip, count.index)}",
+        "install_mode=online",
+        "dns_recursor=${var.dns_recursor}'",
     ]
   }
 
@@ -127,14 +143,24 @@ resource "null_resource" "worker-bootstrap" {
   }
 
   provisioner "file" {
-    source      = "./lidop_config.yaml"
+    source      = "./.lidop_config.yaml"
     destination = "/tmp/lidop/.lidop_config.yaml"
     on_failure  = "continue"
   }
 
   provisioner "file" {
+    source      = "./build"
+    destination = "/tmp/lidop/build/"
+  }
+
+  provisioner "file" {
     source      = "./install"
     destination = "/tmp/lidop/install/"
+  }
+
+  provisioner "file" {
+    source      = "./templates"
+    destination = "/tmp/lidop/templates/"
   }
 
   provisioner "file" {
@@ -145,6 +171,11 @@ resource "null_resource" "worker-bootstrap" {
   provisioner "file" {
     source      = "./plugins"
     destination = "/tmp/lidop/plugins/"
+  }
+
+  provisioner "file" {
+    source      = "./scripts"
+    destination = "/tmp/lidop/scripts/"
   }
 
   provisioner "file" {
@@ -170,18 +201,19 @@ resource "null_resource" "worker-bootstrap" {
 
   provisioner "remote-exec" {
     inline = [
+      "sudo chmod +x /tmp/lidop/install/vault-env",
       "export ANSIBLE_CONFIG=/tmp/lidop/install/ansible.cfg",
       "export ANSIBLE_VAULT_PASSWORD=${var.password}",
       "echo start ansible",
-      "sudo ansible-playbook -v /tmp/lidop/install/install.yml -e ' ",
-      "root_password=${var.password}",
-      "root_user=${var.user_name}",
-      "node=worker",
-      "public_ipaddress=${element(var.worker_public_ips, count.index)}",
-      "ipaddress=${element(var.worker_private_ips, count.index)}",
-      "consul_ip=${element(var.master_private_ip, count.index)}",
-      "install_mode=online",
-      "dns_recursor=${var.dns_recursor}'",
+      "ansible-playbook -v /tmp/lidop/install/install.yml --vault-password-file /tmp/lidop/install/vault-env -e ' ",
+        "root_password=${var.password}",
+        "root_user=${var.user_name}",
+        "node=worker",
+        "public_ipaddress=${element(var.worker_public_ips, count.index)}",
+        "ipaddress=${element(var.worker_private_ips, count.index)}",
+        "consul_ip=${element(var.master_private_ip, count.index)}",
+        "install_mode=online",
+        "dns_recursor=${var.dns_recursor}'",
     ]
   }
 

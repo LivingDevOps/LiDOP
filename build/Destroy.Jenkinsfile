@@ -32,21 +32,21 @@ pipeline {
 
     stage("Terraform init") {
       steps {
-        sh 'ln -sf ./../terraform.backend.consul.tf ./aws/terraform.tf'
-        sh "terraform init -backend-config=address=${env.IPADDRESS}:8500 ./aws"
+        sh 'cp ./terraform/terraform.backend.consul.tf ./terraform/aws/terraform.tf'
+        sh "terraform init -backend-config=address=${env.IPADDRESS}:8500 ./terraform/aws"
       }
     }
 
     stage("Terraform select workspace") {
       steps {
-       sh "terraform workspace select ${params.Name} ./aws"
+       sh "terraform workspace select ${params.Name} ./terraform/aws"
       }
     }
 
     stage("Terraform plan") {
       steps {
 	      withCredentials([string(credentialsId: "${params.AWS_Secret}", variable: 'AWS_SECRET'), string(credentialsId: "${params.AWS_Key}", variable: 'AWS_KEY')]) {
-	        sh "terraform plan -var access_key=${AWS_Key} -var enabled=0 -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./aws"
+	        sh "terraform plan -var access_key=${AWS_Key} -var enabled=0 -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./terraform/aws"
         }      
       }
     }
@@ -54,15 +54,15 @@ pipeline {
     stage("Terraform destroy") {
       steps {
     	  withCredentials([string(credentialsId: "${params.AWS_Secret}", variable: 'AWS_SECRET'), string(credentialsId: "${params.AWS_Key}", variable: 'AWS_KEY')]) {
-	        sh "terraform destroy -auto-approve -var access_key=${AWS_Key} -var enabled=0 -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./aws"
+	        sh "terraform destroy -auto-approve -var access_key=${AWS_Key} -var enabled=0 -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./terraform/aws"
         }      
       }
     }
 
     stage("Terraform delete workspace") {
       steps {
-       sh "terraform workspace select default ./aws"
-       sh "terraform workspace delete ${params.Name} ./aws"
+       sh "terraform workspace select default ./terraform/aws"
+       sh "terraform workspace delete ${params.Name} ./terraform/aws"
       }
     }
 
