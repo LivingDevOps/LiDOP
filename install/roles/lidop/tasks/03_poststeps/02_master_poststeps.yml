@@ -25,7 +25,11 @@
       cd /tmp/work
       git clone "http://{{ root_user }}:{{ root_password }}@{{ ipaddress }}:8081/gitbucket/git/LiDOP/{{ item.name }}.git"
       cd {{ item.name }}
-      cp -a {{ item.folder }}/** .
+      mv .git .git_temp
+      cp -a {{ item.folder }}/. .
+      rm -rf .git
+      rm -rf .box
+      mv .git_temp .git
       git add .
       git commit -m "initial commit"
       git push --set-upstream origin master

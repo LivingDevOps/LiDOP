@@ -3,7 +3,9 @@
   - name: find all extension files
     find:
       paths: "/tmp/lidop/extensions"
-      patterns: "*.yml"
+      patterns: 
+        - "*.yml"
+        - "*.yaml"
       recurse: true
     register: extension_files
     when: node == "master"
