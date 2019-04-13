@@ -17,7 +17,7 @@
     return_content: yes
   register: crumb
 
-- name: Create Demo Builds
+- name: Start Load Plugin Build
   uri:
     url: 'http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load_Plugin/buildWithParameters?token=CreateBuilds&ProjectName=Demo&CopyRepository=true&PluginUrl=https://github.com/LivingDevOps/LiDOP.helloworld_nodejs.git&Branch=*/master'
     status_code: 201
@@ -38,7 +38,7 @@
   retries: 100
   delay: 5
 
-- name: Create sonarqube Builds
+- name: Start sonarqube Builds
   uri:
     url: 'http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/buildWithParameters?service=sonarqube&docker_image_version={{ docker_image_version }}'
     method: POST
@@ -49,7 +49,7 @@
     headers:
       Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
 
-- name: Create selenium Builds
+- name: Start selenium Builds
   uri:
     url: 'http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/buildWithParameters?service=selenium&docker_image_version={{ docker_image_version }}'
     method: POST
@@ -64,6 +64,18 @@
   pause:
     seconds: 60
 
+- name: "wait for Load_Plugin to come up"
+  uri:
+    url: "http://{{ ipaddress }}/jenkins/job/LiDOP/job/Load_Plugin/3/api/json"
+    status_code: 200
+    user: "{{ root_user }}"
+    password: "{{ root_password }}"
+    body_format: json
+  register: data
+  until: data.json.result == "SUCCESS"
+  retries: 100
+  delay: 5
+    
 - name: "wait for Sonarqube to come up"
   uri:
     url: "http://{{ ipaddress }}/jenkins/job/Environment/job/Create_Service/1/api/json"
