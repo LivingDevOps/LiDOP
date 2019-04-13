@@ -46,7 +46,7 @@ pipeline {
     stage("Terraform plan") {
       steps {
 	      withCredentials([string(credentialsId: "${params.AWS_Secret}", variable: 'AWS_SECRET'), string(credentialsId: "${params.AWS_Key}", variable: 'AWS_KEY')]) {
-	        sh "terraform plan -var access_key=${AWS_Key} -var enabled=0 -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./terraform/aws"
+	        sh "terraform plan -var access_key=${AWS_Key} -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./terraform/aws"
         }      
       }
     }
@@ -54,7 +54,7 @@ pipeline {
     stage("Terraform destroy") {
       steps {
     	  withCredentials([string(credentialsId: "${params.AWS_Secret}", variable: 'AWS_SECRET'), string(credentialsId: "${params.AWS_Key}", variable: 'AWS_KEY')]) {
-	        sh "terraform destroy -auto-approve -var access_key=${AWS_Key} -var enabled=0 -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./terraform/aws"
+	        sh "terraform destroy -auto-approve -var access_key=${AWS_Key} -var lidop_name=${params.Name} -var secret_key=${AWS_Secret} -var user_name=${params.User} -var password=${params.Password} ./terraform/aws"
         }      
       }
     }
