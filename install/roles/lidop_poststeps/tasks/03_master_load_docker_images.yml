@@ -1,0 +1,31 @@
+---
+
+########################################################################
+- name: Start web
+########################################################################
+  block:
+
+  - name: pull image
+    shell: "docker pull livingdevops/lidop.{{ item }}:{{ docker_image_version }}"
+    with_items:
+      - backup
+      - serverspec
+    when: 
+      - install_mode == "online"
+      - node == "master"
+
+  - name: tag image
+    shell: "docker tag livingdevops/lidop.{{ item }}:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/{{ item }}:{{ docker_image_version }}"
+    when: node == "master"
+    with_items:
+      - backup
+      - serverspec
+
+  - name: push image
+    shell: "docker push registry.service.lidop.local:5000/lidop/{{ item }}:{{ docker_image_version }}"
+    when: node == "master"
+    with_items:
+      - backup
+      - serverspec
+
+  tags: web

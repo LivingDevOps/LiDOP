@@ -6,12 +6,34 @@
 
   pre_tasks:
     - include_vars: /tmp/lidop/.lidop_config.yaml
-    - name: 'dos2unix vault'
+    - name: "dos2unix vault"
       raw: dos2unix /tmp/lidop/install/vault-env 
-    - name: 'chmod vault'
+    - name: "chmod vault"
       raw: chmod +x /tmp/lidop/install/vault-env 
+    - name: "install consul module"
+      pip: 
+        name: "python-consul"
+      when: 
+        - install_mode == "online"
 
   roles:
-    - { role: lidop_host_preparation }
-    - { role: docker }
-    - { role: lidop }
+    - role: lidop_host_setup
+    - role: lidop_presteps
+    - role: docker
+    - role: consul
+    - role: registry
+      when: node == "master"
+    - role: registry
+      when: node == "master"
+    - role: openldap
+      when: node == "master"
+    - role: portainer
+      when: node == "master"
+    - role: postgres
+      when: node == "master"
+    - role: gitbucket
+      when: node == "master"
+    - role: jenkins
+      when: node == "master"
+    - role: web
+    - role: lidop_poststeps

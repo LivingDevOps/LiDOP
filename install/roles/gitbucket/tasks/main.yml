@@ -1,0 +1,53 @@
+---
+
+  - name: pull image
+    shell: "docker pull livingdevops/lidop.gitbucket:{{ docker_image_version }}"
+    when: 
+      - install_mode == "online"
+      - node == "master"
+
+  - name: build image
+    shell: "docker tag livingdevops/lidop.gitbucket:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/gitbucket:{{ docker_image_version }}"
+    when: node == "master"
+
+  - name: start gitbucket
+    shell: docker stack deploy -c /var/lidop/templates/gitbucket.yml gitbucket
+          
+  - name: "wait for GitBucket to come up"
+    uri:
+      url: "http://{{ ipaddress }}:8081/gitbucket"
+      status_code: 200
+    register: result
+    until: result.status == 200
+    retries: 100
+    delay: 5
+
+  - name: setup gitbucket
+    block:
+    - name: delete root user in gitbucket
+      shell: docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d gitbucket -c  "delete from account;"
+      register: result
+      ignore_errors: True  
+
+    - name: add {{ root_user }} as admin to gitbucket
+      shell: >
+        docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d gitbucket -c
+        "INSERT INTO "account" ("user_name", "mail_address",        "password", "administrator", "url", "registered_date",         "updated_date",          "last_login_date",         "image", "group_account", "full_name", "removed", "description") 
+        VALUES ('{{ root_user }}', '{{ root_user }}@localhost', '',         '1',              '',   '1900-01-01 00:00:00.000','1900-01-01 00:00:00.000','1900-01-01 00:00:00.000', NULL,    false,           'lidop',  false,    NULL);"
+      when: result is succeeded    
+
+    - name: add {{ root_user }} as group to gitbucket
+      shell: > 
+        docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d gitbucket -c  
+        "INSERT INTO "account" ("user_name", "mail_address",        "password", "administrator", "url", "registered_date",         "updated_date",           "last_login_date",         "image", "group_account", "full_name", "removed", "description") 
+        VALUES                 ('LiDOP', 'LiDOP@devnull',	  '',	        false,	             '',    '1900-01-01 00:00:00.000', '1900-01-01 00:00:00.000', NULL, NULL,   true,	          'LiDOP', false,	    NULL);"
+      when: result is succeeded    
+
+    - name: add {{ root_user }} as group to gitbucket
+      shell: > 
+        docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d gitbucket -c  
+        "INSERT INTO "group_member" ("group_name", "user_name", "manager") VALUES
+        ('LiDOP',	'{{ root_user }}',	'1');"
+      when: result is succeeded    
+
+    tags: gitbucket

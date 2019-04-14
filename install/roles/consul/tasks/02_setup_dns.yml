@@ -1,8 +1,6 @@
 ---
 
-########################################################################
-- name: Setup DNS
-########################################################################
+- name: "Setup DNS to use consul as server"
   block:
 
   - name: Change from resolconf to resolved

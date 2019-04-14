@@ -28,13 +28,6 @@ class Virtualbox
             # forward ports (needed for accessing lidop over the guest ip machine)
             override.vm.network :forwarded_port, guest: 80, host: 80, auto_correct: true
             override.vm.network :forwarded_port, guest: 443, host: 443, auto_correct: true
-            override.vm.network :forwarded_port, guest: 4243, host: 4243, auto_correct: true
-            override.vm.network :forwarded_port, guest: 2377, host: 2377, auto_correct: true
-            override.vm.network :forwarded_port, guest: 8301, host: 8301, auto_correct: true
-            override.vm.network :forwarded_port, guest: 8500, host: 8500, auto_correct: true
-            (8080..8099).each do |i|
-                override.vm.network :forwarded_port, guest: i, host: i, auto_correct: true
-            end
 
             # adapt script for master installation
             script = <<-SCRIPT

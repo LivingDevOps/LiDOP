@@ -30,10 +30,10 @@
       - "lidop"
     when: node == "master"
 
-  - local_action: copy content={{ base_url }} dest=/var/lidop/.base_url
+  # - local_action: copy content={{ base_url }} dest=/var/lidop/.base_url
 
-  - debug:
-      msg: "gitbucket_base_url: {{ gitbucket_base_url }}"  
+  # - debug:
+  #     msg: "gitbucket_base_url: {{ gitbucket_base_url }}"  
 
   - name: find all j2 files
     find:
@@ -84,14 +84,5 @@
     shell: >
       chmod 777 -R  /var/lidop/
     when: node == "master"
-
-  - name: install root certificate
-    shell: |
-      cp /tmp/lidop/configs/certs/rootCA.pem /usr/local/share/ca-certificates/lidop.crt
-      update-ca-certificates
-
-  - name: configure git
-    shell: |
-      git config --system http.sslVerify false
 
   tags: config

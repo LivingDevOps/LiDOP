@@ -1,0 +1,7 @@
+---
+
+- name: install root certificate
+  shell: |
+    cp /tmp/lidop/configs/certs/rootCA.pem /usr/local/share/ca-certificates/lidop.crt
+    update-ca-certificates
+

@@ -2,7 +2,7 @@
 
 - name: read files for master
   find:
-    paths:  "{{ playbook_dir }}/roles/lidop_host_preparation/tasks"
+    paths:  "{{ role_path }}/tasks"
     patterns: "^((?!main).)*$"
     recurse: true
     use_regex: true
@@ -11,7 +11,7 @@
 
 - name: read files for worker
   find:
-    paths:  "{{ playbook_dir }}/roles/lidop_host_preparation/tasks"
+    paths:  "{{ role_path }}/tasks"
     patterns: "^((?!master|main).)*$"
     recurse: true
     use_regex: true

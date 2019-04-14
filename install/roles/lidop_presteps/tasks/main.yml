@@ -1,0 +1,13 @@
+---
+
+- name: read files
+  find:
+    paths:  "{{ role_path }}/tasks"
+    patterns: "^((?!main).)*$"
+    recurse: true
+    use_regex: true
+  register: includes
+
+- name: include tasks
+  include_tasks: "{{ item.path }}"
+  with_items: "{{ includes.files | sort(attribute='path') }}" 

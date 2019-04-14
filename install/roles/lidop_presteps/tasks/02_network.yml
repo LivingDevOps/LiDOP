@@ -1,6 +1,6 @@
 ---
 
-- name: Init
+- name: "Set network variables"
   block:
   - name: get public IP
     ipify_facts:
@@ -73,62 +73,4 @@
       msg: "consul_ip: {{ consul_ip }}"  
     when: node == "worker"
 
-  - name: install python-consul
-    shell: pip install python-consul
-    when: 
-      - install_mode == "online"
-      - node == "worker"
-
-  - name: Read swarm_manager_ip
-    consul_kv:
-        key: "config/swarm_manager_ip"
-        host: "{{ consul_ip }}"
-    register: swarm_manager_ip
-    when: node == "worker"
-  - set_fact: swarm_manager_ip="{{ swarm_manager_ip.data.Value }}"  
-    when: node == "worker"
-  - debug:
-      msg: "swarm_manager_ip: {{ swarm_manager_ip }}"  
-    when: node == "worker"
-  - debug:
-      msg: "Node MasterIpaddress: {{ swarm_manager_ip }}"  
-    when: node == "worker"
-
-  - name: Read swarm_manager_token
-    consul_kv:
-        key: "config/swarm_manager_token"
-        host: "{{ consul_ip }}"
-    register: swarm_manager_token
-    when: node == "worker"
-  - set_fact: swarm_manager_token="{{ swarm_manager_token.data.Value }}"  
-    when: node == "worker"
-  - debug:
-      msg: "swarm_manager_token: {{ swarm_manager_token }}"  
-    when: node == "worker"
-
-  - name: Read swarm_worker_token
-    consul_kv:
-        key: "config/swarm_worker_token"
-        host: "{{ consul_ip }}"
-    register: swarm_worker_token
-    when: node == "worker"
-  - set_fact: swarm_worker_token="{{ swarm_worker_token.data.Value }}"  
-    when: node == "worker"
-  - debug:
-      msg: "swarm_worker_token: {{ swarm_worker_token }}"  
-    when: node == "worker"
-
-  - name: Read secret_password
-    consul_kv:
-        key: "config/secret_password"
-        host: "{{ consul_ip }}"
-    register: secret_password
-    when: node == "worker"
-  - set_fact: secret_password="{{ secret_password.data.Value }}"  
-    when: node == "worker"
-  - set_fact: secret_password="{{ secret_password_generator }}"  
-    when: node == "master"
-  - debug:
-      msg: "secret_password: {{ secret_password }}"  
-
-  tags: init
+  tags: set_network_variables

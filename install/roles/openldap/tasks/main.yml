@@ -1,0 +1,47 @@
+---
+
+- name: setup openldap
+  block:
+
+  - name: Create folders
+    file:
+      state: "directory"
+      path: "/var/lidop/{{ item }}"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+    with_items:
+      - openldap/ldap
+      - openldap/slapd.d
+
+  - name: start openldap
+    shell: docker stack deploy -c /var/lidop/templates/openldap.yml openldap
+
+  - name: wait for starting openladp up
+    shell: docker logs $(docker ps -f "name=openldap_openldapdb" -q)
+    register: result
+    until: result.stdout.find("First start is done") != -1
+    retries: 100
+    delay: 5
+
+  - name: wait for registering openldap in consul
+    shell: ping -c 1 ldap.service.lidop.local
+    register: result
+    until: result.rc == 0
+    retries: 100
+    delay: 5
+
+  - name: change passwords
+    shell: docker exec $(docker ps -f "name=openldap_openldapdb" -q) ldappasswd -x -D "cn=admin,dc=lidop,dc=local" -w {{ secret_password }}  -s {{ root_password }} "cn={{ root_user }},ou=users,dc=lidop,dc=local"
+
+  - name: change passwords
+    shell: docker exec $(docker ps -f "name=openldap_openldapdb" -q) ldappasswd -x -D "cn=admin,dc=lidop,dc=local" -w {{ secret_password }}  -s {{ root_password }} "cn=admin,dc=lidop,dc=local"
+
+  - name: wait for starting openladp up
+    shell: docker logs $(docker ps -f "name=openldap_openldapdb" -q)
+    register: result
+    until: result.stderr.find("PASSMOD id=\"cn=admin,dc=lidop,dc=local\" new") != -1
+    retries: 100
+    delay: 5
+
+  tags: openldap

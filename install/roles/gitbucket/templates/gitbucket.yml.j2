@@ -1,0 +1,26 @@
+version: '3.2'
+
+services:
+
+  gitbucket:
+    image: registry.service.lidop.local:5000/lidop/gitbucket:{{ docker_image_version }}
+    ports:
+      - target: 8080
+        published: 8081
+        protocol: tcp
+        mode: host
+      - target: 29418
+        published: 29418
+        protocol: tcp
+        mode: host
+    environment:
+      - SERVICE_8080_NAME=gitbucket
+      - SERVICE_29418_NAME=ssl-gitbucket
+      - GITBUCKET_EXTRA_DEPS=
+      - GITBUCKET_OPTS=--prefix=/gitbucket
+    volumes: 
+      - /var/lidop/gitbucket:/gitbucket
+    deploy:
+      restart_policy:
+        condition: any
+

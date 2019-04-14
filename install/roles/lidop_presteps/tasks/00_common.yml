@@ -1,0 +1,19 @@
+---
+
+- name: "Set common variables"
+  block:
+
+  - name: Read secret_password
+    consul_kv:
+        key: "config/secret_password"
+        host: "{{ consul_ip }}"
+    register: secret_password
+    when: node == "worker"
+  - set_fact: secret_password="{{ secret_password.data.Value }}"  
+    when: node == "worker"
+  - set_fact: secret_password="{{ secret_password_generator }}"  
+    when: node == "master"
+  - debug:
+      msg: "secret_password: {{ secret_password }}"  
+
+  tags: set_common_variables
