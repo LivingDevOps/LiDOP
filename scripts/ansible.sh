@@ -21,7 +21,7 @@ sudo apt-get -y remove unattended-upgrades
 echo "###########################################################"
 echo "Install ansible"
 echo "###########################################################"
-sudo apt-get update
+sudo apt-get update --fix-missing -y
 sudo apt-get install -y software-properties-common
 sudo apt-add-repository -y ppa:ansible/ansible   
 sudo apt-get update
