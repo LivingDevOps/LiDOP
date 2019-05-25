@@ -1,5 +1,7 @@
+
 require 'spec_helper'
 describe 'Test OpenLdap installation' do
+{% if ldap_use_external_server == false %}
 
   describe command('docker service ls') do
     its(:stdout) { should contain ("openldap_openldapdb") }
@@ -18,3 +20,4 @@ describe 'Test OpenLdap installation' do
   end
 
 end
+{% endif %}
