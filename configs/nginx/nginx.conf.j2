@@ -26,11 +26,11 @@ http {
     #gzip  on;
 
     ldap_server ldapserver {
-        url ldap://ldap.service.lidop.local/dc=lidop,dc=local?uid?sub;
-        binddn "cn=admin,dc=lidop,dc=local";
-        binddn_passwd "{{ secret_password }}";
-        group_attribute memberUid;
-        require group 'cn=admins,ou=groups,dc=lidop,dc=local';
+        url "ldap://{{ ldap_server }}/{{ ldap_base_dn }}?{{ ldap_username_attribute }}?sub";
+        binddn "{{ ldap_bind_dn }}";
+        binddn_passwd "{{ ldap_bind_password }}";
+        group_attribute "{{ ldap_group_search_attribute }}";
+        require group "{{ ldap_lidop_admin_group_query }}";
         require valid_user;
         satisfy all;
     }

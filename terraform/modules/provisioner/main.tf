@@ -1,10 +1,10 @@
 resource "null_resource" "master-bootstrap" {
   count = "1"
-
   connection {
     host        = "${element(var.master_public_ip, count.index)}"
-    user        = "ubuntu"
-    private_key = "${var.private_key}"
+    user        = "${var.ssh_user}"
+    private_key = "${var.private_key != "" ? "${var.private_key}" : ""}"
+    password = "${var.ssh_password != "" ? "${var.ssh_password}" : ""}"
   }
 
   provisioner "remote-exec" {
@@ -81,19 +81,21 @@ resource "null_resource" "master-bootstrap" {
   }
 
   provisioner "remote-exec" {
-    scripts = [
-      "./scripts/ansible.sh",
+    inline = [
+      "sudo apt-get install -y dos2unix",
+      "sudo dos2unix /tmp/lidop/scripts/ansible.sh",
+      "sudo bash /tmp/lidop/scripts/ansible.sh",
     ]
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod +x /tmp/lidop/install/vault-env",
+      "sudo chmod +x /tmp/lidop/install/vault.py",
+      "dos2unix /tmp/lidop/install/vault.py",
       "export ANSIBLE_CONFIG=/tmp/lidop/install/ansible.cfg",
       "export ANSIBLE_VAULT_PASSWORD=${var.password}",
       "echo start ansible",
-      "ansible-playbook -v /tmp/lidop/install/install.yml --vault-password-file /tmp/lidop/install/vault-env -e ' ",
-        "root_password=${var.password}",
+      "sudo -E ansible-playbook -v /tmp/lidop/install/install.yml --vault-password-file /tmp/lidop/install/vault.py -e 'root_password=${var.password}",
         "root_user=${var.user_name}",
         "node=master",
         "public_ipaddress=${element(var.master_public_ip, count.index)}",
@@ -116,8 +118,9 @@ resource "null_resource" "worker-bootstrap" {
 
   connection {
     host        = "${element(var.worker_public_ips, count.index)}"
-    user        = "ubuntu"
-    private_key = "${var.private_key}"
+    user        = "${var.ssh_user}"
+    private_key = "${var.private_key != "" ? "${var.private_key}" : ""}"
+    password = "${var.ssh_password != "" ? "${var.ssh_password}" : ""}"
   }
 
   provisioner "remote-exec" {
@@ -194,19 +197,21 @@ resource "null_resource" "worker-bootstrap" {
   }
 
   provisioner "remote-exec" {
-    scripts = [
-      "./scripts/ansible.sh",
+    inline = [
+      "sudo apt install dos2unix -y",
+      "sudo dos2unix /tmp/lidop/scripts/ansible.sh",
+      "sudo bash /tmp/lidop/scripts/ansible.sh",
     ]
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod +x /tmp/lidop/install/vault-env",
+      "sudo chmod +x /tmp/lidop/install/vault.py",
+      "dos2unix /tmp/lidop/install/vault.py",
       "export ANSIBLE_CONFIG=/tmp/lidop/install/ansible.cfg",
       "export ANSIBLE_VAULT_PASSWORD=${var.password}",
       "echo start ansible",
-      "ansible-playbook -v /tmp/lidop/install/install.yml --vault-password-file /tmp/lidop/install/vault-env -e ' ",
-        "root_password=${var.password}",
+      "sudo -E ansible-playbook -v /tmp/lidop/install/install.yml --vault-password-file /tmp/lidop/install/vault.py -e ' root_password=${var.password}",
         "root_user=${var.user_name}",
         "node=worker",
         "public_ipaddress=${element(var.worker_public_ips, count.index)}",

@@ -9,57 +9,63 @@
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
   <authorizationStrategy class="hudson.security.GlobalMatrixAuthorizationStrategy">
-    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Create:admins</permission>
-    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Delete:admins</permission>
-    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains:admins</permission>
-    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Update:admins</permission>
-    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.View:admins</permission>
-    <permission>hudson.model.Computer.Build:admins</permission>
-    <permission>hudson.model.Computer.Configure:admins</permission>
-    <permission>hudson.model.Computer.Connect:admins</permission>
-    <permission>hudson.model.Computer.Create:admins</permission>
-    <permission>hudson.model.Computer.Delete:admins</permission>
-    <permission>hudson.model.Computer.Disconnect:admins</permission>
-    <permission>hudson.model.Hudson.Administer:admins</permission>
-    <permission>hudson.model.Hudson.Read:admins</permission>
+    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Create:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Delete:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Update:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>com.cloudbees.plugins.credentials.CredentialsProvider.View:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Computer.Build:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Computer.Configure:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Computer.Connect:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Computer.Create:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Computer.Delete:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Computer.Disconnect:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Hudson.Administer:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Hudson.Read:{{ ldap_lidop_admin_group_name }}</permission>
     <permission>hudson.model.Hudson.Read:authenticated</permission>
-    <permission>hudson.model.Item.Build:admins</permission>
+    <permission>hudson.model.Item.Build:{{ ldap_lidop_admin_group_name }}</permission>
     <permission>hudson.model.Item.Build:authenticated</permission>
-    <permission>hudson.model.Item.Cancel:admins</permission>
-    <permission>hudson.model.Item.Configure:admins</permission>
-    <permission>hudson.model.Item.Create:admins</permission>
-    <permission>hudson.model.Item.Delete:admins</permission>
-    <permission>hudson.model.Item.Discover:admins</permission>
-    <permission>hudson.model.Item.Move:admins</permission>
-    <permission>hudson.model.Item.Read:admins</permission>
+    <permission>hudson.model.Item.Cancel:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Item.Configure:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Item.Create:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Item.Delete:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Item.Discover:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Item.Move:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Item.Read:{{ ldap_lidop_admin_group_name }}</permission>
     <permission>hudson.model.Item.Read:authenticated</permission>
-    <permission>hudson.model.Item.Workspace:admins</permission>
-    <permission>hudson.model.Run.Delete:admins</permission>
-    <permission>hudson.model.Run.Replay:admins</permission>
-    <permission>hudson.model.Run.Update:admins</permission>
-    <permission>hudson.model.View.Configure:admins</permission>
-    <permission>hudson.model.View.Create:admins</permission>
-    <permission>hudson.model.View.Delete:admins</permission>
-    <permission>hudson.model.View.Read:admins</permission>
+    <permission>hudson.model.Item.Workspace:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Run.Delete:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Run.Replay:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.Run.Update:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.View.Configure:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.View.Create:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.View.Delete:{{ ldap_lidop_admin_group_name }}</permission>
+    <permission>hudson.model.View.Read:{{ ldap_lidop_admin_group_name }}</permission>
     <permission>hudson.model.View.Read:authenticated</permission>
-    <permission>hudson.scm.SCM.Tag:admins</permission>
+    <permission>hudson.scm.SCM.Tag:{{ ldap_lidop_admin_group_name }}</permission>
   </authorizationStrategy>
   <securityRealm class="hudson.security.LDAPSecurityRealm" plugin="ldap@1.18">
     <disableMailAddressResolver>false</disableMailAddressResolver>
     <configurations>
       <jenkins.security.plugins.ldap.LDAPConfiguration>
-        <server>ldap.service.lidop.local</server>
-        <rootDN>dc=lidop,dc=local</rootDN>
+        <server>{{ ldap_server }}</server>
+        <rootDN>{{ ldap_base_dn }}</rootDN>
         <inhibitInferRootDN>false</inhibitInferRootDN>
         <userSearchBase></userSearchBase>
-        <userSearch>uid={0}</userSearch>
+        <userSearch>{{ ldap_username_attribute }}={0}</userSearch>
+{% if ldap_user_attribute_for_usergroups is defined %}
+        <groupMembershipStrategy class="jenkins.security.plugins.ldap.FromUserRecordLDAPGroupMembershipStrategy">
+          <attributeName>{{ ldap_user_attribute_for_usergroups }}</attributeName>
+        </groupMembershipStrategy>
+{% elif ldap_search_groups_usergroups is defined %}
         <groupMembershipStrategy class="jenkins.security.plugins.ldap.FromGroupSearchLDAPGroupMembershipStrategy">
           <filter></filter>
         </groupMembershipStrategy>
-        <managerDN>cn=admin,dc=lidop,dc=local</managerDN>
-        <managerPasswordSecret>{{ secret_password }}</managerPasswordSecret>
-        <displayNameAttributeName>givenName</displayNameAttributeName>
-        <mailAddressAttributeName>mail</mailAddressAttributeName>
+{% endif %}
+        <managerDN>{{ ldap_bind_dn }}</managerDN>
+        <managerPasswordSecret>{{ ldap_bind_password }}</managerPasswordSecret>
+        <displayNameAttributeName>{{ ldap_fullname_attribute }}</displayNameAttributeName>
+        <mailAddressAttributeName>{{ ldap_mail_address_attribute }}</mailAddressAttributeName>
         <extraEnvVars class="linked-hash-map">
           <entry>
             <string></string>
@@ -108,7 +114,7 @@
 -cx
 curl --connect-timeout 20 --max-time 60 -o slave.jar $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JAR_URL &amp;&amp; java -jar slave.jar -jnlpUrl $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JNLP_URL -secret $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_SECRET -noReconnect -workDir /tmp</command>
           <user>root</user>
-          <workingDir>/tmp</workingDir>
+          <workingDir>/w</workingDir>
           <cacheDir></cacheDir>
           <envVars></envVars>
           <baseWorkspaceLocation></baseWorkspaceLocation>
@@ -133,7 +139,7 @@ curl --connect-timeout 20 --max-time 60 -o slave.jar $DOCKER_SWARM_PLUGIN_JENKIN
 -cx
 curl --connect-timeout 20 --max-time 60 -o slave.jar $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JAR_URL &amp;&amp; java -jar slave.jar -jnlpUrl $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JNLP_URL -secret $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_SECRET -noReconnect -workDir /tmp</command>
           <user>root</user>
-          <workingDir>/tmp</workingDir>
+          <workingDir>/w</workingDir>
           <cacheDir></cacheDir>
           <envVars></envVars>
           <baseWorkspaceLocation></baseWorkspaceLocation>
@@ -158,7 +164,7 @@ curl --connect-timeout 20 --max-time 60 -o slave.jar $DOCKER_SWARM_PLUGIN_JENKIN
 -cx
 curl --connect-timeout 20 --max-time 60 -o slave.jar $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JAR_URL &amp;&amp; java -jar slave.jar -jnlpUrl $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_JNLP_URL -secret $DOCKER_SWARM_PLUGIN_JENKINS_AGENT_SECRET -noReconnect -workDir /tmp</command>
           <user>root</user>
-          <workingDir>/tmp</workingDir>
+          <workingDir>/w</workingDir>
           <cacheDir></cacheDir>
           <envVars></envVars>
           <baseWorkspaceLocation></baseWorkspaceLocation>

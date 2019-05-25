@@ -25,7 +25,7 @@ variable "image_name" {}
 variable "availability_zone" {}
 
 variable "instance_type_master" {
-  default = "a1.2large"
+  default = "a1.2xlarge"
 }
 
 variable "instance_type_worker" {

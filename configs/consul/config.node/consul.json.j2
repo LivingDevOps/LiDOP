@@ -12,10 +12,15 @@
   },
   "server" : false,
   "ui" : false,
-  "acl_datacenter": "dc1",
-  "acl_master_token": "{{ secret_password }}",
-  "acl_default_policy": "allow",
-  "acl_down_policy": "extend-cache",
+  "primary_datacenter": "dc1",
+  "acl": {
+    "enabled": true,
+    "tokens": {
+      "master": "{{ secret_password }}"
+    },
+    "default_policy": "deny",
+    "down_policy": "extend-cache"
+  },
   "http_config": {
     "response_headers": {
       "Access-Control-Allow-Origin": "*"

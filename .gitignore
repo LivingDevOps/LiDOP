@@ -15,3 +15,5 @@ backup.tgz
 *.tfstate.*
 *.tfvars
 **/*temp_key
+
+vra-terraform.log

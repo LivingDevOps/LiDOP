@@ -23,6 +23,10 @@
   shell: pip install docker-compose
   when: install_mode == "online"
 
+- name: install python-consul
+  shell: pip install python-consul
+  when: install_mode == "online"
+
 - name: ensure repository key is installed
   apt_key:
     url: https://download.docker.com/linux/raspbian/gpg
@@ -63,6 +67,12 @@
 - name: Add LiDOP user to docker group
   command: "usermod -aG docker {{ root_user }}"
   changed_when: false
+
+- name: leave swarm
+  shell: >
+    docker swarm leave --force
+  ignore_errors: yes
+  when: node == "master"
 
 - name: initialize swarm cluster
   shell: >

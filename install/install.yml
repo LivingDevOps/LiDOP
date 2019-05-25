@@ -7,9 +7,9 @@
   pre_tasks:
     - include_vars: /tmp/lidop/.lidop_config.yaml
     - name: "dos2unix vault"
-      raw: dos2unix /tmp/lidop/install/vault-env 
+      raw: dos2unix /tmp/lidop/install/vault.py 
     - name: "chmod vault"
-      raw: chmod +x /tmp/lidop/install/vault-env 
+      raw: chmod +x /tmp/lidop/install/vault.py 
     - name: "install consul module"
       pip: 
         name: "python-consul"
@@ -26,7 +26,9 @@
     - role: registry
       when: node == "master"
     - role: openldap
-      when: node == "master"
+      when: 
+        - node == "master"
+        - ldap_use_external_server == "false"
     - role: portainer
       when: node == "master"
     - role: postgres

@@ -11,6 +11,30 @@ protocol: https
 # latest, dev
 docker_image_version: latest
 
+plugins_to_load: 
+  - "Environment" 
+  - "LiDOPCloud" 
+
+ldap_use_external_server: false
+ldap_server: ldap.service.lidop.local
+ldap_base_dn: dc=lidop,dc=local
+
+ldap_needs_authentication: true
+ldap_bind_dn: cn=admin,dc=lidop,dc=local
+ldap_bind_password: "{{ secret_password }}"
+
+ldap_fullname_attribute: givenName
+ldap_username_attribute: uid
+ldap_mail_address_attribute: mail
+
+ldap_user_search_attribute: uid
+ldap_user_search_object_class: inetOrgPerson
+ldap_group_search_attribute: memberUid
+ldap_group_search_object_class: posixGroup
+
+ldap_lidop_admin_group_query: cn=admins,ou=groups,dc=lidop,dc=local
+ldap_lidop_admin_group_name: admins
+
 # some user values. you can also use vault encrypted variables (use the same password as you use for lidop)
 dummy: value
 

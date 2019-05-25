@@ -2,7 +2,15 @@ variable "user_name" {}
 
 variable "password" {}
 
-variable "private_key" {}
+variable "private_key" {
+    default = ""
+}
+variable "ssh_user" {
+  default = "ubuntu"
+}
+variable "ssh_password" {
+  default = ""
+}
 
 variable "workers" {
   default = 0
