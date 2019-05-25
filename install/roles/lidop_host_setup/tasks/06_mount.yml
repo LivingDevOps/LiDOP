@@ -3,6 +3,15 @@
 - name: Init
   block:
 
+  - name: Create folder /var/lidop
+    file:
+      state: "directory"
+      path: "/var/lidop/"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+    when: node == "master"
+
   - name: Enable mout for /var/lidop
     lineinfile:
       create: yes

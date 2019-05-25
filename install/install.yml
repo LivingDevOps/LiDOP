@@ -28,7 +28,7 @@
     - role: openldap
       when: 
         - node == "master"
-        - ldap_use_external_server == "false"
+        - ldap_use_external_server == false
     - role: portainer
       when: node == "master"
     - role: postgres
