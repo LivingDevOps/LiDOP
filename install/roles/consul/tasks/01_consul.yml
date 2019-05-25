@@ -67,10 +67,77 @@
       -v /var/run/docker.sock:/tmp/docker.sock \
       -v /etc/hosts:/etc/hosts \
       --name consul_registrator \
+      -e CONSUL_HTTP_TOKEN={{ secret_password }} \
       --restart always \
       gliderlabs/registrator:latest -ip={{ ipaddress }} -cleanup=true -deregister="always" -resync=60 consul://{{ ipaddress }}:8500
 
-  - name: wait for consul starting up
+  - name: "wait for consul to come up"
+    uri:
+      url: "http://{{ ipaddress }}:8500/v1/acl/policy"
+      status_code: 405
+    register: result
+    until: result.status == 405
+    retries: 100
+    delay: 5
+    when: node == "master"
+
+  # HACK. Better way needed to check when consul is fully up and acl is ready
+  - pause:
+      seconds: 10
+
+  - name: Create dns policy
+    uri:
+      method: PUT
+      status_code: 200
+      url: 'http://{{ ipaddress }}:8500/v1/acl/policy'
+      timeout: 120
+      force_basic_auth: yes
+      headers:
+        X-Consul-Token: "{{ secret_password }}"
+      body: |
+        {
+          "Name": "dns",
+          "Description": "grant access to use dns",
+          "Type": "client",
+          "Rules": "node_prefix \"\" { policy = \"read\" } service_prefix \"\" { policy = \"read\" }"
+        }
+    when: node == "master"
+
+  - name: Create kv policy
+    uri:
+      method: PUT
+      status_code: 200
+      url: 'http://{{ ipaddress }}:8500/v1/acl/policy'
+      timeout: 120
+      force_basic_auth: yes
+      headers:
+        X-Consul-Token: "{{ secret_password }}"
+      body: |
+        {
+          "Name": "kv",
+          "Description": "grant access to use kv",
+          "Type": "client",
+          "Rules": "key_prefix \"\" { policy = \"read\" } key_prefix \"config\" { policy = \"deny\" }"
+        }
+    when: node == "master"
+
+
+  - name: add dns policy to anonym token
+    uri:
+      method: PUT
+      status_code: 200
+      url: 'http://{{ ipaddress }}:8500/v1/acl/token/00000000-0000-0000-0000-000000000002'
+      timeout: 120
+      force_basic_auth: yes
+      headers:
+        X-Consul-Token: "{{ secret_password }}"
+      body: |
+        { 
+          "Policies": [ { "Name": "dns" }, { "Name": "kv" } ], 
+          "Local": false 
+        }
+
+  - name: wait for consul registering
     shell: docker run --rm --dns {{ ipaddress }} alpine:latest ping -c 1 consul.service.lidop.local
     register: result
     until: result.rc == 0

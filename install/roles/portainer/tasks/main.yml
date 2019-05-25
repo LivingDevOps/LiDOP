@@ -2,6 +2,13 @@
 
 - name: Start portainer
   block:
+
+  - name: copy template file
+    template:
+      src: "/tmp/lidop/install/roles/portainer/templates/portainer.yml.j2"
+      dest: "/var/lidop/templates/portainer.yml"
+    when: node == "master"
+
   - name: start portainer
     shell: docker stack deploy -c /var/lidop/templates/portainer.yml portainer
     when: node == "master"

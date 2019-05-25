@@ -10,6 +10,11 @@
     shell: "docker tag livingdevops/lidop.gitbucket:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/gitbucket:{{ docker_image_version }}"
     when: node == "master"
 
+  - name: copy template file
+    template:
+      src: "/tmp/lidop/install/roles/gitbucket/templates/gitbucket.yml.j2"
+      dest: "/var/lidop/templates/gitbucket.yml"
+
   - name: start gitbucket
     shell: docker stack deploy -c /var/lidop/templates/gitbucket.yml gitbucket
           

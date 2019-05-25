@@ -13,6 +13,12 @@
     shell: "docker tag livingdevops/lidop.jenkins:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/jenkins:{{ docker_image_version }}"
     when: node == "master"
 
+  - name: copy template file
+    template:
+      src: "/tmp/lidop/install/roles/jenkins/templates/jenkins.yml.j2"
+      dest: "/var/lidop/templates/jenkins.yml"
+    when: node == "master"
+
   - name: start jenkins
     shell: docker stack deploy -c /var/lidop/templates/jenkins.yml jenkins
           

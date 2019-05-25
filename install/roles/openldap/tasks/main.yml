@@ -14,6 +14,12 @@
       - openldap/ldap
       - openldap/slapd.d
 
+  - name: copy template file
+    template:
+      src: "/tmp/lidop/install/roles/openldap/templates/openldap.yml.j2"
+      dest: "/var/lidop/templates/openldap.yml"
+    when: node == "master"
+
   - name: start openldap
     shell: docker stack deploy -c /var/lidop/templates/openldap.yml openldap
 

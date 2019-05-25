@@ -3,6 +3,12 @@
 - name: Registry
   block:
 
+  - name: copy template file
+    template:
+      src: "/tmp/lidop/install/roles/registry/templates/registry.yml.j2"
+      dest: "/var/lidop/templates/registry.yml"
+    when: node == "master"
+
   - name: create certificate certificate
     shell: |
       echo "Create Key"

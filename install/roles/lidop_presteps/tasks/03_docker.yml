@@ -7,6 +7,7 @@
     consul_kv:
         key: "config/swarm_manager_ip"
         host: "{{ consul_ip }}"
+        token: "{{ secret_password }}"
     register: swarm_manager_ip
     when: node == "worker"
   - set_fact: swarm_manager_ip="{{ swarm_manager_ip.data.Value }}"  
@@ -22,6 +23,7 @@
     consul_kv:
         key: "config/swarm_manager_token"
         host: "{{ consul_ip }}"
+        token: "{{ secret_password }}"
     register: swarm_manager_token
     when: node == "worker"
   - set_fact: swarm_manager_token="{{ swarm_manager_token.data.Value }}"  
@@ -34,6 +36,7 @@
     consul_kv:
         key: "config/swarm_worker_token"
         host: "{{ consul_ip }}"
+        token: "{{ secret_password }}"
     register: swarm_worker_token
     when: node == "worker"
   - set_fact: swarm_worker_token="{{ swarm_worker_token.data.Value }}"  

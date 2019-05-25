@@ -13,6 +13,12 @@
     with_items:
       - postgres/data
 
+  - name: copy template file
+    template:
+      src: "/tmp/lidop/install/roles/postgres/templates/postgres.yml.j2"
+      dest: "/var/lidop/templates/postgres.yml"
+    when: node == "master"
+
   - name: start postgres
     shell: docker stack deploy -c /var/lidop/templates/postgres.yml postgres
 

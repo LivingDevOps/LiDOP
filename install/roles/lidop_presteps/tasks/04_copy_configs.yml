@@ -24,11 +24,11 @@
   - name: copy test files
     command: "cp -rf /tmp/lidop/tests /var/lidop"
 
-  - name: copy template files
-    command: "cp -rf /tmp/lidop/install/roles/{{ item }}/templates/ /var/lidop/"
-    with_items:
-      - "lidop"
-    when: node == "master"
+  # - name: copy template files
+  #   command: "cp -rf /tmp/lidop/install/roles/{{ item }}/templates/ /var/lidop/"
+  #   with_items:
+  #     - "lidop"
+  #   when: node == "master"
 
   # - local_action: copy content={{ base_url }} dest=/var/lidop/.base_url
 

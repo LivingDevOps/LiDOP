@@ -47,9 +47,7 @@
       force_basic_auth: yes
       headers:
         Jenkins-Crumb: "{{ crumb.content.split(':')[1] }}"
-    with_items:
-      - "Environment" 
-      - "LiDOPCloud" 
+    with_items: "{{ plugins_to_load }}"
 
   # - name: Create first Backup
   #   uri:

@@ -57,6 +57,12 @@
     with_items:
       - ""
 
+  - name: copy template file
+    template:
+      src: "/tmp/lidop/install/roles/web/templates/web.yml.j2"
+      dest: "/var/lidop/templates/web.yml"
+    when: node == "master"
+
   - name: start webservice
     shell: docker stack deploy -c /var/lidop/templates/web.yml portal
     when: node == "master"

@@ -8,6 +8,7 @@
         key: config/secret_password
         host: "{{ ipaddress }}"
         value: "{{ secret_password }}"
+        token: "{{ secret_password }}"
     when: node == "master"
 
   - name: Store base_url in Consul
@@ -15,6 +16,7 @@
         key: config/base_url
         host: "{{ ipaddress }}"
         value: "{{ base_url }}"
+        token: "{{ secret_password }}"
     when: node == "master"
 
   - name: Store root_user in Consul
@@ -22,6 +24,7 @@
         key: config/root_user
         host: "{{ ipaddress }}"
         value: "{{ root_user }}"
+        token: "{{ secret_password }}"
     when: node == "master"
 
   - name: read swarm worker token
@@ -39,6 +42,7 @@
         key: config/swarm_manager_ip
         host: "{{ ipaddress }}"
         value: "{{ ipaddress }}"
+        token: "{{ secret_password }}"
     when: node == "master"
 
   - name: Store swarm worker token
@@ -46,6 +50,7 @@
         key: config/swarm_worker_token
         host: "{{ ipaddress }}"
         value: "{{ swarm_worker_token.stdout }}"
+        token: "{{ secret_password }}"
     when: node == "master"
 
   - name: Store swarm manager token
@@ -53,6 +58,7 @@
         key: config/swarm_manager_token
         host: "{{ ipaddress }}"
         value: "{{ swarm_manager_token.stdout }}"
+        token: "{{ secret_password }}"
     when: node == "master"
     
   - debug:
