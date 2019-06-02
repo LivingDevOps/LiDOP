@@ -1,0 +1,22 @@
+---
+
+- name: "Common"
+  block:
+
+  - name: Create folders
+    file:
+      state: "directory"
+      path: "/var/lidop/templates"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+    when: node == "master"
+
+  - set_fact: secret_password="{{ lookup('file', '/var/lidop/.secret') }}" 
+    when: node == "worker"
+  - set_fact: secret_password="{{ secret_password_generator }}"  
+    when: node == "master"
+  - debug:
+      msg: "secret_password: {{ secret_password }}"  
+
+  tags: common

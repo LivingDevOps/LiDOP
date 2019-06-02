@@ -19,9 +19,9 @@ module LocalCommand
 
     class Provisioner < Vagrant.plugin("2", :provisioner)
         def provision
-            base_url, s1 = Open3.capture2 "vagrant ssh lidop_0 -c 'echo $(curl --silent consul.service.lidop.local:8500/v1/kv/config/base_url?raw)'"
-            secret_password, s2 = Open3.capture2 "vagrant ssh lidop_0 -c 'echo $(curl --silent consul.service.lidop.local:8500/v1/kv/config/secret_password?raw)'"
-            root_user, s2 = Open3.capture2 "vagrant ssh lidop_0 -c 'echo $(curl --silent consul.service.lidop.local:8500/v1/kv/config/root_user?raw)'"
+            base_url, s1 = Open3.capture2 "vagrant ssh lidop_0 -c 'echo $(curl --silent --header \"X-Consul-Token: $(cat ./var/lidop.secret)\"  consul.service.lidop.local:8500/v1/kv/lidop/base_url?raw)'"
+            secret_password, s2 = Open3.capture2 "vagrant ssh lidop_0 -c 'echo $(curl --silent --header \"X-Consul-Token: $(cat ./var/lidop.secret)\" consul.service.lidop.local:8500/v1/kv/lidop/secret_password?raw)'"
+            root_user, s2 = Open3.capture2 "vagrant ssh lidop_0 -c 'echo $(curl --silent --header \"X-Consul-Token: $(cat ./var/lidop.secret)\" consul.service.lidop.local:8500/v1/kv/lidop/root_user?raw)'"
             print("\n#############################################################\n" \
                     "LiDOP ist ready to use. \n" \
                     "#############################################################\n" \

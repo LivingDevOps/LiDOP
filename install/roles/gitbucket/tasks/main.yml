@@ -1,13 +1,13 @@
 ---
 
   - name: pull image
-    shell: "docker pull livingdevops/lidop.gitbucket:{{ docker_image_version }}"
+    shell: "docker pull {{ gitbucket_image }}"
     when: 
       - install_mode == "online"
       - node == "master"
 
   - name: build image
-    shell: "docker tag livingdevops/lidop.gitbucket:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/gitbucket:{{ docker_image_version }}"
+    shell: "docker tag {{ gitbucket_image }} registry.service.lidop.local:5000/lidop/gitbucket:{{ docker_image_version }}"
     when: node == "master"
 
   - name: copy template file

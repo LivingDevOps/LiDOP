@@ -117,12 +117,12 @@
           "Name": "kv",
           "Description": "grant access to use kv",
           "Type": "client",
-          "Rules": "key_prefix \"\" { policy = \"read\" } key_prefix \"config\" { policy = \"deny\" }"
+          "Rules": "key_prefix \"\" { policy = \"read\" } key_prefix \"lidop\" { policy = \"deny\" }"
         }
     when: node == "master"
 
 
-  - name: add dns policy to anonym token
+  - name: add policies to anonym token
     uri:
       method: PUT
       status_code: 200

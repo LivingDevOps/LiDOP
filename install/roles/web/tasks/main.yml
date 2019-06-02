@@ -18,13 +18,13 @@
     when: node == "master"
 
   - name: pull image
-    shell: "docker pull livingdevops/lidop.nginx:{{ docker_image_version }}"
+    shell: "docker pull {{ nginx_image }}"
     when: 
       - install_mode == "online"
       - node == "master"
 
   - name: tag image
-    shell: "docker tag livingdevops/lidop.nginx:{{ docker_image_version }} registry.service.lidop.local:5000/lidop/nginx:{{ docker_image_version }}"
+    shell: "docker tag {{ nginx_image }} registry.service.lidop.local:5000/lidop/nginx:{{ docker_image_version }}"
     when: node == "master"
 
   - name: push image

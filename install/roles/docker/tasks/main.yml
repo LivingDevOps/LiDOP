@@ -23,10 +23,6 @@
   shell: pip install docker-compose
   when: install_mode == "online"
 
-- name: install python-consul
-  shell: pip install python-consul
-  when: install_mode == "online"
-
 - name: ensure repository key is installed
   apt_key:
     url: https://download.docker.com/linux/raspbian/gpg

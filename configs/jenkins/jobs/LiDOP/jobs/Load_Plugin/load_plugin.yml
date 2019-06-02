@@ -1,91 +1,108 @@
 ---
 
-  - name: Load Plugin
-    hosts: localhost
-    gather_facts: no
+- name: Load Plugin
+  hosts: localhost
+  gather_facts: no
 
-    vars:
-      body:
-        name: "{{ project_name | replace(' ', '_')}}"
-        private: true
+  vars:
+    body:
+      name: "{{ project_name | replace(' ', '_')}}"
+      private: true
 
-    tasks:
+  tasks:
+    - name: set project_name
+      set_fact: project_name_without_spaces="{{ project_name | replace(' ', '_')}}"
 
-      - name: Create Repository in gitbucket
-        uri:
-          method: POST
-          status_code: 200
-          url: http://gitbucket.service.lidop.local:8081/gitbucket/api/v3/orgs/LiDOP/repos
-          user: "{{ root_user }}"
-          password: "{{ root_password }}"
-          force_basic_auth: yes
-          body: "{{ body | to_json }}"
-        when: copy_repository == "true"
+    - name: Create Repository in gitbucket
+      uri:
+        method: POST
+        status_code: 200
+        url: http://gitbucket.service.lidop.local:8081/gitbucket/api/v3/orgs/LiDOP/repos
+        user: "{{ root_user }}"
+        password: "{{ root_password }}"
+        force_basic_auth: yes
+        body: "{{ body | to_json }}"
+      when: copy_repository == "true"
 
-      - name: add webhook for user {{ root_user }}
-        shell: > 
-          docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d gitbucket -c  
-          "INSERT INTO "WEB_HOOK" ("user_name", "repository_name", "url", "ctype") VALUES
-          ('LiDOP', '{{ project_name | replace(' ', '_')}}', 'http://jenkins.service.lidop.local:8080/jenkins/generic-webhook-trigger/invoke?token={{ project_name | replace(' ', '_')}}', 'json');"
-        when: copy_repository == "true"
+    - name: add webhook for user {{ root_user }}
+      shell: > 
+        docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d gitbucket -c  
+        "INSERT INTO "WEB_HOOK" ("user_name", "repository_name", "url", "ctype") VALUES
+        ('LiDOP', '{{ project_name_without_spaces}}', 'http://jenkins.service.lidop.local:8080/jenkins/generic-webhook-trigger/invoke?token={{ project_name_without_spaces}}', 'json');"
+      when: copy_repository == "true"
 
-      - name: add webhook for user {{ root_user }}
-        shell: > 
-          docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d gitbucket -c  
-          "INSERT INTO "WEB_HOOK_EVENT" ("user_name", "repository_name", "url", "event") VALUES
-          ('LiDOP', '{{ project_name | replace(' ', '_')}}', 'http://jenkins.service.lidop.local:8080/jenkins/generic-webhook-trigger/invoke?token={{ project_name | replace(' ', '_')}}', 'push');"
-        when: copy_repository == "true"
+    - name: add webhook for user {{ root_user }}
+      shell: > 
+        docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d gitbucket -c  
+        "INSERT INTO "WEB_HOOK_EVENT" ("user_name", "repository_name", "url", "event") VALUES
+        ('LiDOP', '{{ project_name_without_spaces}}', 'http://jenkins.service.lidop.local:8080/jenkins/generic-webhook-trigger/invoke?token={{ project_name_without_spaces}}', 'push');"
+      when: copy_repository == "true"
 
-      - name: add webhook for user {{ root_user }}
-        shell: > 
-          docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d gitbucket -c  
-          "INSERT INTO "WEB_HOOK_EVENT" ("user_name", "repository_name", "url", "event") VALUES
-          ('LiDOP', '{{ project_name | replace(' ', '_')}}', 'http://jenkins.service.lidop.local:8080/jenkins/generic-webhook-trigger/invoke?token={{ project_name | replace(' ', '_')}}', 'pull_request');"
-        when: copy_repository == "true"
+    - name: add webhook for user {{ root_user }}
+      shell: > 
+        docker exec $(docker ps -f "name=_postgres" -q) psql -U {{ root_user }} -d gitbucket -c  
+        "INSERT INTO "WEB_HOOK_EVENT" ("user_name", "repository_name", "url", "event") VALUES
+        ('LiDOP', '{{ project_name | replace(' ', '_')}}', 'http://jenkins.service.lidop.local:8080/jenkins/generic-webhook-trigger/invoke?token={{ project_name_without_spaces}}', 'pull_request');"
+      when: copy_repository == "true"
 
-      - name: Upload files to gitbucket
-        shell: |
-          rm -rf ./temp
-          git clone {{ plugin_url }} temp
-          cd ./temp
-          git branch -r | awk -F'origin/' '!/HEAD|master/{print $2 " " $1"origin/"$2}' | xargs -L 1 git branch -f --track 
-          git fetch --all
-          git pull --all
+    - name: Upload files to gitbucket
+      shell: |
+        rm -rf ./temp
+        git clone {{ plugin_url }} temp
+        cd ./temp
+        git branch -r | awk -F'origin/' '!/HEAD|master/{print $2 " " $1"origin/"$2}' | xargs -L 1 git branch -f --track 
+        git fetch --all
+        git pull --all
 
-          git remote rm origin
-          git remote add origin "http://{{ root_user }}:{{ root_password }}@gitbucket.service.lidop.local:8081/gitbucket/git/LiDOP/{{ project_name | replace(' ', '_')}}.git"
-          git push --all
-          git push --tags
-        when: copy_repository == "true"
+        git remote rm origin
+        git remote add origin "http://{{ root_user }}:{{ root_password }}@gitbucket.service.lidop.local:8081/gitbucket/git/LiDOP/{{ project_name_without_spaces}}.git"
+        git push --all
+        git push --tags
+      when: copy_repository == "true"
 
-      - name: Set variable PluginUrl
-        set_fact: plugin_url2="{{ gitbucket_base_url }}/git/LiDOP/{{ project_name | replace(' ', '_')}}.git"
-        when: copy_repository == "true"
-      - name: Set variable PluginUrl
-        set_fact: plugin_url_link="{{ gitbucket_base_url }}/LiDOP/{{ project_name | replace(' ', '_')}}"
-        when: copy_repository == "true"
+    - name: Set variable PluginUrl
+      set_fact: plugin_url2="{{ gitbucket_base_url }}/git/LiDOP/{{ project_name_without_spaces}}.git"
+      when: copy_repository == "true"
+    - name: Set variable PluginUrl
+      set_fact: plugin_url_link="{{ gitbucket_base_url }}/LiDOP/{{ project_name_without_spaces}}"
+      when: copy_repository == "true"
 
-      - name: Set variable PluginUrl
-        set_fact: plugin_url2="{{ plugin_url }}"
-        when: copy_repository == "false"
-      - name: Set variable PluginUrl
-        set_fact: plugin_url_link="{{ plugin_url }}"
-        when: copy_repository == "false"
+    - name: Set variable PluginUrl
+      set_fact: plugin_url2="{{ plugin_url }}"
+      when: copy_repository == "false"
+    - name: Set variable PluginUrl
+      set_fact: plugin_url_link="{{ plugin_url }}"
+      when: copy_repository == "false"
 
-      - name: Set variable Credential
-        set_fact: credential2="lidop"
-        when: copy_repository == "true"
-      - name: Set variable Credential
-        set_fact: credential2="{{ credential }}"
-        when: copy_repository == "false"
+    - name: Set variable Credential
+      set_fact: credential2="lidop"
+      when: copy_repository == "true"
+    - name: Set variable Credential
+      set_fact: credential2="{{ credential }}"
+      when: copy_repository == "false"
 
-      - name: load builds.json file
-        include_vars:
-          file: ./build/builds.json
-          name: pipelines
+    - name: update build.json file
+      template:
+        src: ./build/builds.json
+        dest: ./build/builds.json
 
-      - name: update config files
-        template:
-          src: ./job_dsl
-          dest: ./build/builds.groovy
-  
+    - name: load builds.json file
+      include_vars:
+        file: ./build/builds.json
+        name: pipelines
+
+    - name: update config files
+      template:
+        src: ./job_dsl
+        dest: ./build/builds.groovy
+
+    - name: read extension files
+      find:
+        paths:  "./build"
+        patterns: "*.yml,*.yaml"
+      register: includes_extension
+
+    - name: execute extension
+      include_tasks: "{{ item.path }}"
+      with_items: "{{ includes_extension.files | sort(attribute='path') }}" 
+

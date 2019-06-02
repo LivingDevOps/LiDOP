@@ -1,0 +1,76 @@
+---
+
+- name: "Set network variables"
+  block:
+  - name: get public IP
+    ipify_facts:
+    register: public_ip
+    when: public_ipaddress is undefined
+
+  - name: Set IPs with a public ip
+    set_fact: 
+      ipaddress: "{{ ansible_default_ipv4.address }}"
+      public_ipaddress: "{{ ipify_public_ip }}"
+    when: 
+      - public_ipaddress is undefined
+      - not public_ip.failed
+
+  - name: Set IPs with non public ip
+    set_fact: 
+      ipaddress: "{{ ansible_default_ipv4.address }}"
+      public_ipaddress: "{{ ipaddress }}"
+    when: 
+      - public_ipaddress is undefined
+      - public_ip.failed
+
+  - name: Set Public IPs from arguments
+    set_fact: 
+      public_ipaddress: "{{ ipaddress }}"
+    when: 
+      - public_ipaddress is undefined
+      - ipaddress is defined
+
+  - name: Set dns_recursor
+    set_fact: 
+      dns_recursor: "8.8.8.8"
+    when: dns_recursor is undefined
+
+  - debug:
+      msg: "Public IP: {{ public_ipaddress }}"  
+  - debug:
+      msg: "Private IP: {{ ipaddress }}"  
+  - debug:
+      msg: "dns_recursor: {{ dns_recursor }}"  
+ 
+  - debug:
+      msg: "Install Mode: {{ install_mode }}"  
+  - debug:
+      msg: "protocol: {{ protocol }}"  
+  - debug:
+      msg: "certificate_creation: {{ certificate_creation }}"  
+
+  - name: set base_urls to {{ domain_name }}
+    set_fact: 
+      base_url: "{{ protocol }}://{{ domain_name }}"  
+      jenkins_base_url: "{{ protocol }}://{{ domain_name }}/jenkins"  
+      gitbucket_base_url: "{{ protocol }}://{{ domain_name }}/gitbucket" 
+
+  - name: set base_urls to lidop.local
+    set_fact: 
+      base_url: "{{ protocol }}://{{ public_ipaddress }}"
+      jenkins_base_url: "{{ protocol }}://{{ public_ipaddress }}/jenkins"  
+      gitbucket_base_url: "{{ protocol }}://{{ public_ipaddress }}/gitbucket"  
+    when: domain_name == "lidop.local"
+
+  - debug:
+      msg: "base_url: {{ base_url }}"  
+  - debug:
+      msg: "jenkins_base_url: {{ jenkins_base_url }}"  
+  - debug:
+      msg: "gitbucket_base_url: {{ gitbucket_base_url }}"  
+
+  - debug:
+      msg: "consul_ip: {{ consul_ip }}"  
+    when: node == "worker"
+
+  tags: set_network_variables

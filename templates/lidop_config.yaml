@@ -11,6 +11,16 @@ protocol: https
 # latest, dev
 docker_image_version: latest
 
+nginx_image: livingdevops/lidop.nginx:{{ docker_image_version }}
+jenkins_image: livingdevops/lidop.jenkins:{{ docker_image_version }}
+jenkins_slave_image: livingdevops/lidop.jenkins-slave:{{ docker_image_version }}
+jenkins_docker_slave_image: livingdevops/lidop.jenkins-slave-docker:{{ docker_image_version }}
+gitbucket_image: livingdevops/lidop.gitbucket:{{ docker_image_version }}
+backup_image: livingdevops/lidop.backup:{{ docker_image_version }}
+serverspec_image: livingdevops/lidop.serverspec:{{ docker_image_version }}
+sonarqube_image: livingdevops/lidop.sonarqube:{{ docker_image_version }}
+sonarqube_scanner_image: livingdevops/lidop.sonarqube_scanner:{{ docker_image_version }}
+
 plugins_to_load: 
   - "Environment" 
   - "LiDOPCloud" 
