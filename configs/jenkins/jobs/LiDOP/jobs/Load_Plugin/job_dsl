@@ -104,24 +104,25 @@ pipelineJob("{{ project_name | replace(' ', '_')}}/{{ pipeline }}") {
         cpsScmFlowDefinition {
             scm {
                 gitSCM {
-                userRemoteConfigs {
-                    userRemoteConfig {
-                    credentialsId("{{ credential2 }}")
-                    name('')
-                    refspec('')
-                    url("{{ plugin_url2 }}")
+                    userRemoteConfigs {
+                        userRemoteConfig {
+                        credentialsId("{{ credential2 }}")
+                        name('')
+                        refspec('')
+                        url("{{ plugin_url2 }}")
+                        }
                     }
-                }
-                branches {
-                    branchSpec {
-                    name("{{ branch }}")
+                    branches {
+                        branchSpec {
+                        name("{{ branch }}")
+                        }
                     }
-                }
-                extensions {
-                }
-                  doGenerateSubmoduleConfigurations(false)
-                  browser { }
-                  gitTool('')
+                    extensions {
+                        cleanBeforeCheckout()
+                    }
+                    doGenerateSubmoduleConfigurations(false)
+                    browser { }
+                    gitTool('')
             }
         }
         scriptPath("{{ pipelines[pipeline].Script }}")

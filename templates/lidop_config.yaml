@@ -1,6 +1,6 @@
 ---
 # online, offline
-install_mode: offline
+install_mode: online
 nodes: 0
 # self, letsencrypt
 certificate_creation: self
@@ -18,8 +18,6 @@ jenkins_docker_slave_image: livingdevops/lidop.jenkins-slave-docker:{{ docker_im
 gitbucket_image: livingdevops/lidop.gitbucket:{{ docker_image_version }}
 backup_image: livingdevops/lidop.backup:{{ docker_image_version }}
 serverspec_image: livingdevops/lidop.serverspec:{{ docker_image_version }}
-sonarqube_image: livingdevops/lidop.sonarqube:{{ docker_image_version }}
-sonarqube_scanner_image: livingdevops/lidop.sonarqube_scanner:{{ docker_image_version }}
 
 plugins_to_load: 
   - "Environment" 

@@ -1,11 +1,11 @@
 ---
-box_config: offline
+box_config: online
 virtualbox:
   cpus: 4
   memory: 4096
   # set the ip adress without the last digit
   ipaddress: 10.20.30.4
-  online_box_name: LivingDevOps/lidop.online
+  online_box_name: bento/ubuntu-18.10
   online_box_url: 
   online_box_version: ">=1.1"
   offline_box_name: LivingDevOps/lidop.offline
