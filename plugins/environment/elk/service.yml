@@ -8,9 +8,6 @@
     folder: "/var/lidop/elk"
 
   tasks:
-    - name: fix max memory
-      command: sysctl -w vm.max_map_count=262144
-
     - name: delete directory
       file:
         path: "{{ folder }}"
