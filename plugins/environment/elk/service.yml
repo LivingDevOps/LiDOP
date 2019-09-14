@@ -19,17 +19,6 @@
         dest: "{{ folder }}"
         mode: 0644
       when: state == "present"
-      
-    - name: Create folders
-      file:
-        state: "directory"
-        path: "{{ folder }}{{ item }}"
-        owner: "{{ root_user }}"
-        group: "{{ root_user }}"
-        mode: '0777'
-      with_items:
-        - /elasticsearch
-      when: state == "present"
 
     - name: set docker-compose
       template:
