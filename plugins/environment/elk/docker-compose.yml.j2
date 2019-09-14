@@ -32,6 +32,8 @@ services:
         protocol: tcp
         mode: host
     volumes:
+      - /var/lidop/elk/elasticsearch/:/usr/share/elasticsearch/config
+      - /usr/share/elasticsearch/config/ingest-geoip
       - /var/lidop/elk/elasticsearch:/usr/share/elasticsearch/data
     deploy:
       restart_policy:
