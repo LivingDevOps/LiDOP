@@ -21,6 +21,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.4
     environment:
       - SERVICE_9200_NAME=elasticsearch
+      - discovery.type=single-node 
     ports:
       - target: 9200
         published: 9200
@@ -31,6 +32,8 @@ services:
         protocol: tcp
         mode: host
     volumes:
+      - /var/lidop/elk/elasticsearch/:/usr/share/elasticsearch/config
+      - /usr/share/elasticsearch/config/ingest-geoip
       - /var/lidop/elk/elasticsearch:/usr/share/elasticsearch/data
     deploy:
       restart_policy:
