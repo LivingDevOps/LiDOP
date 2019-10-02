@@ -3,6 +3,7 @@
 **.iso
 builds
 **.tar
+packer_cache/**
 
 !.gitignore
 docker-compose.yml
