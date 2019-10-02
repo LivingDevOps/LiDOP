@@ -1,0 +1,37 @@
+---
+
+- name: "Common"
+  block:
+
+  - name: Create folder /var/lidop
+    file:
+      state: "directory"
+      path: "/var/lidop/"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+
+  - name: Create folders
+    file:
+      state: "directory"
+      path: "/var/lidop/templates"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+    when: node == "master"
+
+  - name: Read secret_password
+    consul_kv:
+        key: "config/secret_password"
+        host: "{{ consul_ip }}"
+        token: "{{ secret_password }}"
+    register: secret_password
+    when: node == "worker"
+  - set_fact: secret_password="{{ secret_password.data.Value }}"  
+    when: node == "worker"
+  - set_fact: secret_password="{{ secret_password_generator }}"  
+    when: node == "master"
+  - debug:
+      msg: "secret_password: {{ secret_password }}"  
+
+  tags: common

@@ -1,0 +1,13 @@
+---
+
+- name: "Set default variables"
+  block:
+  - name: set plugins_to_load
+    set_fact: 
+      plugins_to_load: 
+        - "Environment" 
+        - "LiDOPCloud" 
+    when: 
+    - plugins_to_load is undefined
+
+  tags: set_default_variables

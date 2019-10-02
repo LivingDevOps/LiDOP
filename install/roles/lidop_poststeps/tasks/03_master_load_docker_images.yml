@@ -1,0 +1,25 @@
+---
+
+########################################################################
+- name: Start download images
+########################################################################
+  block:
+  - name: backup_image
+    shell: |
+      docker pull {{ backup_image }}
+      docker tag {{ backup_image }} registry.service.lidop.local:5000/lidop/backup:{{ docker_image_version }}
+      docker push registry.service.lidop.local:5000/lidop/backup:{{ docker_image_version }}
+    when: 
+      - install_mode == "online"
+      - node == "master"
+
+  - name: serverspec_image
+    shell: |
+      docker pull {{ serverspec_image }}
+      docker tag {{ serverspec_image }} registry.service.lidop.local:5000/lidop/serverspec:{{ docker_image_version }}
+      docker push registry.service.lidop.local:5000/lidop/serverspec:{{ docker_image_version }}
+    when: 
+      - install_mode == "online"
+      - node == "master"
+
+  tags: download_images

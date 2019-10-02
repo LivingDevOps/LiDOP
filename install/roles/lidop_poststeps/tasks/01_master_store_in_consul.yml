@@ -1,0 +1,67 @@
+---
+
+- name: store values
+  block:
+
+  - name: Store secret_password in Consul
+    consul_kv:
+        key: lidop/secret_password
+        host: "{{ ipaddress }}"
+        value: "{{ secret_password }}"
+        token: "{{ secret_password }}"
+    when: node == "master"
+
+  - name: Store base_url in Consul
+    consul_kv:
+        key: lidop/base_url
+        host: "{{ ipaddress }}"
+        value: "{{ base_url }}"
+        token: "{{ secret_password }}"
+    when: node == "master"
+
+  - name: Store root_user in Consul
+    consul_kv:
+        key: lidop/root_user
+        host: "{{ ipaddress }}"
+        value: "{{ root_user }}"
+        token: "{{ secret_password }}"
+    when: node == "master"
+
+  - name: read swarm worker token
+    shell: sudo docker swarm join-token -q worker
+    register: swarm_worker_token
+    when: node == "master"
+
+  - name: read swarm manager token
+    shell: sudo docker swarm join-token -q manager
+    register: swarm_manager_token
+    when: node == "master"
+
+  - name: Store swarm manager ip
+    consul_kv:
+        key: lidop/swarm_manager_ip
+        host: "{{ ipaddress }}"
+        value: "{{ ipaddress }}"
+        token: "{{ secret_password }}"
+    when: node == "master"
+
+  - name: Store swarm worker token
+    consul_kv:
+        key: lidop/swarm_worker_token
+        host: "{{ ipaddress }}"
+        value: "{{ swarm_worker_token.stdout }}"
+        token: "{{ secret_password }}"
+    when: node == "master"
+
+  - name: Store swarm manager token
+    consul_kv:
+        key: lidop/swarm_manager_token
+        host: "{{ ipaddress }}"
+        value: "{{ swarm_manager_token.stdout }}"
+        token: "{{ secret_password }}"
+    when: node == "master"
+    
+  - debug:
+      msg: "Secret Password: {{ secret_password }}"
+
+  tags: consul

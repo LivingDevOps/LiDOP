@@ -1,0 +1,88 @@
+---
+
+- name: Init
+  block:
+
+  - name: save secret_password to local file
+    local_action: copy content={{ secret_password }} dest=/var/lidop/.secret
+
+  - name: copy config files
+    command: "cp -rf /tmp/lidop/configs/{{ item }} /var/lidop"
+    with_items:
+      - "consul"
+      - "gitbucket"
+      - "jenkins"
+      - "jenkins.sharedlib"
+      - "nginx"
+      - "openldap"
+      - "postgresql"
+      - "www"
+      - "certs"
+      - "registry"
+    when: node == "master"
+
+  - name: copy test files
+    command: "cp -rf /tmp/lidop/tests /var/lidop"
+
+  # - name: copy template files
+  #   command: "cp -rf /tmp/lidop/install/roles/{{ item }}/templates/ /var/lidop/"
+  #   with_items:
+  #     - "lidop"
+  #   when: node == "master"
+
+  # - local_action: copy content={{ base_url }} dest=/var/lidop/.base_url
+
+  # - debug:
+  #     msg: "gitbucket_base_url: {{ gitbucket_base_url }}"  
+
+  - name: find all j2 files
+    find:
+      paths: "/var/lidop/"
+      patterns: "*.j2"
+      recurse: true
+    register: j2_files
+    when: node == "master"
+    
+  - name: update config files
+    template:
+      src: "{{ item.path }}"
+      dest: "{{ item.path | replace('.j2','') }}"
+    with_items: "{{ j2_files.files }}"
+    when: node == "master"
+
+  - name: find all sh files
+    find:
+      paths: "/var/lidop/"
+      patterns: "*.sh"
+      recurse: true
+    register: sh_files
+    when: node == "master"
+    
+  - name: update sh files
+    shell: dos2unix {{ item.path }}
+    with_items: "{{ sh_files.files }}"
+    when: node == "master"
+
+  - name: chown
+    shell: >
+      chown -R 1111:1111 /var/lidop/{{ item }}
+    with_items:
+      - "jenkins"
+    when: node == "master"
+
+  - name: fix permissions
+    file:
+      path: "/var/lidop"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      follow: false
+      mode: u=rwX,g=rX,o=rX
+      recurse: true
+    when: node == "master"
+
+  - name: permission hack needs to be removed
+    shell: >
+      chmod 777 -R  /var/lidop/
+    when: node == "master"
+
+  tags: config

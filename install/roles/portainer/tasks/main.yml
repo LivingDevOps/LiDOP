@@ -1,0 +1,24 @@
+---
+
+- name: Start portainer
+  block:
+
+  - name: copy template file
+    template:
+      src: "/tmp/lidop/install/roles/portainer/templates/portainer.yml.j2"
+      dest: "/var/lidop/templates/portainer.yml"
+    when: node == "master"
+
+  - name: start portainer
+    shell: docker stack deploy -c /var/lidop/templates/portainer.yml portainer
+    when: node == "master"
+  
+  - name: "wait for portainer to come up"
+    uri:
+      url: "http://{{ ipaddress }}:8083"
+      status_code: 200
+    register: result
+    until: result.status == 200
+    retries: 100
+    delay: 5
+  tags: portainer

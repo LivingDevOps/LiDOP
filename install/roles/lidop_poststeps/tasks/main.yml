@@ -1,0 +1,30 @@
+---
+
+- name: read files for master
+  find:
+    paths:  "{{ role_path }}/tasks"
+    patterns: "^((?!main).)*$"
+    recurse: true
+    use_regex: true
+  register: includes_master
+  when: node == "master"
+
+- name: read files for worker
+  find:
+    paths:  "{{ role_path }}/tasks"
+    patterns: "^((?!master|main).)*$"
+    recurse: true
+    use_regex: true
+  register: includes_worker
+  when: node == "worker"
+
+- name: show master
+  include_tasks: "{{ item.path }}"
+  with_items: "{{ includes_master.files | sort(attribute='path') }}" 
+  when: node == "master"
+
+- name: show worker
+  include_tasks: "{{ item.path }}"
+  with_items: "{{ includes_worker.files | sort(attribute='path') }}"
+  when: node == "worker"
+

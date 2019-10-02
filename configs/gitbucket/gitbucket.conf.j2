@@ -1,18 +1,18 @@
 oidc_authentication=false
 gravatar=false
-ldap.bind_password={{ secret_password }}
+ldap.bind_password={{ ldap_bind_password }}
 base_url={{ gitbucket_base_url }}
 notification=false
-ldap.baseDN=dc\=lidop,dc\=local
+ldap.baseDN={{ ldap_base_dn | replace('=', '\=') }}
 useSMTP=false
 skinName=skin-blue
 is_create_repository_option_public=true
 ldap_authentication=true
 ssh=false
-ldap.username_attribute=uid
+ldap.username_attribute={{ ldap_username_attribute }}
 allow_account_registration=false
-ldap.host=ldap.service.lidop.local
-ldap.bindDN=cn\=admin,dc\=lidop,dc\=local
+ldap.host={{ ldap_server }}
+ldap.bindDN={{ ldap_bind_dn | replace('=', '\=') }}
 allow_anonymous_access=true
-ldap.fullname_attribute=givenName
+ldap.fullname_attribute={{ ldap_fullname_attribute }}
 ldap.port=389

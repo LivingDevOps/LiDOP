@@ -1,0 +1,19 @@
+---
+
+- name: Init
+  block:
+
+  - name: Create folder /var/lidop
+    file:
+      state: "directory"
+      path: "/var/lidop/"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+
+  - name: "mount /var/lidop from {{ consul_ip }}"
+    shell: >
+      mount {{ consul_ip }}:/var/lidop /var/lidop
+    when: node == "worker"
+
+  tags: mount

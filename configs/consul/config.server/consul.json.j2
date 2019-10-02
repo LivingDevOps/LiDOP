@@ -3,7 +3,7 @@
   "datacenter": "dc1",
   "domain": "lidop.local",
   "log_level": "INFO",
-  "node_name": "LiDOP.Master",
+  "node_name": "Master",
   "bind_addr" : "{{ ipaddress }}",
   "advertise_addr" : "{{ ipaddress }}",
   "client_addr" : "{{ ipaddress }}",
@@ -14,10 +14,15 @@
   "server" : true,
   "bootstrap_expect": 1,
   "ui" : true,
-  "acl_datacenter": "dc1",
-  "acl_master_token": "{{ secret_password }}",
-  "acl_default_policy": "allow",
-  "acl_down_policy": "extend-cache",
+  "primary_datacenter": "dc1",
+  "acl": {
+    "enabled": true,
+    "tokens": {
+      "master": "{{ secret_password }}"
+    },
+    "default_policy": "deny",
+    "down_policy": "extend-cache"
+  },
   "http_config": {
     "response_headers": {
       "Access-Control-Allow-Origin": "*"

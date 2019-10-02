@@ -1,0 +1,48 @@
+---
+
+- name: "set docker variables"
+  block:
+
+  - name: Read swarm_manager_ip
+    consul_kv:
+        key: "lidop/swarm_manager_ip"
+        host: "{{ consul_ip }}"
+        token: "{{ secret_password }}"
+    register: swarm_manager_ip
+    when: node == "worker"
+  - set_fact: swarm_manager_ip="{{ swarm_manager_ip.data.Value }}"  
+    when: node == "worker"
+  - debug:
+      msg: "swarm_manager_ip: {{ swarm_manager_ip }}"  
+    when: node == "worker"
+  - debug:
+      msg: "Node MasterIpaddress: {{ swarm_manager_ip }}"  
+    when: node == "worker"
+
+  - name: Read swarm_manager_token
+    consul_kv:
+        key: "lidop/swarm_manager_token"
+        host: "{{ consul_ip }}"
+        token: "{{ secret_password }}"
+    register: swarm_manager_token
+    when: node == "worker"
+  - set_fact: swarm_manager_token="{{ swarm_manager_token.data.Value }}"  
+    when: node == "worker"
+  - debug:
+      msg: "swarm_manager_token: {{ swarm_manager_token }}"  
+    when: node == "worker"
+
+  - name: Read swarm_worker_token
+    consul_kv:
+        key: "lidop/swarm_worker_token"
+        host: "{{ consul_ip }}"
+        token: "{{ secret_password }}"
+    register: swarm_worker_token
+    when: node == "worker"
+  - set_fact: swarm_worker_token="{{ swarm_worker_token.data.Value }}"  
+    when: node == "worker"
+  - debug:
+      msg: "swarm_worker_token: {{ swarm_worker_token }}"  
+    when: node == "worker"
+
+  tags: set_docker_variables

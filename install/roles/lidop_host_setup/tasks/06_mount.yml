@@ -1,0 +1,29 @@
+---
+
+- name: Init
+  block:
+
+  - name: Create folder /var/lidop
+    file:
+      state: "directory"
+      path: "/var/lidop/"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+    when: node == "master"
+
+  - name: Enable mout for /var/lidop
+    lineinfile:
+      create: yes
+      state: present
+      dest: /etc/exports
+      regexp: '^/var/lidop'
+      line: /var/lidop  *(rw,async,no_subtree_check,no_root_squash)
+    when: node == "master"
+
+  - name: restart nfs service
+    shell: >
+      systemctl restart nfs-kernel-server
+    when: node == "master"
+
+  tags: mount

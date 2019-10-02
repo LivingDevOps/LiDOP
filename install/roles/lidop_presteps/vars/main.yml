@@ -1,0 +1,3 @@
+---
+
+secret_password_generator: "{{ lookup('password', '/dev/null length=30 chars=ascii_letters,digits') }}"

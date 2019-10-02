@@ -65,6 +65,37 @@ pipelineJob("{{ project_name | replace(' ', '_')}}/{{ pipeline }}") {
             choiceParam("{{ param.Name }}", {{ param.Choices | to_json }}, "")
         {%endif%}
 
+        {%if param.Type == "ActiveChoice"%}
+            activeChoiceParam("{{ param.Name }}") {
+            {% if param.Description is defined %}
+            description("{{ param.Description }}")
+            {% endif %}
+            filterable()
+            choiceType("{{ param.ChoiceType }}")
+            groovyScript {
+                script("{{ param.Script }}")
+                fallbackScript("{{ param.FallbackScript }}")
+            }
+        }
+        {%endif%}
+
+        {%if param.Type == "ActiveChoiceReactive"%}
+            activeChoiceReactiveParam("{{ param.Name }}") {
+            {% if param.Description is defined %}
+            description("{{ param.Description }}")
+            {% endif %}
+            filterable()
+            choiceType("{{ param.ChoiceType }}")
+            groovyScript {
+                script("{{ param.Script }}")
+                fallbackScript("{{ param.FallbackScript }}")
+            }
+            {% for paramReference in param.References%}
+            referencedParameter("{{ paramReference }}")
+            {% endfor %}
+        }
+        {%endif%}
+
     {% endfor %}
     }
 {% endif %}

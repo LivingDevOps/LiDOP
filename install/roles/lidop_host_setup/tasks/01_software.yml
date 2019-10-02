@@ -1,0 +1,21 @@
+---
+
+- name: Install Software
+  block:
+
+    - name: install aptitude
+      shell: apt-get install -y aptitude
+      when: install_mode == "online"
+
+    - name: Install required packages
+      apt: 
+        name: "{{ packages }}"
+        update_cache: yes 
+        state: present
+      vars:
+        packages:
+          - default-jre
+          - nfs-kernel-server
+      when: install_mode == "online"
+  
+  tags: software

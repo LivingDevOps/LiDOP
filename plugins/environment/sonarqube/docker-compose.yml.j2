@@ -3,7 +3,7 @@ version: '3.2'
 services:
   
   sonarqube:
-    image: livingdevops/lidop.sonarqube:{{ docker_image_version }}
+    image: {{ sonarqube_image }}
     restart: always
     ports:
       - target: 9000

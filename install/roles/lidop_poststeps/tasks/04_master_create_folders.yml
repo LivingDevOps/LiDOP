@@ -1,0 +1,17 @@
+---
+
+########################################################################
+- name: Start web
+########################################################################
+  block:
+
+  - name: Create folders
+    file:
+      state: "directory"
+      path: "/home/{{ item }}"
+      owner: "{{ root_user }}"
+      group: "{{ root_user }}"
+      mode: '0775'
+    with_items:
+      - /backups
+  tags: web
