@@ -5,7 +5,7 @@ nodes: 0
 # self, letsencrypt
 certificate_creation: self
 # lidop.local, xip.io, mydomain.xyz
-domain_name: www.{{ public_ipaddress }}.nip.io
+domain_name: www.{{ ipaddress }}.nip.io
 # http, https
 protocol: https
 # latest, dev

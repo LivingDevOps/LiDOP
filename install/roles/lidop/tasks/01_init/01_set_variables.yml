@@ -57,9 +57,9 @@
 
   - name: set base_urls to lidop.local
     set_fact: 
-      base_url: "{{ protocol }}://{{ public_ipaddress }}"
-      jenkins_base_url: "{{ protocol }}://{{ public_ipaddress }}/jenkins"  
-      gitbucket_base_url: "{{ protocol }}://{{ public_ipaddress }}/gitbucket"  
+      base_url: "{{ protocol }}://{{ ipaddress }}"
+      jenkins_base_url: "{{ protocol }}://{{ ipaddress }}/jenkins"  
+      gitbucket_base_url: "{{ protocol }}://{{ ipaddress }}/gitbucket"  
     when: domain_name == "lidop.local"
 
   - debug:

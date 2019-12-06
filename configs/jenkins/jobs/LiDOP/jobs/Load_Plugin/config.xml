@@ -119,7 +119,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: &apos;lidop_secret_password&apos;, passwordVariable: &apos;secret_password&apos;, usernameVariable: &apos;root_user_secret&apos;)]) {
 
                         unstash &apos;data&apos;
-                        sh &quot;ansible-playbook load_plugin.yml -v -e \&quot; base_url=${env.BASE_URL} jenkins_base_url=${env.JENKINS_BASE_URL} gitbucket_base_url=${env.GITBUCKET_BASE_URL} ipaddress=${env.IPADDRESS} public_ipaddress=${env.PUBLIC_IPADDRESS} project_name='${ProjectName}' credential=${Credential} plugin_url=${params.PluginUrl} copy_repository=${CopyRepository} root_password=${root_password} root_user=${root_user} secret_password=${secret_password} branch=${Branch}\&quot;&quot;
+                        sh &quot;ansible-playbook load_plugin.yml -v -e \&quot; base_url=${env.BASE_URL} jenkins_base_url=${env.JENKINS_BASE_URL} gitbucket_base_url=${env.GITBUCKET_BASE_URL} ipaddress=${env.IPADDRESS} ipaddress=${env.ipaddress} project_name='${ProjectName}' credential=${Credential} plugin_url=${params.PluginUrl} copy_repository=${CopyRepository} root_password=${root_password} root_user=${root_user} secret_password=${secret_password} branch=${Branch}\&quot;&quot;
                     
                     }
                 }

@@ -1,5 +1,5 @@
 server {
-    server_name  {{ public_ipaddress }} {{ public_ipaddress }}.*;
+    server_name  {{ ipaddress }} {{ ipaddress }}.*;
     listen       80;
     listen       443 ssl;
     ssl_certificate /certs/live/{{ domain_name }}/fullchain.pem;
