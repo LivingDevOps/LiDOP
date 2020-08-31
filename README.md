@@ -1,6 +1,19 @@
 # LiDOP
 A easy to use DevOps playground. Can be started local or in AWS.
 
+## TL;DR
+
+Open "git bash" (or any linux terminal) and do:
+
+```
+git clone https://github.com/LivingDevOps/LiDOP.git
+cd LiDOP
+vagrant up
+```
+Then got to https://www.10.20.30.40.nip.io to find all the tools.
+
+There is also terraform code to make it run in AWS (or Azure/GCP), but there is much more preparation and debugging needed for that.
+
 ## Build Status
 
 | Build                                     | Status               
