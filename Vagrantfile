@@ -66,7 +66,10 @@ Vagrant.configure("2") do |config|
         -e HOST=$IPADDRESS \
         -e HOSTNAME=$HOSTNAME \
         -e TEST_HOST=$TEST_HOST \
-        registry.service.lidop.local:5000/lidop/serverspec:#{configuration["docker_image_version"]} test
+        registry.service.lidop.local:5000/lidop/serverspec:#{configuration["docker_image_version"]} test || true
+        # registry does not contain that image...
+        echo "existing images:"
+        curl -ks https://registry.service.lidop.local:5000/v2/_catalog
     SCRIPT
 
     # no parallel start of the machines
