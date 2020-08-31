@@ -98,7 +98,6 @@
         {
           "Name": "dns",
           "Description": "grant access to use dns",
-          "Type": "client",
           "Rules": "node_prefix \"\" { policy = \"read\" } service_prefix \"\" { policy = \"read\" }"
         }
     when: node == "master"
@@ -116,7 +115,6 @@
         {
           "Name": "kv",
           "Description": "grant access to use kv",
-          "Type": "client",
           "Rules": "key_prefix \"\" { policy = \"read\" } key_prefix \"lidop\" { policy = \"deny\" }"
         }
     when: node == "master"
