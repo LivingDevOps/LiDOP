@@ -27,16 +27,8 @@ class Settings
             @password = ENV["PASSWORD"]
         else
             print "Enter Password: [lidop]: "
-            @password = STDIN.noecho(&:gets).chomp
+            @password = STDIN.gets.chomp
             print "\n"    
-
-            print "Reenter Password: [lidop]: "
-            @password2 = STDIN.noecho(&:gets).chomp
-            print "\n"
-            
-            if(@password != @password2)
-                raise 'Passwords are not same!!!!'  
-            end
 
             if(@password == "")
                 @password = "lidop"
